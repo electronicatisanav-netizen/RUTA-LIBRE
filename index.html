@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>RIFA PRO — Talonario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:          #0a0a0f;
+      --bg-surface:       #12121a;
+      --bg-elevated:      #1a1a26;
+      --bg-hover:         #22223a;
+      --accent-primary:   #6366f1;
+      --accent-secondary: #8b5cf6;
+      --accent-glow:      rgba(99,102,241,0.2);
+      --num-libre:        #22c55e;
+      --num-reservado:    #f59e0b;
+      --num-pagado:       #ef4444;
+      --num-bloqueado:    #374151;
+      --text-primary:     #f1f5f9;
+      --text-secondary:   #94a3b8;
+      --text-muted:       #475569;
+      --border-subtle:    rgba(255,255,255,0.06);
+      --border-normal:    rgba(255,255,255,0.12);
+      --whatsapp:         #25d366;
+      --whatsapp-dark:    #128c7e;
+      --shadow-card:      0 4px 24px rgba(0,0,0,0.4);
+      --shadow-glow:      0 0 20px rgba(99,102,241,0.15);
+      --radius-sm:   8px;
+      --radius-md:   12px;
+      --radius-lg:   16px;
+      --radius-xl:   24px;
+      --radius-full: 9999px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════
+       LOADING
+    ══════════════════════════════════ */
+    #loading {
+      position: fixed; inset: 0;
+      background: var(--bg-base);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 20px; z-index: 9999;
+    }
+    .loading-logo {
+      font-size: 48px;
+      animation: pulse-logo 1.5s ease-in-out infinite;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border-normal);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    #loading p {
+      color: var(--text-secondary); font-size: 13px; font-weight: 500;
+    }
+
+    /* ══════════════════════════════════
+       BLOQUEO
+    ══════════════════════════════════ */
+    #bloqueado {
+      display: none; position: fixed; inset: 0;
+      background: var(--bg-base);
+      flex-direction: column; align-items: center;
+      justify-content: center; text-align: center;
+      gap: 16px; padding: 32px; z-index: 9998;
+    }
+    #bloqueado .bloqueo-icon { font-size: 80px; opacity: 0.4; }
+    #bloqueado h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: 26px; font-weight: 700;
+    }
+    #bloqueado p { color: var(--text-secondary); max-width: 340px; line-height: 1.7; }
+    #bloqueado .bloqueo-sub { color: var(--text-muted); font-size: 12px; margin-top: 4px; }
+
+    /* ══════════════════════════════════
+       APP PRINCIPAL
+    ══════════════════════════════════ */
+    #app { display: none; }
+
+    /* ══════════════════════════════════
+       BANNER VENCIMIENTO
+    ══════════════════════════════════ */
+    .banner-vencimiento {
+      display: none;
+      background: rgba(245,158,11,0.1);
+      border-bottom: 1px solid rgba(245,158,11,0.25);
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 13px;
+      color: #f59e0b;
+      font-weight: 500;
+    }
+
+    /* ══════════════════════════════════
+       HEADER
+    ══════════════════════════════════ */
+    .header {
+      background: linear-gradient(180deg, #14141f 0%, var(--bg-base) 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 28px 16px 24px;
+    }
+    .header-inner {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Badge */
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #a5b4fc;
+      border-radius: var(--radius-full);
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Fotos */
+    .header-fotos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .header-foto-wrap {
+      aspect-ratio: 16/9;
+      border-radius: var(--radius-lg);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      position: relative;
+    }
+    .header-foto-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .header-foto-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 6px; color: var(--text-muted); font-size: 12px;
+    }
+    .header-foto-placeholder span { font-size: 28px; opacity: 0.4; }
+
+    /* Título */
+    .header-titulo {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 800;
+      background: linear-gradient(135deg, #f1f5f9 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .header-subtitulo {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 16px;
+      min-height: 20px;
+    }
+
+    /* Premios */
+    .premios-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .premio-chip {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-normal);
+      border-radius: var(--radius-full);
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: flex; align-items: center; gap: 5px;
+    }
+
+    /* Meta row */
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .meta-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .meta-valor { font-size: 15px; font-weight: 600; }
+    .meta-valor.precio {
+      color: var(--accent-primary);
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+    }
+
+    /* Causa */
+    .causa-strip {
+      max-width: 700px;
+      margin: 14px auto 0;
+      background: rgba(99,102,241,0.07);
+      border: 1px solid rgba(99,102,241,0.15);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: none;
+    }
+    .causa-strip strong { color: #a5b4fc; }
+
+    /* Contador */
+    .contador-strip {
+      max-width: 700px;
+      margin: 10px auto 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      min-height: 20px;
+    }
+
+    /* Pago rápido */
+    .pago-strip {
+      max-width: 700px;
+      margin: 12px auto 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 11px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pago-strip strong { color: var(--text-primary); }
+
+    /* ══════════════════════════════════
+       ESTADÍSTICAS
+    ══════════════════════════════════ */
+    .stats-section {
+      max-width: 700px;
+      margin: 20px auto 0;
+      padding: 0 16px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 10px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--border-normal); }
+    .stat-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 26px; font-weight: 700;
+      display: block; line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-num.libre     { color: var(--num-libre); }
+    .stat-num.reservado { color: var(--num-reservado); }
+    .stat-num.pagado    { color: var(--num-pagado); }
+    .stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 600;
+    }
+
+    /* Barra de progreso */
+    .progreso-wrap {
+      margin-top: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+    }
+    .progreso-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .progreso-label strong { color: var(--text-primary); }
+    .progreso-track {
+      height: 8px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .progreso-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      transition: width 0.5s ease;
+    }
+
+    /* ══════════════════════════════════
+       GRID NÚMEROS
+    ══════════════════════════════════ */
+    .numeros-section {
+      max-width: 700px;
+      margin: 20px auto 0;
+      padding: 0 16px 40px;
+    }
+    .numeros-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .numeros-titulo {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px; font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .numeros-titulo span { color: var(--num-libre); }
+
+    /* Filtros */
+    .filtros {
+      display: flex;
+      gap: 6px;
+    }
+    .filtro-btn {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-normal);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      padding: 4px 12px;
+      font-size: 11px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .filtro-btn.active,
+    .filtro-btn:hover {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+      background: var(--accent-glow);
+    }
+
+    /* Grid */
+    .grid-numeros {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+    }
+    @media (min-width: 380px) { .grid-numeros { grid-template-columns: repeat(7, 1fr); } }
+    @media (min-width: 500px) { .grid-numeros { grid-template-columns: repeat(10, 1fr); } }
+
+    .numero-btn {
+      aspect-ratio: 1;
+      border-radius: var(--radius-md);
+      border: 2px solid transparent;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      position: relative;
+    }
+    .numero-btn.libre {
+      background: var(--num-libre); color: white;
+    }
+    .numero-btn.libre:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 18px rgba(34,197,94,0.55);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .numero-btn.libre:active { transform: scale(1.05); }
+    .numero-btn.reservado {
+      background: var(--num-reservado);
+      color: #000; cursor: not-allowed;
+      animation: pulse-yellow 2s infinite;
+    }
+    .numero-btn.pagado {
+      background: var(--num-pagado);
+      color: white; cursor: not-allowed;
+    }
+    .numero-btn.oculto { display: none; }
+
+    /* ══════════════════════════════════
+       LEYENDA
+    ══════════════════════════════════ */
+    .leyenda {
+      display: flex; justify-content: center;
+      gap: 20px; flex-wrap: wrap;
+      margin: 22px 0 28px;
+    }
+    .leyenda-item {
+      display: flex; align-items: center;
+      gap: 7px; font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .dot {
+      width: 13px; height: 13px;
+      border-radius: 4px; flex-shrink: 0;
+    }
+    .dot.libre     { background: var(--num-libre); }
+    .dot.reservado { background: var(--num-reservado); }
+    .dot.pagado    { background: var(--num-pagado); }
+
+    /* ══════════════════════════════════
+       MODAL
+    ══════════════════════════════════ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(8px);
+      align-items: flex-end; justify-content: center;
+      z-index: 1000; padding: 0;
+    }
+    .modal-overlay.open { display: flex; }
+
+    @media (min-width: 520px) {
+      .modal-overlay { align-items: center; padding: 16px; }
+      .modal-card { border-radius: var(--radius-xl) !important; }
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-normal);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: 28px 24px 32px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      box-shadow: 0 -16px 64px rgba(0,0,0,0.7);
+      animation: slideUp 0.28s cubic-bezier(0.34,1.1,0.64,1);
+    }
+
+    /* Drag handle */
+    .modal-handle {
+      width: 40px; height: 4px;
+      background: var(--border-normal);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    @media (min-width: 520px) { .modal-handle { display: none; } }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      border-radius: 50%; width: 32px; height: 32px;
+      cursor: pointer; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .modal-close:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    /* Número grande en modal */
+    .numero-grande {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 64px; font-weight: 700;
+      color: var(--accent-primary);
+      display: block; text-align: center;
+      line-height: 1; margin-bottom: 4px;
+      text-shadow: 0 0 40px rgba(99,102,241,0.45);
+    }
+    .modal-num-label {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    /* Inputs */
+    .input-group { margin-bottom: 13px; }
+    .input-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .input {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-normal);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      padding: 12px 14px;
+      font-size: 15px; width: 100%;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .input::placeholder { color: var(--text-muted); }
+
+    /* Info pago */
+    .info-pago {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .info-pago-item { display: flex; flex-direction: column; gap: 2px; }
+    .info-pago-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .info-pago-valor { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .info-pago-valor.precio { color: var(--accent-primary); font-family: 'Sora', sans-serif; }
+
+    /* Botones */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white; border: none;
+      border-radius: var(--radius-md);
+      padding: 14px 24px; font-weight: 700;
+      font-size: 15px; cursor: pointer;
+      width: 100%; font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+      letter-spacing: 0.2px;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(99,102,241,0.45);
+    }
+    .btn-primary:disabled {
+      opacity: 0.55; cursor: not-allowed; transform: none;
+    }
+
+    .btn-whatsapp {
+      background: var(--whatsapp); color: white;
+      border: none; border-radius: var(--radius-md);
+      padding: 15px 24px; font-weight: 700;
+      font-size: 15px; cursor: pointer;
+      display: flex; align-items: center;
+      gap: 10px; width: 100%;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.35);
+      letter-spacing: 0.2px;
+    }
+    .btn-whatsapp:hover {
+      background: var(--whatsapp-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(37,211,102,0.45);
+    }
+    .wsp-icon { width: 22px; height: 22px; fill: white; flex-shrink: 0; }
+
+    /* Éxito */
+    .modal-success { display: none; text-align: center; }
+    .success-anim  { font-size: 60px; margin-bottom: 12px; animation: bounce 0.5s ease; }
+    .modal-success h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px; font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .modal-success p {
+      font-size: 14px; color: var(--text-secondary);
+      margin-bottom: 22px; line-height: 1.65;
+    }
+    .modal-success p strong { color: var(--accent-primary); }
+    .nota-wsp {
+      font-size: 12px; color: var(--text-muted);
+      margin-top: 12px; line-height: 1.5;
+    }
+
+    /* Divider */
+    .modal-divider {
+      height: 1px; background: var(--border-subtle);
+      margin: 18px 0;
+    }
+
+    /* ══════════════════════════════════
+       TOAST
+    ══════════════════════════════════ */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      padding: 11px 20px;
+      font-size: 13px; font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      z-index: 9999; white-space: nowrap;
+      animation: fadeInUp 0.25s ease;
+      border: 1px solid var(--border-normal);
+    }
+
+    /* ══════════════════════════════════
+       FOOTER
+    ══════════════════════════════════ */
+    .footer {
+      text-align: center;
+      padding: 20px 16px 32px;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    .footer strong { color: var(--text-secondary); }
+
+    /* ══════════════════════════════════
+       BOTÓN FLOTANTE PUBLICIDAD
+    ══════════════════════════════════ */
+    .btn-flotante-promo {
+      position: fixed;
+      bottom: 24px;
+      right: 16px;
+      z-index: 500;
+      display: none; /* se muestra solo si hay config */
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      color: white;
+      border: none;
+      border-radius: var(--radius-full);
+      padding: 13px 20px 13px 16px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 6px 28px rgba(37,211,102,0.55), 0 2px 8px rgba(0,0,0,0.4);
+      transition: all 0.25s cubic-bezier(0.34,1.3,0.64,1);
+      animation: entradaFlotante 0.5s cubic-bezier(0.34,1.3,0.64,1) forwards;
+      text-decoration: none;
+      max-width: calc(100vw - 32px);
+    }
+    .btn-flotante-promo:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 10px 36px rgba(37,211,102,0.65), 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .btn-flotante-promo:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+    .btn-flotante-promo .promo-icon {
+      width: 26px; height: 26px;
+      fill: white; flex-shrink: 0;
+    }
+    .btn-flotante-promo .promo-texts {
+      display: flex; flex-direction: column;
+      gap: 1px; text-align: left;
+    }
+    .btn-flotante-promo .promo-label {
+      font-size: 10px; font-weight: 600;
+      opacity: 0.85; text-transform: uppercase;
+      letter-spacing: 0.6px; line-height: 1;
+    }
+    .btn-flotante-promo .promo-texto {
+      font-size: 13px; font-weight: 700; line-height: 1.2;
+    }
+    /* Pulso de atención */
+    .btn-flotante-promo::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: var(--radius-full);
+      border: 2px solid rgba(37,211,102,0.5);
+      animation: pulsoPromo 2.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes entradaFlotante {
+      from { opacity:0; transform:translateY(30px) scale(0.85); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+    @keyframes pulsoPromo {
+      0%,100% { transform:scale(1);   opacity:0.6; }
+      50%      { transform:scale(1.08); opacity:0; }
+    }
+
+    /* ══════════════════════════════════
+       ANIMACIONES
+    ══════════════════════════════════ */
+    @keyframes spin     { to { transform: rotate(360deg); } }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideUp  { from { transform:translateY(100%); } to { transform:translateY(0); } }
+    @keyframes bounce   { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+    @keyframes pulse-logo { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+    @keyframes pulse-yellow {
+      0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+      50%      { box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     LOADING
+════════════════════════════════════ -->
+<div id="loading">
+  <div class="loading-logo">🎟️</div>
+  <div class="spinner"></div>
+  <p>Cargando talonario...</p>
+</div>
+
+<!-- ════════════════════════════════════
+     PANTALLA DE BLOQUEO
+════════════════════════════════════ -->
+<div id="bloqueado">
+  <div class="bloqueo-icon" id="bloqueoIcon">🔒</div>
+  <h2 id="bloqueoTitulo">Talonario no disponible</h2>
+  <p id="bloqueoDesc">Este talonario está temporalmente inactivo.</p>
+  <p class="bloqueo-sub">Si eres el organizador, contacta al administrador de la plataforma.</p>
+</div>
+
+<!-- ════════════════════════════════════
+     APP PRINCIPAL
+════════════════════════════════════ -->
+<div id="app">
+
+  <!-- Banner vencimiento -->
+  <div class="banner-vencimiento" id="bannerVencimiento"></div>
+
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <div class="header-inner">
+
+      <span class="header-badge" id="badge">🎟️ Rifa Oficial</span>
+
+      <!-- Fotos -->
+      <div class="header-fotos" id="headerFotos">
+        <div class="header-foto-wrap" id="wrapFotoIzq">
+          <div class="header-foto-placeholder" id="placeholderIzq">
+            <span>🖼️</span>
+            <span>Foto del premio</span>
+          </div>
+          <img id="fotoIzq" src="" alt="Premio izquierda" style="display:none">
+        </div>
+        <div class="header-foto-wrap" id="wrapFotoDer">
+          <div class="header-foto-placeholder" id="placeholderDer">
+            <span>🖼️</span>
+            <span>Foto del premio</span>
+          </div>
+          <img id="fotoDer" src="" alt="Premio derecha" style="display:none">
+        </div>
+      </div>
+
+      <h1 class="header-titulo" id="titulo">Cargando...</h1>
+      <p class="header-subtitulo" id="subtitulo"></p>
+
+      <div class="premios-row" id="premiosRow"></div>
+
+      <div class="header-meta">
+        <div class="meta-item">
+          <span class="meta-label">Precio</span>
+          <span class="meta-valor precio" id="precio">$0</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Lotería</span>
+          <span class="meta-valor" id="loteria">—</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Sorteo</span>
+          <span class="meta-valor" id="fechaSorteo">—</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Pago vía</span>
+          <span class="meta-valor" id="metodoPago">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Causa -->
+    <div class="causa-strip" id="causaStrip">
+      📌 <strong>Causa:</strong> <span id="causa"></span>
+    </div>
+
+    <!-- Pago rápido -->
+    <div class="pago-strip" id="pagoStrip">
+      💳 <strong>Pagar a Nequi:</strong>
+      <span id="numNequi" style="font-family:'JetBrains Mono',monospace;color:var(--text-primary)">—</span>
+    </div>
+
+    <!-- Contador -->
+    <div class="contador-strip" id="contadorStrip"></div>
+  </header>
+
+  <!-- ── STATS ── -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-num libre" id="statLibres">—</span>
+        <div class="stat-label">Disponibles</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num reservado" id="statReservados">—</span>
+        <div class="stat-label">En proceso</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num pagado" id="statPagados">—</span>
+        <div class="stat-label">Vendidos</div>
+      </div>
+    </div>
+    <div class="progreso-wrap">
+      <div class="progreso-label">
+        <span>Progreso de ventas</span>
+        <span><strong id="progresoTexto">0%</strong></span>
+      </div>
+      <div class="progreso-track">
+        <div class="progreso-fill" id="progresoFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NÚMEROS ── -->
+  <div class="numeros-section">
+    <div class="numeros-header">
+      <p class="numeros-titulo">
+        Toca un número <span>verde</span> para reservarlo
+      </p>
+      <div class="filtros">
+        <button class="filtro-btn active" onclick="filtrar('todos',this)">Todos</button>
+        <button class="filtro-btn" onclick="filtrar('libre',this)">Libres</button>
+        <button class="filtro-btn" onclick="filtrar('pagado',this)">Vendidos</button>
+      </div>
+    </div>
+
+    <div class="grid-numeros" id="numeros"></div>
+
+    <!-- Leyenda -->
+    <div class="leyenda">
+      <div class="leyenda-item"><span class="dot libre"></span>Disponible</div>
+      <div class="leyenda-item"><span class="dot reservado"></span>En proceso</div>
+      <div class="leyenda-item"><span class="dot pagado"></span>Vendido</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    Powered by <strong>RIFA PRO FONDOS</strong> · Todos los derechos reservados
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════
+     BOTÓN FLOTANTE — PUBLICIDAD ADMIN
+════════════════════════════════════ -->
+<button class="btn-flotante-promo" id="btnPromo" onclick="abrirPromoWsp()">
+  <svg class="promo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.856L0 24l6.335-1.502A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.733.885.918-3.638-.234-.374A9.768 9.768 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
+  </svg>
+  <div class="promo-texts">
+    <span class="promo-label">¿Quieres tu propia rifa?</span>
+    <span class="promo-texto" id="promoTexto">¡Contáctanos aquí!</span>
+  </div>
+</button>
+
+<!-- ════════════════════════════════════
+     MODAL RESERVA
+════════════════════════════════════ -->
+<div class="modal-overlay" id="modalReserva">
+  <div class="modal-card">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="cerrarModal()" aria-label="Cerrar">✕</button>
+
+    <!-- ── Formulario ── -->
+    <div id="modalBody">
+      <span class="numero-grande" id="modalNumero">00</span>
+      <p class="modal-num-label">Número seleccionado</p>
+
+      <div class="info-pago">
+        <div class="info-pago-item">
+          <span class="info-pago-label">Valor</span>
+          <span class="info-pago-valor precio" id="modalPrecio">$0</span>
+        </div>
+        <div class="info-pago-item">
+          <span class="info-pago-label">Pago vía</span>
+          <span class="info-pago-valor" id="modalMetodo">Nequi</span>
+        </div>
+        <div class="info-pago-item" style="grid-column:1/-1">
+          <span class="info-pago-label">Número(s) de pago</span>
+          <span class="info-pago-valor" id="modalNequi" style="font-family:'JetBrains Mono',monospace;font-size:13px">—</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="inputNombre">Tu nombre completo *</label>
+        <input type="text" id="inputNombre" class="input"
+               placeholder="Ej: María García López"
+               maxlength="60" autocomplete="name">
+      </div>
+      <div class="input-group">
+        <label for="inputTelefono">Tu número de WhatsApp *</label>
+        <input type="tel" id="inputTelefono" class="input"
+               placeholder="Ej: 3001234567"
+               maxlength="15" autocomplete="tel">
+      </div>
+
+      <button class="btn-primary" id="btnConfirmar" onclick="confirmarReserva()">
+        ✅ Reservar número
+      </button>
+    </div>
+
+    <!-- ── Éxito + WhatsApp ── -->
+    <div class="modal-success" id="modalSuccess">
+      <div class="success-anim">🎉</div>
+      <h3>¡Número apartado!</h3>
+      <p>
+        Tu número <strong id="successNumero"></strong> está reservado.<br>
+        Ahora envía tu comprobante de pago para confirmar tu boleta.
+      </p>
+
+      <button class="btn-whatsapp" onclick="abrirWhatsapp()">
+        <svg class="wsp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.856L0 24l6.335-1.502A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.733.885.918-3.638-.234-.374A9.768 9.768 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
+        </svg>
+        📲 Confirmar pago por WhatsApp
+      </button>
+
+      <p class="nota-wsp">
+        Se abrirá WhatsApp con tu reserva lista.<br>
+        Solo adjunta la foto del comprobante 📸 y envía.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════ -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── Config Firebase ──
+const firebaseConfig = {
+  apiKey: "AIzaSyA4auC2caQVgCXvRnCMabDr2k8WVvCTzBw",
+  authDomain: "rifas-online-d0bae.firebaseapp.com",
+  projectId: "rifas-online-d0bae",
+  storageBucket: "rifas-online-d0bae.firebasestorage.app",
+  messagingSenderId: "905341315838",
+  appId: "1:905341315838:web:6b2d6321af6797643f93af"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── Estado global ──
+let _rifaId, _rifaData, _numSelected, _nombreComprador, _telefonoComprador;
+let _numerosCache = {};
+let _filtroActual = 'todos';
+
+// ── Obtener rifaId de la URL ──
+function obtenerRifaId() {
+  const path  = window.location.pathname;
+  const match = path.match(/\/r\/(.+)/);
+  if (match) return match[1];
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("id")) return params.get("id");
+  return "rifa-stem-2025"; // ID de tu rifa por defecto
+}
+
+// ── Verificar licencia ──
+async function verificarLicencia(rifaId) {
+  try {
+    const snap = await getDoc(doc(db, "rifas", rifaId));
+    if (!snap.exists()) return { valida: false, razon: "no_existe" };
+    const data = snap.data();
+    if (data.estado === "congelada") return { valida: false, razon: "congelada" };
+    if (data.estado === "cerrada")   return { valida: false, razon: "cerrada" };
+    const vence = data.fechaVencimiento?.toDate?.() || new Date(data.fechaVencimiento);
+    if (new Date() > vence)          return { valida: false, razon: "vencida" };
+    return { valida: true, data };
+  } catch(e) {
+    return { valida: false, razon: "error" };
+  }
+}
+
+// ── Mostrar bloqueo ──
+function mostrarBloqueo(razon) {
+  const msgs = {
+    congelada: { icon:"⏸️", titulo:"Talonario pausado",    desc:"Este talonario está temporalmente inactivo." },
+    vencida:   { icon:"⏰", titulo:"Talonario vencido",     desc:"La licencia de este talonario ha expirado." },
+    cerrada:   { icon:"🏆", titulo:"Rifa finalizada",       desc:"Esta rifa ya concluyó. ¡Gracias por participar!" },
+    no_existe: { icon:"❌", titulo:"No encontrado",          desc:"Este talonario no existe o fue eliminado." },
+    error:     { icon:"⚠️", titulo:"Error de conexión",     desc:"No se pudo cargar el talonario. Intenta más tarde." },
+  };
+  const m = msgs[razon] || msgs.error;
+  document.getElementById("bloqueoIcon").textContent   = m.icon;
+  document.getElementById("bloqueoTitulo").textContent = m.titulo;
+  document.getElementById("bloqueoDesc").textContent   = m.desc;
+  document.getElementById("loading").style.display     = "none";
+  document.getElementById("bloqueado").style.display   = "flex";
+}
+
+// ── Renderizar encabezado ──
+function renderizarEncabezado(d) {
+  document.title = (d.titulo || d.nombre || "Rifa") + " — RIFA PRO";
+  document.getElementById("badge").textContent      = d.badge      || "🎟️ Rifa Oficial";
+  document.getElementById("titulo").textContent     = d.titulo     || d.nombre || "Rifa";
+  document.getElementById("subtitulo").textContent  = d.subtitulo  || "";
+  document.getElementById("precio").textContent     = "$" + Number(d.precioNumero||0).toLocaleString("es-CO");
+  document.getElementById("loteria").textContent    = d.loteria    || "—";
+  document.getElementById("fechaSorteo").textContent= d.fechaSorteo|| "—";
+  document.getElementById("metodoPago").textContent = d.metodoPago || "Nequi";
+
+  // Fotos
+  if (d.fotoIzquierda) {
+    const img = document.getElementById("fotoIzq");
+    img.src = d.fotoIzquierda;
+    img.style.display = "block";
+    document.getElementById("placeholderIzq").style.display = "none";
+  }
+  if (d.fotoDerecha) {
+    const img = document.getElementById("fotoDer");
+    img.src = d.fotoDerecha;
+    img.style.display = "block";
+    document.getElementById("placeholderDer").style.display = "none";
+  }
+
+  // Premios
+  const pr = document.getElementById("premiosRow");
+  pr.innerHTML = "";
+  if (d.premio1) pr.innerHTML += `<span class="premio-chip">🏆 ${d.premio1}</span>`;
+  if (d.premio2) pr.innerHTML += `<span class="premio-chip">🥈 ${d.premio2}</span>`;
+
+  // Causa
+  if (d.causa) {
+    document.getElementById("causa").textContent = d.causa;
+    document.getElementById("causaStrip").style.display = "block";
+  }
+
+  // Nequi
+  const nequiTexto = Array.isArray(d.nequi) && d.nequi.length
+    ? d.nequi.join(" · ")
+    : (d.metodoPago || "Consultar organizador");
+  document.getElementById("numNequi").textContent = nequiTexto;
+
+  // Contador regresivo
+  if (d.fechaSorteo) iniciarContador(d.fechaSorteo);
+}
+
+// ── Contador regresivo ──
+function iniciarContador(fechaSorteo) {
+  const el = document.getElementById("contadorStrip");
+  function actualizar() {
+    const diff = new Date(fechaSorteo + "T00:00:00") - new Date();
+    if (diff <= 0) { el.textContent = "🎯 ¡Hoy es el sorteo!"; return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+    el.textContent = `⏳ Faltan ${d}d ${h}h ${m}m para el sorteo`;
+  }
+  actualizar();
+  setInterval(actualizar, 60000);
+}
+
+// ── Renderizar números ──
+function renderizarNumeros(numeros) {
+  _numerosCache = numeros;
+  const c = document.getElementById("numeros");
+  c.innerHTML = "";
+  let libres = 0, reservados = 0, pagados = 0;
+
+  for (let i = 0; i < 100; i++) {
+    const num  = i.toString().padStart(2, "0");
+    const dato = numeros[num] || { estado: "libre" };
+
+    if (dato.estado === "libre")     libres++;
+    if (dato.estado === "reservado") reservados++;
+    if (dato.estado === "pagado")    pagados++;
+
+    const btn = document.createElement("button");
+    btn.className   = "numero-btn " + dato.estado;
+    btn.textContent = num;
+    btn.dataset.num    = num;
+    btn.dataset.estado = dato.estado;
+
+    if (dato.estado !== "libre") {
+      btn.disabled = true;
+      btn.title    = dato.estado === "reservado"
+        ? `En proceso — ${dato.nombre || ""}`
+        : `Vendido — ${dato.nombre || ""}`;
+    } else {
+      btn.onclick = () => abrirModal(num);
+    }
+
+    // Aplicar filtro actual
+    if (_filtroActual !== 'todos' && dato.estado !== _filtroActual) {
+      btn.classList.add("oculto");
+    }
+
+    c.appendChild(btn);
+  }
+
+  // Stats
+  document.getElementById("statLibres").textContent    = libres;
+  document.getElementById("statReservados").textContent = reservados;
+  document.getElementById("statPagados").textContent    = pagados;
+
+  const pct = Math.round((pagados / 100) * 100);
+  document.getElementById("progresoTexto").textContent = pct + "% vendido";
+  document.getElementById("progresoFill").style.width  = pct + "%";
+}
+
+// ── Filtros ──
+window.filtrar = function(estado, btn) {
+  _filtroActual = estado;
+
+  // Actualizar botones activos
+  document.querySelectorAll(".filtro-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  // Mostrar/ocultar
+  document.querySelectorAll(".numero-btn").forEach(nb => {
+    if (estado === "todos") {
+      nb.classList.remove("oculto");
+    } else {
+      if (nb.dataset.estado === estado) {
+        nb.classList.remove("oculto");
+      } else {
+        nb.classList.add("oculto");
+      }
+    }
+  });
+};
+
+// ── Modal ──
+window.abrirModal = function(num) {
+  _numSelected = num;
+  document.getElementById("modalNumero").textContent  = num;
+  document.getElementById("successNumero").textContent = num;
+  document.getElementById("modalPrecio").textContent  =
+    "$" + Number(_rifaData.precioNumero||0).toLocaleString("es-CO");
+  document.getElementById("modalMetodo").textContent  = _rifaData.metodoPago || "Nequi";
+  document.getElementById("modalNequi").textContent   =
+    Array.isArray(_rifaData.nequi) && _rifaData.nequi.length
+      ? _rifaData.nequi.join(" · ")
+      : _rifaData.metodoPago || "—";
+
+  document.getElementById("inputNombre").value   = "";
+  document.getElementById("inputTelefono").value = "";
+  document.getElementById("modalBody").style.display    = "block";
+  document.getElementById("modalSuccess").style.display = "none";
+  document.getElementById("btnConfirmar").disabled = false;
+  document.getElementById("btnConfirmar").textContent   = "✅ Reservar número";
+  document.getElementById("modalReserva").classList.add("open");
+
+  // Foco en primer campo
+  setTimeout(() => document.getElementById("inputNombre").focus(), 300);
+};
+
+window.cerrarModal = function() {
+  document.getElementById("modalReserva").classList.remove("open");
+};
+
+// Cerrar tocando fuera
+document.getElementById("modalReserva").addEventListener("click", function(e) {
+  if (e.target === this) cerrarModal();
+});
+
+// Enter en campos
+document.getElementById("inputTelefono").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") confirmarReserva();
+});
+
+window.confirmarReserva = async function() {
+  const nombre   = document.getElementById("inputNombre").value.trim();
+  const telefono = document.getElementById("inputTelefono").value.trim();
+
+  if (!nombre || nombre.length < 3) {
+    mostrarToast("⚠️ Ingresa tu nombre completo", "warning"); return;
+  }
+  if (!telefono || telefono.replace(/\D/g,"").length < 10) {
+    mostrarToast("⚠️ Ingresa un celular válido de 10 dígitos", "warning"); return;
+  }
+
+  _nombreComprador   = nombre;
+  _telefonoComprador = telefono;
+
+  const btn = document.getElementById("btnConfirmar");
+  btn.disabled = true;
+  btn.textContent = "⏳ Reservando...";
+
+  try {
+    const ref  = doc(db, "rifas", _rifaId, "numeros", _numSelected);
+    const snap = await getDoc(ref);
+
+    if (snap.exists() && snap.data().estado !== "libre") {
+      mostrarToast("❌ Ese número ya fue tomado, elige otro", "error");
+      cerrarModal(); return;
+    }
+
+    await setDoc(ref, {
+      numero:   _numSelected,
+      estado:   "reservado",
+      nombre,
+      telefono,
+      tiempo:   serverTimestamp(),
+      aprobado: false,
+    });
+
+    document.getElementById("modalBody").style.display    = "none";
+    document.getElementById("modalSuccess").style.display = "block";
+
+  } catch(e) {
+    mostrarToast("❌ Error al reservar: " + e.message, "error");
+    btn.disabled = false;
+    btn.textContent = "✅ Reservar número";
+  }
+};
+
+// ── WhatsApp + Desprendible ──
+window.abrirWhatsapp = function() {
+  const numero = (_rifaData.clienteWhatsApp || "").replace(/\D/g, "");
+  if (!numero) {
+    mostrarToast("⚠️ Este talonario no tiene WhatsApp configurado", "warning");
+    return;
+  }
+
+  const fecha = new Date().toLocaleDateString("es-CO",
+    { day:"2-digit", month:"long", year:"numeric" });
+
+  const nequiLineas = Array.isArray(_rifaData.nequi) && _rifaData.nequi.length
+    ? _rifaData.nequi.map((n, i) => `  ${i+1}. ${n}`).join("\n")
+    : "  " + (_rifaData.metodoPago || "Consultar con el organizador");
+
+  const msg =
+`🎟️ *COMPROBANTE DE RESERVA*
+━━━━━━━━━━━━━━━━━━━━
+📋 *Rifa:* ${_rifaData.titulo || _rifaData.nombre}
+🔢 *Número elegido:* *${_numSelected}*
+👤 *Nombre:* ${_nombreComprador}
+📱 *Teléfono:* ${_telefonoComprador}
+💵 *Valor:* $${Number(_rifaData.precioNumero||0).toLocaleString("es-CO")}
+🎯 *Lotería:* ${_rifaData.loteria || "—"}
+📅 *Fecha sorteo:* ${_rifaData.fechaSorteo || "—"}
+━━━━━━━━━━━━━━━━━━━━
+💳 *INSTRUCCIONES DE PAGO*
+Pagar por ${_rifaData.metodoPago || "Nequi"} a:
+${nequiLineas}
+━━━━━━━━━━━━━━━━━━━━
+📸 Por favor adjunta tu comprobante de pago.
+_Reserva realizada: ${fecha}_`;
+
+  window.open(`https://wa.me/57${numero}?text=${encodeURIComponent(msg)}`, "_blank");
+};
+
+// ── Toast ──
+function mostrarToast(msg, tipo = "success") {
+  document.querySelectorAll(".toast").forEach(t => t.remove());
+  const colores = {
+    success: "#22c55e", error: "#ef4444",
+    warning: "#f59e0b", info: "#6366f1"
+  };
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.style.borderColor = colores[tipo] || colores.info;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ── INICIALIZAR ──
+async function init() {
+  _rifaId = obtenerRifaId();
+
+  const licencia = await verificarLicencia(_rifaId);
+  if (!licencia.valida) { mostrarBloqueo(licencia.razon); return; }
+
+  _rifaData = licencia.data;
+
+  // Banner vencimiento
+  const vence  = _rifaData.fechaVencimiento?.toDate?.() || new Date(_rifaData.fechaVencimiento);
+  const diasRest = Math.max(0, Math.floor((vence - new Date()) / 86400000));
+  if (diasRest <= 5) {
+    const bv = document.getElementById("bannerVencimiento");
+    bv.textContent = `⚠️ Este talonario estará disponible por ${diasRest} día(s) más.`;
+    bv.style.display = "block";
+  }
+
+  renderizarEncabezado(_rifaData);
+
+  // Escuchar números en tiempo real
+  onSnapshot(collection(db, "rifas", _rifaId, "numeros"), snap => {
+    const numeros = {};
+    snap.forEach(d => { numeros[d.id] = d.data(); });
+    renderizarNumeros(numeros);
+  });
+
+  // Mostrar app
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("app").style.display     = "block";
+
+  // Cargar botón de publicidad
+  cargarBotoPromo();
+}
+
+// ── Botón flotante de publicidad ──
+async function cargarBotoPromo() {
+  try {
+    const snap = await getDoc(doc(db, "config", "plataforma"));
+    if (!snap.exists()) return;
+    const cfg = snap.data();
+    if (!cfg.promoActivo || !cfg.promoWsp) return;
+
+    const btn = document.getElementById("btnPromo");
+    if (cfg.promoTexto) {
+      document.getElementById("promoTexto").textContent = cfg.promoTexto;
+    }
+    btn.style.display = "flex";
+
+    // Guardar config para usar en click
+    btn.dataset.wsp     = cfg.promoWsp.replace(/\D/g,"");
+    btn.dataset.mensaje = cfg.promoMensaje || "Hola, quiero información para crear mi propio talonario de rifa 🎟️";
+  } catch(e) {
+    // Si no hay config simplemente no se muestra — sin error al usuario
+  }
+}
+
+window.abrirPromoWsp = function() {
+  const btn     = document.getElementById("btnPromo");
+  const numero  = btn.dataset.wsp;
+  const mensaje = btn.dataset.mensaje;
+  if (!numero) return;
+  window.open(`https://wa.me/57${numero}?text=${encodeURIComponent(mensaje)}`, "_blank");
+};
+
+init();
+</script>
+</body>
+</html>
