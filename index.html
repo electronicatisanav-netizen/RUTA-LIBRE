@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RUTA LIBRE">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="RUTA LIBRE">
+  <title>RUTA LIBRE 🚗</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0a0a0f;--surf:#12121a;--elev:#1a1a26;--hov:#22223a;
+      --acc:#6366f1;--acc-g:rgba(99,102,241,0.2);
+      --v:#22c55e;--r:#ef4444;--am:#f59e0b;--az:#3b82f6;
+      --tp:#f1f5f9;--ts:#94a3b8;--tm:#475569;
+      --bs:rgba(255,255,255,0.06);--bn:rgba(255,255,255,0.12);
+      --wsp:#25d366;--wsp2:#128c7e;
+      --car-color:#ef4444;
+      --rsm:8px;--rmd:12px;--rlg:16px;--rxl:24px;--rfl:9999px
+    }
+    html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--tp);font-size:14px;line-height:1.6;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+
+    /* SPLASH */
+    #splash{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:9999;transition:opacity 0.5s}
+    .splash-car{font-size:72px;animation:bounce-car 0.8s ease-in-out infinite alternate}
+    .splash-title{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,#f1f5f9,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .splash-sub{color:var(--tm);font-size:13px}
+    .splash-bar{width:200px;height:4px;background:var(--elev);border-radius:2px;overflow:hidden}
+    .splash-fill{height:100%;background:linear-gradient(90deg,var(--acc),#8b5cf6);border-radius:2px;animation:fill-bar 1.5s ease forwards}
+
+    /* ONBOARDING */
+    #onboard{display:none;min-height:100vh;padding:24px 20px;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,0.15) 0%,transparent 65%)}
+    .ob-step{display:none;animation:fadeUp 0.3s ease}
+    .ob-step.on{display:block}
+    .ob-logo{text-align:center;margin-bottom:24px;padding-top:32px}
+    .ob-logo .car-icon{font-size:56px;display:block;margin-bottom:8px}
+    .ob-logo h1{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;background:linear-gradient(135deg,#f1f5f9,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .ob-logo p{color:var(--tm);font-size:13px;margin-top:4px}
+    .ob-card{background:var(--surf);border:1px solid var(--bn);border-radius:var(--rxl);padding:24px 20px;margin-bottom:14px}
+    .ob-title{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px}
+    .ob-sub{color:var(--ts);font-size:13px;margin-bottom:16px}
+    .dots{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--bn);transition:all 0.3s}
+    .dot.on{background:var(--acc);width:24px;border-radius:4px}
+    .rol-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .rol-btn{background:var(--elev);border:2px solid var(--bn);border-radius:var(--rlg);padding:20px 12px;text-align:center;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+    .rol-btn.sel,.rol-btn:hover{border-color:var(--acc);background:var(--acc-g)}
+    .rol-ico{font-size:36px;display:block;margin-bottom:8px}
+    .rol-nom{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;display:block;margin-bottom:3px}
+    .rol-des{font-size:11px;color:var(--tm)}
+    .fgrp{margin-bottom:13px}
+    .fgrp label{display:block;font-size:11px;color:var(--ts);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+    .inp{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);color:var(--tp);padding:13px 14px;font-size:15px;width:100%;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s,box-shadow 0.2s}
+    .inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-g)}
+    .inp::placeholder{color:var(--tm)}
+    .btn-p{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:var(--rmd);padding:14px;font-weight:700;font-size:15px;cursor:pointer;width:100%;font-family:'Inter',sans-serif;transition:all 0.2s;box-shadow:0 4px 14px rgba(99,102,241,0.35)}
+    .btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(99,102,241,0.45)}
+    .btn-p:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .ferr{display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:var(--rmd);padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:12px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .chip{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:4px 12px;font-size:12px;cursor:pointer;color:var(--ts);transition:all 0.15s}
+    .chip:hover{border-color:var(--acc);color:var(--acc)}
+    .btn-back{background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;margin-top:12px;font-family:'Inter',sans-serif}
+
+    /* APP */
+    #app{display:none;height:100vh;flex-direction:column}
+
+    /* TOPBAR */
+    .tbar{background:var(--surf);border-bottom:1px solid var(--bs);padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
+    .tbar-l{display:flex;align-items:center;gap:8px}
+    .tbar-car{font-size:24px;transition:all 0.3s}
+    .tbar-info h2{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;line-height:1.1}
+    .tbar-city{font-size:10px;color:var(--tm)}
+    .tbar-r{display:flex;align-items:center;gap:8px}
+    .bgest{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rfl);font-size:11px;font-weight:700}
+    .bgest.on{background:rgba(34,197,94,0.15);color:var(--v)}
+    .bgest.off{background:rgba(71,85,105,0.2);color:#64748b}
+    .btn-inact{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:5px 12px;font-size:11px;font-weight:600;color:var(--ts);cursor:pointer;transition:all 0.2s}
+    .btn-inact.off{background:rgba(71,85,105,0.2);color:#64748b;border-color:#64748b}
+
+    /* FRANJA */
+    .franja{background:rgba(99,102,241,0.1);border-bottom:1px solid rgba(99,102,241,0.2);padding:5px 0;overflow:hidden;flex-shrink:0;display:none}
+    .franja-txt{white-space:nowrap;font-size:12px;font-weight:500;color:#a5b4fc;display:inline-block;animation:marquee 25s linear infinite;padding-left:100vw}
+
+    /* PANTALLAS */
+    .pant{display:none;flex:1;overflow-y:auto;padding-bottom:76px}
+    .pant.on{display:block}
+
+    /* ═══════════════════════════
+       PANTALLA 1 — VÍA
+    ═══════════════════════════ */
+
+    /* Círculo estado principal */
+    .via-hero{margin:16px;border-radius:var(--rxl);padding:22px 20px;text-align:center;border:2px solid transparent;transition:all 0.4s;position:relative}
+    .via-hero.ok{background:rgba(34,197,94,0.07);border-color:rgba(34,197,94,0.2)}
+    .via-hero.alerta{background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.25)}
+    .via-hero.prec{background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.2)}
+    .circ-wrap{position:relative;width:90px;height:90px;margin:0 auto 12px}
+    .circ-main{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid transparent;transition:all 0.4s}
+    .circ-main.v{background:rgba(34,197,94,0.15);border-color:var(--v);animation:pv 2.5s infinite}
+    .circ-main.r{background:rgba(239,68,68,0.15);border-color:var(--r);animation:pr 1.5s infinite}
+    .circ-main.a{background:rgba(245,158,11,0.15);border-color:var(--am);animation:pa 1.5s infinite}
+    .via-tit{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;margin-bottom:3px}
+    .via-sub{font-size:12px;color:var(--ts);margin-bottom:10px}
+
+    /* CARRITOS CONFIRMACIÓN */
+    .carritos-row{display:flex;align-items:center;justify-content:center;gap:4px;margin:8px 0;min-height:28px;flex-wrap:wrap}
+    .carrito-conf{font-size:20px;animation:fadeUp 0.3s ease;transition:all 0.3s}
+    .carrito-conf.viejo{opacity:0.4;filter:grayscale(1)}
+    .conf-txt{font-size:11px;color:var(--ts);margin-top:4px}
+    .btn-conf-libre{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:var(--rfl);padding:7px 18px;color:var(--v);font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;margin-top:8px}
+    .btn-conf-libre:hover{background:rgba(34,197,94,0.22)}
+
+    /* ALERTAS ACTIVAS */
+    .alertas-sec{padding:0 16px}
+    .alerta-card{border-radius:var(--rlg);padding:16px;margin-bottom:10px;border:2px solid transparent}
+    .alerta-card.cr{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.35);animation:pcr 2s infinite}
+    .alerta-card.ca{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.35);animation:pca 2s infinite}
+    .alerta-card.co{background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.3)}
+    .ac-tipo{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px}
+    .ac-tipo.r{color:var(--r)} .ac-tipo.a{color:var(--am)} .ac-tipo.b{color:var(--az)}
+    .ac-lugar{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px}
+    .ac-lugar.r{color:var(--r)} .ac-lugar.a{color:var(--am)} .ac-lugar.b{color:var(--az)}
+    .ac-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+    .ac-meta span{font-size:12px;color:var(--ts)}
+    .carr-confirm{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+    .carr-confirm .carrito-conf{font-size:18px}
+    .carr-confirm span{font-size:12px;color:var(--ts)}
+    .ac-btns{display:flex;gap:8px}
+    .btn-sigue{flex:1;padding:10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:var(--rmd);color:var(--r);font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
+    .btn-sigue:hover{background:rgba(239,68,68,0.25)}
+    .btn-paso{flex:1;padding:10px;background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);color:var(--ts);font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
+    .btn-paso:hover{border-color:var(--v);color:var(--v)}
+
+    /* PUNTOS DE LA VÍA — Lista visual */
+    .puntos-sec{margin:12px 16px}
+    .puntos-tit{font-size:11px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+    .puntos-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .punto-item{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rmd);padding:10px 12px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:8px;position:relative}
+    .punto-item:hover{border-color:var(--bn);transform:scale(1.02)}
+    .punto-item.pv{border-left:3px solid var(--v)}
+    .punto-item.pr{border-left:3px solid var(--r);background:rgba(239,68,68,0.06)}
+    .punto-item.pa{border-left:3px solid var(--am);background:rgba(245,158,11,0.06)}
+    .punto-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .punto-dot.v{background:var(--v);box-shadow:0 0 6px rgba(34,197,94,0.5)}
+    .punto-dot.r{background:var(--r);box-shadow:0 0 6px rgba(239,68,68,0.5);animation:pulso-dot 1.5s infinite}
+    .punto-dot.a{background:var(--am);box-shadow:0 0 6px rgba(245,158,11,0.5);animation:pulso-dot 1.5s infinite}
+    .punto-dot.gris{background:var(--tm)}
+    .punto-nombre{font-size:12px;font-weight:600;flex:1;line-height:1.2}
+    .punto-mini{font-size:10px;color:var(--tm);margin-top:1px}
+    .btn-add-punto{background:var(--elev);border:1px dashed var(--bn);border-radius:var(--rmd);padding:10px;cursor:pointer;font-size:11px;color:var(--ts);font-family:'Inter',sans-serif;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;grid-column:1/-1}
+    .btn-add-punto:hover{border-color:var(--acc);color:var(--acc)}
+
+    /* SERVICIOS CONDUCTOR */
+    .servs{padding:0 16px;margin-top:8px}
+    .serv-c{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between}
+    .serv-c:hover{border-color:var(--bn)}
+    .serv-c.act{border-color:rgba(99,102,241,0.3)}
+    .serv-l{display:flex;align-items:center;gap:12px}
+    .serv-ico{font-size:26px}
+    .serv-i h3{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:2px}
+    .serv-i p{font-size:11px;color:var(--ts)}
+    .serv-bdg{background:var(--acc);color:white;border-radius:var(--rfl);padding:3px 10px;font-size:11px;font-weight:700}
+    .serv-bdg.u{background:var(--r);animation:pulso-dot 1.5s infinite}
+
+    /* BOTÓN RETÉN */
+    .btn-ret{position:fixed;bottom:76px;left:16px;right:16px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;border:none;border-radius:var(--rlg);padding:15px;font-family:'Sora',sans-serif;font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 6px 24px rgba(239,68,68,0.45);display:none;align-items:center;justify-content:center;gap:10px;transition:all 0.2s;z-index:50}
+    .btn-ret:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(239,68,68,0.55)}
+    .btn-ret.show{display:flex}
+
+    /* ═══════════════════════════
+       PANTALLA 2
+    ═══════════════════════════ */
+    .p2-wrap{padding:16px}
+    .p2-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:3px}
+    .p2-sub{font-size:12px;color:var(--tm);margin-bottom:14px}
+
+    /* Publicidad categorías */
+    .pub-cats{overflow-x:auto;margin-bottom:16px;padding-bottom:4px;scrollbar-width:none}
+    .pub-cats::-webkit-scrollbar{display:none}
+    .cats-row{display:flex;gap:8px;width:max-content}
+    .cat-btn{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:7px 16px;font-size:12px;font-weight:600;color:var(--ts);cursor:pointer;transition:all 0.15s;white-space:nowrap;font-family:'Inter',sans-serif}
+    .cat-btn.on,.cat-btn:hover{border-color:var(--acc);color:var(--acc);background:var(--acc-g)}
+    .pub-lista{margin-bottom:16px;min-height:60px}
+    .pub-card{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px;margin-bottom:8px;transition:all 0.2s}
+    .pub-card:hover{border-color:var(--bn)}
+    .pub-nom{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:3px}
+    .pub-desc{font-size:12px;color:var(--ts);margin-bottom:10px}
+    .pub-btns{display:flex;gap:8px}
+    .btn-wsp-pub{background:var(--wsp);color:white;border:none;border-radius:var(--rfl);padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:5px}
+    .btn-gps-pub{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:7px 14px;font-size:12px;font-weight:600;color:var(--ts);cursor:pointer;font-family:'Inter',sans-serif}
+    .pub-empty{text-align:center;padding:20px;color:var(--tm);font-size:13px}
+
+    /* Servicios grid */
+    .serv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .sg-item{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:18px 12px;text-align:center;cursor:pointer;transition:all 0.2s}
+    .sg-item:hover{border-color:var(--acc)}
+    .sg-item.off{opacity:0.4;cursor:not-allowed;pointer-events:none}
+    .sg-ico{font-size:30px;display:block;margin-bottom:7px}
+    .sg-nom{font-family:'Sora',sans-serif;font-size:13px;font-weight:700}
+    .sg-des{font-size:11px;color:var(--tm);margin-top:2px}
+
+    /* ═══════════════════════════
+       SONIDOS
+    ═══════════════════════════ */
+    .son-wrap{padding:16px}
+    .son-tit{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px}
+    .son-item{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rmd);padding:14px;margin-bottom:8px}
+    .son-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+    .son-n{font-weight:600;font-size:14px}
+    .son-d{font-size:11px;color:var(--tm);margin-bottom:8px}
+    .vol-r{display:flex;align-items:center;gap:10px}
+    .vol-l{font-size:11px;color:var(--tm);min-width:14px}
+    .vol-n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--acc);min-width:22px;text-align:right}
+    input[type=range]{flex:1;height:4px;-webkit-appearance:none;background:var(--elev);border-radius:2px;outline:none}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer;box-shadow:0 2px 8px rgba(99,102,241,0.4)}
+    .tog-w{display:flex;align-items:center;gap:8px}
+    .tog{position:relative;width:44px;height:24px;flex-shrink:0}
+    .tog input{display:none}
+    .tog-s{position:absolute;inset:0;background:var(--hov);border-radius:var(--rfl);cursor:pointer;transition:0.3s;border:1px solid var(--bn)}
+    .tog-s::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:2px;background:var(--tm);border-radius:50%;transition:0.3s}
+    .tog input:checked+.tog-s{background:var(--acc);border-color:var(--acc)}
+    .tog input:checked+.tog-s::before{transform:translateX(20px);background:white}
+    .btn-probar{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rsm);padding:6px 14px;font-size:12px;color:var(--ts);cursor:pointer;font-family:'Inter',sans-serif;margin-top:6px}
+
+    /* ═══════════════════════════
+       PERFIL
+    ═══════════════════════════ */
+    .perf-wrap{padding:16px}
+    .perf-card{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rxl);padding:24px;text-align:center;margin-bottom:14px}
+    .perf-av{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px}
+    .perf-av.n5{border:3px solid #3b82f6;background:rgba(59,130,246,0.1)}
+    .perf-av.n4{border:3px solid var(--v);background:rgba(34,197,94,0.1)}
+    .perf-av.n3{border:3px solid var(--am);background:rgba(245,158,11,0.1)}
+    .perf-av.n2{border:3px solid #f97316;background:rgba(249,115,22,0.1)}
+    .perf-av.n1{border:3px solid var(--r);background:rgba(239,68,68,0.1)}
+    .perf-nom{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
+    .perf-stars{font-size:20px;margin-bottom:4px}
+    .perf-rol{font-size:12px;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px}
+    .cred-c{background:var(--elev);border:1px solid rgba(99,102,241,0.25);border-radius:var(--rlg);padding:14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+    .cred-n{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:var(--acc)}
+    .cred-t{font-size:12px;color:var(--tm)}
+    .info-c{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px;margin-bottom:12px}
+    .info-r{font-size:13px;color:var(--ts);margin-bottom:7px}
+    .info-r:last-child{margin-bottom:0}
+    .btn-sal{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:var(--rmd);padding:13px;width:100%;color:#fca5a5;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+
+    /* NAV */
+    .nav{position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bs);display:flex;height:64px;z-index:100;padding:0 8px}
+    .nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--tm);font-family:'Inter',sans-serif;transition:all 0.15s;padding:8px 4px;border-radius:var(--rmd)}
+    .nb.on{color:var(--acc)}
+    .nb-ico{font-size:20px}
+    .nb-txt{font-size:10px;font-weight:600}
+    .co{display:none}
+
+    /* WSP FLOTANTE */
+    .wsp-fl{position:fixed;bottom:78px;right:16px;background:var(--wsp);color:white;border:none;border-radius:var(--rfl);width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:50;box-shadow:0 4px 18px rgba(37,211,102,0.45);transition:all 0.2s;font-size:22px}
+    .wsp-fl:hover{transform:scale(1.1)}
+    .wsp-fl-l{position:absolute;bottom:-16px;right:0;font-size:9px;color:var(--tm);white-space:nowrap;font-family:'Inter',sans-serif}
+
+    /* MODAL */
+    .mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;z-index:200}
+    .mov.open{display:flex}
+    .mc{background:var(--surf);border:1px solid var(--bn);border-radius:var(--rxl) var(--rxl) 0 0;padding:24px 20px 40px;width:100%;animation:slideUp 0.3s cubic-bezier(0.34,1.1,0.64,1);max-height:90vh;overflow-y:auto}
+    .mh{width:40px;height:4px;background:var(--bn);border-radius:2px;margin:0 auto 16px}
+    .mt{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
+    .ms{font-size:13px;color:var(--ts);margin-bottom:16px}
+    .slbl{font-size:11px;color:var(--ts);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px}
+    .tipo-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .tipo-b{background:var(--elev);border:2px solid var(--bn);border-radius:var(--rmd);padding:11px 6px;text-align:center;cursor:pointer;transition:all 0.15s}
+    .tipo-b .ti{font-size:22px;display:block;margin-bottom:4px}
+    .tipo-b .tt{font-size:11px;font-weight:600;color:var(--ts)}
+    .tipo-b.sr{border-color:var(--r);background:rgba(239,68,68,0.1)} .tipo-b.sr .tt{color:var(--r)}
+    .tipo-b.sa{border-color:var(--am);background:rgba(245,158,11,0.1)} .tipo-b.sa .tt{color:var(--am)}
+    .tipo-b.so{border-color:var(--az);background:rgba(59,130,246,0.1)} .tipo-b.so .tt{color:var(--az)}
+    .sent-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .sent-b{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:9px 5px;text-align:center;cursor:pointer;font-size:11px;font-weight:600;color:var(--ts);transition:all 0.15s;font-family:'Inter',sans-serif}
+    .sent-b.on{border-color:var(--acc);color:var(--acc);background:var(--acc-g)}
+    .pto-d{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:11px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .pto-l{font-size:11px;color:var(--ts)}
+    .pto-v{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}
+    .sel-rl{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);color:var(--tp);padding:9px 28px 9px 10px;font-size:12px;outline:none;font-family:'Inter',sans-serif;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .nvo-pto{display:none;margin-bottom:12px}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:10px 20px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:9999;white-space:nowrap;animation:fadeUpToast 0.25s ease;border-left:3px solid var(--acc);pointer-events:none}
+
+    /* ANIMACIONES */
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes bounce-car{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+    @keyframes fill-bar{from{width:0}to{width:100%}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeUpToast{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    @keyframes pv{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)}50%{box-shadow:0 0 0 14px rgba(34,197,94,0)}}
+    @keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{box-shadow:0 0 0 16px rgba(239,68,68,0)}}
+    @keyframes pa{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.5)}50%{box-shadow:0 0 0 14px rgba(245,158,11,0)}}
+    @keyframes pcr{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.15)}50%{box-shadow:0 0 10px rgba(239,68,68,0.25)}}
+    @keyframes pca{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.15)}50%{box-shadow:0 0 10px rgba(245,158,11,0.25)}}
+    @keyframes pulso-dot{0%,100%{opacity:1}50%{opacity:0.5}}
+  </style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-car" id="splashCar">🚗</div>
+  <div class="splash-title">RUTA LIBRE</div>
+  <div class="splash-sub">Cargando...</div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="onboard">
+  <div class="ob-step on" id="ob1">
+    <div class="ob-logo"><span class="car-icon" id="obCar">🚗</span><h1>RUTA LIBRE</h1><p>Tauramena · Yopal y más rutas</p></div>
+    <div class="dots"><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="ob-card">
+      <div class="ob-title">¿Cómo usarás la app?</div>
+      <div class="ob-sub">Elige tu rol para personalizar tu experiencia</div>
+      <div class="rol-grid">
+        <div class="rol-btn" id="rC" onclick="elegirRol('conductor')"><span class="rol-ico">🚗</span><span class="rol-nom">Conductor</span><span class="rol-des">Ofrezco transporte</span></div>
+        <div class="rol-btn" id="rP" onclick="elegirRol('pasajero')"><span class="rol-ico">👤</span><span class="rol-nom">Pasajero</span><span class="rol-des">Necesito transporte</span></div>
+      </div>
+    </div>
+    <button class="btn-p" id="btnS1" onclick="goOb('ob2')" disabled>Continuar →</button>
+  </div>
+
+  <div class="ob-step" id="ob2">
+    <div class="ob-logo" style="padding-top:20px"><span class="car-icon" style="font-size:40px" id="obCar2">🚗</span><h1 style="font-size:22px">Tus datos</h1></div>
+    <div class="dots"><div class="dot"></div><div class="dot on"></div><div class="dot"></div></div>
+    <div class="ob-card">
+      <div class="ob-title">¿Cómo te llamamos?</div>
+      <div class="ob-sub">Para coordinar los servicios</div>
+      <div class="ferr" id="e2"></div>
+      <div class="fgrp"><label>Nombre completo *</label><input type="text" id="iNom" class="inp" placeholder="Ej: Carlos Martínez" maxlength="50" autocomplete="name"></div>
+      <div class="fgrp"><label>Teléfono / WhatsApp *</label><input type="tel" id="iTel" class="inp" placeholder="Ej: 3001234567" maxlength="15" autocomplete="tel"></div>
+    </div>
+    <button class="btn-p" onclick="goOb3()">Continuar →</button>
+    <button class="btn-back" onclick="goOb('ob1')">← Volver</button>
+  </div>
+
+  <div class="ob-step" id="ob3">
+    <div class="ob-logo" style="padding-top:20px"><span class="car-icon" style="font-size:40px">📍</span><h1 style="font-size:22px">Tu ciudad</h1></div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot on"></div></div>
+    <div class="ob-card">
+      <div class="ob-title">¿Desde dónde operas?</div>
+      <div class="ob-sub">Verás alertas y rutas de tu zona</div>
+      <div class="ferr" id="e3"></div>
+      <div class="fgrp">
+        <label>Municipio o ciudad *</label>
+        <input type="text" id="iCiu" class="inp" placeholder="Ej: Tauramena" maxlength="50" autocomplete="off">
+        <div class="chips">
+          <span class="chip" onclick="sCiu('Tauramena')">Tauramena</span>
+          <span class="chip" onclick="sCiu('Yopal')">Yopal</span>
+          <span class="chip" onclick="sCiu('Aguazul')">Aguazul</span>
+          <span class="chip" onclick="sCiu('Villanueva')">Villanueva</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-p" id="btnReg" onclick="registrar()">✅ Entrar a RUTA LIBRE</button>
+    <button class="btn-back" onclick="goOb('ob2')">← Volver</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- TOPBAR -->
+  <div class="tbar">
+    <div class="tbar-l">
+      <span class="tbar-car" id="tbarCar">🚗</span>
+      <div class="tbar-info"><h2>RUTA LIBRE</h2><div class="tbar-city" id="tCity">—</div></div>
+    </div>
+    <div class="tbar-r">
+      <div class="bgest on" id="bgest">🟢 Activo</div>
+      <button class="btn-inact" id="btnInact" onclick="toggleInact()">Inactivo</button>
+    </div>
+  </div>
+
+  <!-- FRANJA ADMIN -->
+  <div class="franja" id="franja"><span class="franja-txt" id="franjaT"></span></div>
+
+  <!-- PANTALLA 1 — VÍA -->
+  <div class="pant on" id="pVia">
+    <!-- Hero estado -->
+    <div class="via-hero ok" id="vHero">
+      <div class="circ-wrap">
+        <div class="circ-main v" id="vCirc">🟢</div>
+      </div>
+      <div class="via-tit" id="vTit">VÍA DESPEJADA</div>
+      <div class="via-sub" id="vSub">Sin novedades reportadas</div>
+      <!-- CARRITOS CONFIRMACIÓN -->
+      <div class="carritos-row" id="carritosRow"></div>
+      <div class="conf-txt" id="confTxt"></div>
+      <button class="btn-conf-libre" id="btnConfLibre" onclick="confirmarLibre()" style="display:none">
+        🚗 Confirmar vía libre
+      </button>
+    </div>
+
+    <!-- Alertas activas -->
+    <div class="alertas-sec" id="alertasSec"></div>
+
+    <!-- Puntos de la vía -->
+    <div class="puntos-sec">
+      <div class="puntos-tit">
+        <span>📍 Puntos de la vía</span>
+        <span style="font-size:10px;color:var(--tm)" id="puntosTiem">—</span>
+      </div>
+      <div class="puntos-grid" id="puntosGrid">
+        <!-- Se llenan dinámicamente -->
+      </div>
+      <button class="btn-add-punto co" onclick="abrirAddPunto()">➕ Agregar nuevo punto</button>
+    </div>
+
+    <!-- Servicios conductor -->
+    <div class="servs co" id="servsC">
+      <div class="serv-c act" onclick="toast('🚗 Módulo de viajes — próximamente','info')">
+        <div class="serv-l"><div class="serv-ico">🚗</div><div class="serv-i"><h3>Pasajeros</h3><p id="txPas">Próximamente</p></div></div>
+        <div class="serv-bdg" id="bdgPas">0</div>
+      </div>
+      <div class="serv-c" onclick="toast('📦 Módulo de encomiendas — próximamente','info')">
+        <div class="serv-l"><div class="serv-ico">📦</div><div class="serv-i"><h3>Encomiendas</h3><p id="txEnc">Próximamente</p></div></div>
+        <div class="serv-bdg u" id="bdgEnc" style="display:none">!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2 — TODOS -->
+  <div class="pant" id="pIni">
+    <div class="p2-wrap">
+      <div class="p2-title">Servicios</div>
+      <div class="p2-sub">Toca el servicio que necesitas</div>
+
+      <!-- Publicidad categorías -->
+      <div class="pub-cats" id="pubCats">
+        <div class="cats-row" id="catsRow">
+          <!-- Se llenan dinámicamente desde Firebase -->
+        </div>
+      </div>
+      <div class="pub-lista" id="pubLista"></div>
+
+      <!-- Servicios -->
+      <div class="serv-grid">
+        <div class="sg-item" onclick="toast('🚗 Transporte — próximamente','info')"><span class="sg-ico">🚗</span><div class="sg-nom">Transporte</div><div class="sg-des">Solicita o publica viaje</div></div>
+        <div class="sg-item" onclick="toast('📦 Encomiendas — próximamente','info')"><span class="sg-ico">📦</span><div class="sg-nom">Encomiendas</div><div class="sg-des">Envía o recibe paquetes</div></div>
+        <div class="sg-item off" id="srv4"><span class="sg-ico">🔘</span><div class="sg-nom">Próximamente</div><div class="sg-des">En desarrollo</div></div>
+        <div class="sg-item off" id="srv5"><span class="sg-ico">🔘</span><div class="sg-nom">Próximamente</div><div class="sg-des">En desarrollo</div></div>
+        <div class="sg-item off" id="srv6"><span class="sg-ico">🔘</span><div class="sg-nom">Próximamente</div><div class="sg-des">En desarrollo</div></div>
+        <div class="sg-item" style="background:rgba(37,211,102,0.07);border-color:rgba(37,211,102,0.2)" onclick="abrirWsp()"><span class="sg-ico">📣</span><div class="sg-nom">Anúnciate</div><div class="sg-des">Publica tu negocio aquí</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA SONIDOS -->
+  <div class="pant" id="pSon">
+    <div class="son-wrap">
+      <div class="son-tit">🔔 Configuración de sonidos</div>
+      <div class="son-item">
+        <div class="son-h"><div class="son-n">🚨 Retén policial</div></div>
+        <div class="son-d">Volumen — 0 = solo vibración</div>
+        <div class="vol-r"><span class="vol-l">0</span><input type="range" id="vRet" min="0" max="10" value="7" oninput="updVol(this.value)"><span class="vol-n" id="nRet">7</span><span class="vol-l">10</span></div>
+        <button class="btn-probar" onclick="probar('r')">🔊 Probar</button>
+      </div>
+      <div class="son-item">
+        <div class="son-h"><div class="son-n">🚗 Solicitud de pasajero</div><div class="tog-w"><label class="tog"><input type="checkbox" id="tPas" checked onchange="updTog('p',this.checked)"><div class="tog-s"></div></label></div></div>
+        <div class="son-d">Suena cuando hay nuevas solicitudes</div>
+        <button class="btn-probar" onclick="probar('p')">🔊 Probar</button>
+      </div>
+      <div class="son-item">
+        <div class="son-h"><div class="son-n">📦 Solicitud de encomienda</div><div class="tog-w"><label class="tog"><input type="checkbox" id="tEnc" checked onchange="updTog('e',this.checked)"><div class="tog-s"></div></label></div></div>
+        <div class="son-d">Suena cuando hay nuevas encomiendas</div>
+        <button class="btn-probar" onclick="probar('e')">🔊 Probar</button>
+      </div>
+      <div class="son-item">
+        <div class="son-h"><div class="son-n">💬 Chat conductores</div><div class="tog-w"><label class="tog"><input type="checkbox" id="tChat" checked onchange="updTog('c',this.checked)"><div class="tog-s"></div></label></div></div>
+        <div class="son-d">Mensajes del chat de conductores</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFIL -->
+  <div class="pant" id="pPerf">
+    <div class="perf-wrap">
+      <div class="perf-card">
+        <div class="perf-av n5" id="pAv">🚗</div>
+        <div class="perf-nom" id="pNom">—</div>
+        <div class="perf-stars" id="pStar">⭐⭐⭐⭐⭐</div>
+        <div class="perf-rol" id="pRol">Conductor</div>
+      </div>
+      <div class="cred-c">
+        <div><div class="cred-t">Saldo disponible</div><div class="cred-n" id="pCred">10 créditos</div></div>
+        <button onclick="abrirWsp()" style="background:var(--wsp);color:white;border:none;border-radius:var(--rmd);padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Recargar</button>
+      </div>
+      <div class="info-c">
+        <div class="info-r">📱 <span id="pTel">—</span></div>
+        <div class="info-r">📍 <span id="pCiu">—</span></div>
+        <div class="info-r">🎭 <span id="pRol2">—</span></div>
+      </div>
+      <button class="btn-sal" onclick="salir()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- NAV BOTTOM -->
+  <div class="nav" id="navBot">
+    <button class="nb co on" id="nV" onclick="navGo('pVia','nV')"><span class="nb-ico">🛣️</span><span class="nb-txt">La vía</span></button>
+    <button class="nb on" id="nI" onclick="navGo('pIni','nI')"><span class="nb-ico">🏠</span><span class="nb-txt">Inicio</span></button>
+    <button class="nb co" id="nS" onclick="navGo('pSon','nS')"><span class="nb-ico">🔔</span><span class="nb-txt">Sonidos</span></button>
+    <button class="nb" id="nP" onclick="navGo('pPerf','nP')"><span class="nb-ico">👤</span><span class="nb-txt">Perfil</span></button>
+  </div>
+
+  <!-- BOTÓN RETÉN -->
+  <button class="btn-ret co" id="btnRet" onclick="abrirModal()">🚨 REPORTAR NOVEDAD EN LA VÍA</button>
+
+  <!-- WSP FLOTANTE -->
+  <button class="wsp-fl" onclick="abrirWsp()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.856L0 24l6.335-1.502A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.733.885.918-3.638-.234-.374A9.768 9.768 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+    <span class="wsp-fl-l">Admin</span>
+  </button>
+</div>
+
+<!-- MODAL REPORTE -->
+<div class="mov" id="mRep">
+  <div class="mc">
+    <div class="mh"></div>
+    <div class="mt">🚨 Reportar novedad</div>
+    <div class="ms">GPS detectado. Completa los detalles:</div>
+    <div class="slbl">¿Qué encontraste?</div>
+    <div class="tipo-g">
+      <div class="tipo-b" id="tR" onclick="sTipo('reten')"><span class="ti">🚔</span><span class="tt">Retén policial</span></div>
+      <div class="tipo-b" id="tA" onclick="sTipo('accidente')"><span class="ti">⚠️</span><span class="tt">Accidente</span></div>
+      <div class="tipo-b" id="tO" onclick="sTipo('otro')"><span class="ti">🚧</span><span class="tt">Otra novedad</span></div>
+    </div>
+    <div class="slbl">¿En qué punto?</div>
+    <div class="pto-d">
+      <div><div class="pto-l">GPS</div><div class="pto-v" id="pGps">Detectando...</div></div>
+      <select class="sel-rl" id="selPM" onchange="sPtoM()">
+        <option value="">Cambiar punto</option>
+        <option value="El Venado">El Venado</option>
+        <option value="Puente El Venado">Pte. El Venado</option>
+        <option value="Mordizco">Mordizco</option>
+        <option value="Choricera">Choricera</option>
+        <option value="Valle Verde">Valle Verde</option>
+        <option value="Puente Peatonal Sonora">Pte. Sonora</option>
+        <option value="Los Troncos">Los Troncos</option>
+        <option value="Uñete">Uñete</option>
+        <option value="Pozo Ramiriquí">Pozo Ramiriquí</option>
+        <option value="La Ceiba">La Ceiba</option>
+        <option value="Puente Cachaguas">Pte. Cachaguas</option>
+        <option value="Antiguo Toro">Antiguo Toro</option>
+        <option value="Aguazul - El Toro">Aguazul-El Toro</option>
+        <option value="nuevo">+ Nuevo punto</option>
+      </select>
+    </div>
+    <div class="nvo-pto" id="nvoP">
+      <input type="text" id="iNvoP" class="inp" placeholder="¿Cómo se llama este lugar?">
+    </div>
+    <div class="slbl">¿En qué sentido?</div>
+    <div class="sent-g">
+      <div class="sent-b" id="sI" onclick="sSent('ida')">➡️ T'MENA→YOPAL</div>
+      <div class="sent-b" id="sV" onclick="sSent('vuelta')">⬅️ YOPAL→T'MENA</div>
+      <div class="sent-b" id="sA" onclick="sSent('ambos')">↔️ AMBOS</div>
+    </div>
+    <div style="margin-bottom:14px"><input type="text" id="iNota" class="inp" placeholder="Nota adicional (opcional)..." maxlength="80"></div>
+    <button class="btn-p" id="btnEnv" onclick="enviar()">🚨 Enviar alerta a todos</button>
+    <br><br>
+    <button onclick="cerrarM('mRep')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR PUNTO -->
+<div class="mov" id="mPunto">
+  <div class="mc">
+    <div class="mh"></div>
+    <div class="mt">📍 Agregar nuevo punto</div>
+    <div class="ms">Este punto quedará guardado para todos los conductores</div>
+    <div class="fgrp"><label>Nombre del punto *</label><input type="text" id="iNomPto" class="inp" placeholder="Ej: La Ye de Aguazul" maxlength="40"></div>
+    <div class="fgrp">
+      <label>Ruta</label>
+      <select class="inp" id="iRutaPto">
+        <option value="tauramena-yopal">Tauramena → Yopal</option>
+        <option value="yopal-tauramena">Yopal → Tauramena</option>
+        <option value="ambas">Ambas rutas</option>
+      </select>
+    </div>
+    <button class="btn-p" onclick="guardarNuevoPunto()">📍 Guardar punto</button>
+    <br><br>
+    <button onclick="cerrarM('mPunto')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection,
+         onSnapshot, updateDoc, addDoc, query, orderBy, where,
+         serverTimestamp, limit, arrayUnion }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FC={apiKey:"AIzaSyBvT_SEwvXKrLwZfYsFu3vFU8hIWY-Pz8U",authDomain:"rutalibre-455cf.firebaseapp.com",databaseURL:"https://rutalibre-455cf-default-rtdb.firebaseio.com",projectId:"rutalibre-455cf",storageBucket:"rutalibre-455cf.firebasestorage.app",messagingSenderId:"352770988370",appId:"1:352770988370:web:3020bbbe006c841070828b"};
+const app=initializeApp(FC),db=getFirestore(app);
+
+// ESTADO GLOBAL
+let U=null,rolEl=null,inact=false,tipoR=null,sentR=null,ptoR=null,unsubA=null,unsubCFG=null;
+let SND={vol:7,pas:true,enc:true,chat:true};
+let CFG={wsp:'3114571322',msg:'Hola, necesito información sobre RUTA LIBRE 👋',franjaOn:false,fTxt:'',carColor:'#ef4444',catPub:[]};
+const PUNTOS_DEFAULT=['El Venado','Puente El Venado','Mordizco','Choricera','Valle Verde','Puente Peatonal Sonora','Los Troncos','Uñete','Pozo Ramiriquí','La Ceiba','Puente Cachaguas','Antiguo Toro','Aguazul - El Toro'];
+
+// ─── AUDIO ───
+let aC=null;
+const gA=()=>{if(!aC)aC=new(window.AudioContext||window.webkitAudioContext)();return aC;};
+const tonoR=(v=7)=>{const c=gA(),vol=v/10;[0,.4,.8].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;o.type='square';g.gain.setValueAtTime(0,c.currentTime+t);g.gain.linearRampToValueAtTime(vol*.4,c.currentTime+t+.05);g.gain.linearRampToValueAtTime(0,c.currentTime+t+.25);o.start(c.currentTime+t);o.stop(c.currentTime+t+.3);});};
+const tonoP=()=>{if(!SND.pas)return;const c=gA();[[523.25,0],[392,.35]].forEach(([f,t])=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.3,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.6);o.start(c.currentTime+t);o.stop(c.currentTime+t+.7);});};
+const tonoE=()=>{if(!SND.enc)return;const c=gA();[0,.25,.5].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=1047;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.4);o.start(c.currentTime+t);o.stop(c.currentTime+t+.45);});};
+window.probar=t=>{if(t==='r')tonoR(SND.vol);if(t==='p'){SND.pas=true;tonoP();}if(t==='e'){SND.enc=true;tonoE();}};
+window.updVol=v=>{SND.vol=parseInt(v);document.getElementById('nRet').textContent=v;saveSnd();};
+window.updTog=(k,v)=>{if(k==='p')SND.pas=v;if(k==='e')SND.enc=v;if(k==='c')SND.chat=v;saveSnd();};
+const saveSnd=()=>localStorage.setItem('rl_s',JSON.stringify(SND));
+const loadSnd=()=>{const s=localStorage.getItem('rl_s');if(s){SND=JSON.parse(s);document.getElementById('vRet').value=SND.vol;document.getElementById('nRet').textContent=SND.vol;document.getElementById('tPas').checked=SND.pas;document.getElementById('tEnc').checked=SND.enc;document.getElementById('tChat').checked=SND.chat;}};
+
+// ─── CARRITO COLOR ───
+function aplicarColor(c){
+  const car=c||CFG.carColor||'#ef4444';
+  // Color del carrito en todos los elementos
+  document.getElementById('splashCar').style.filter=colorFilter(car);
+  document.getElementById('obCar') && (document.getElementById('obCar').style.filter=colorFilter(car));
+  document.getElementById('obCar2') && (document.getElementById('obCar2').style.filter=colorFilter(car));
+  document.getElementById('tbarCar').style.filter=colorFilter(car);
+}
+function colorFilter(hex){
+  const map={'#ef4444':'hue-rotate(0deg) saturate(1)','#22c55e':'hue-rotate(120deg) saturate(1.2)','#f59e0b':'hue-rotate(40deg) saturate(1.5)','#3b82f6':'hue-rotate(220deg) saturate(1.2)','#8b5cf6':'hue-rotate(270deg) saturate(1.2)'};
+  return map[hex]||'hue-rotate(0deg)';
+}
+
+// ─── ONBOARDING ───
+window.elegirRol=r=>{rolEl=r;document.getElementById('rC').classList.toggle('sel',r==='conductor');document.getElementById('rP').classList.toggle('sel',r==='pasajero');document.getElementById('btnS1').disabled=false;};
+window.goOb=id=>{document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');};
+window.goOb3=()=>{
+  const n=document.getElementById('iNom').value.trim(),t=document.getElementById('iTel').value.trim(),e=document.getElementById('e2');e.style.display='none';
+  if(!n||n.length<2){e.textContent='❌ Ingresa tu nombre';e.style.display='block';return;}
+  if(!t||t.replace(/\D/g,'').length<10){e.textContent='❌ Teléfono inválido (10 dígitos)';e.style.display='block';return;}
+  goOb('ob3');
+};
+window.sCiu=c=>document.getElementById('iCiu').value=c;
+window.registrar=async()=>{
+  const n=document.getElementById('iNom').value.trim(),t=document.getElementById('iTel').value.trim(),c=document.getElementById('iCiu').value.trim(),e=document.getElementById('e3'),b=document.getElementById('btnReg');
+  e.style.display='none';
+  if(!c||c.length<2){e.textContent='❌ Ingresa tu ciudad';e.style.display='block';return;}
+  b.disabled=true;b.textContent='Creando cuenta...';
+  try{
+    const uid='u_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+    const u={uid,nombre:n,telefono:t.replace(/\D/g,''),ciudad:c,rol:rolEl,creditos:10,estrellas:5,nivel:5,fechaReg:new Date().toISOString()};
+    await setDoc(doc(db,'ciudades',c.toLowerCase(),'usuarios',uid),u);
+    localStorage.setItem('rl_u',JSON.stringify(u));U=u;mostrarApp();
+  }catch(err){e.textContent='❌ Error: '+err.message;e.style.display='block';b.disabled=false;b.textContent='✅ Entrar a RUTA LIBRE';}
+};
+
+// ─── INIT ───
+async function init(){
+  setTimeout(()=>{
+    const s=localStorage.getItem('rl_u');
+    if(s){U=JSON.parse(s);mostrarApp();}
+    else{document.getElementById('splash').style.opacity='0';setTimeout(()=>{document.getElementById('splash').style.display='none';document.getElementById('onboard').style.display='block';},500);}
+  },1800);
+}
+
+function mostrarApp(){
+  document.getElementById('splash').style.display='none';
+  document.getElementById('onboard').style.display='none';
+  document.getElementById('app').style.display='flex';
+  const eC=U.rol==='conductor';
+  document.querySelectorAll('.co').forEach(el=>el.style.display=eC?'':'none');
+  if(!eC)navGo('pIni','nI');
+  else{document.getElementById('btnRet').classList.add('show');navGo('pVia','nV');}
+  document.getElementById('tCity').textContent=U.ciudad;
+  document.getElementById('pNom').textContent=U.nombre;
+  document.getElementById('pTel').textContent=U.telefono;
+  document.getElementById('pCiu').textContent=U.ciudad;
+  document.getElementById('pCred').textContent=U.creditos+' créditos';
+  document.getElementById('pRol').textContent=eC?'Conductor':'Pasajero';
+  document.getElementById('pRol2').textContent=eC?'Conductor':'Pasajero';
+  document.getElementById('pAv').textContent=eC?'🚗':'👤';
+  loadSnd();cargarCFG();cargarPuntos();
+  if(eC)escucharAlertas();
+}
+
+// ─── CONFIG ADMIN (tiempo real) ───
+function cargarCFG(){
+  if(unsubCFG)unsubCFG();
+  unsubCFG=onSnapshot(doc(db,'config','plataforma'),snap=>{
+    if(snap.exists()){
+      const d=snap.data();
+      CFG={...CFG,...d};
+      // Franja
+      const f=document.getElementById('franja'),ft=document.getElementById('franjaT');
+      if(d.franjaActiva&&d.franjaTexto){f.style.display='block';ft.textContent='📢 '+d.franjaTexto+' ·· 📢 '+d.franjaTexto;}
+      else f.style.display='none';
+      // Color carrito
+      if(d.carColor)aplicarColor(d.carColor);
+      // Publicidad categorías
+      if(d.catPub&&d.catPub.length)cargarCategorias(d.catPub);
+      // Servicios futuros
+      if(d.srv4)activarServicio('srv4',d.srv4);
+      if(d.srv5)activarServicio('srv5',d.srv5);
+      if(d.srv6)activarServicio('srv6',d.srv6);
+    }
+  });
+}
+
+function activarServicio(id,cfg){
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.remove('off');el.onclick=()=>toast('🔜 '+cfg.nombre,'info');
+  el.querySelector('.sg-ico').textContent=cfg.icono||'🔧';
+  el.querySelector('.sg-nom').textContent=cfg.nombre||'Servicio';
+  el.querySelector('.sg-des').textContent=cfg.desc||'';
+}
+
+// ─── PUBLICIDAD CATEGORÍAS ───
+function cargarCategorias(cats){
+  const row=document.getElementById('catsRow');
+  row.innerHTML='<div class="cat-btn on" onclick="filtrarCat(null,this)">Todos</div>';
+  cats.forEach(c=>{
+    const b=document.createElement('div');b.className='cat-btn';
+    b.textContent=(c.icono||'📌')+' '+c.nombre;
+    b.onclick=function(){filtrarCat(c.nombre,this);};
+    row.appendChild(b);
+  });
+  cargarAnuncios(null);
+}
+
+window.filtrarCat=async(cat,el)=>{
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  cargarAnuncios(cat);
+};
+
+async function cargarAnuncios(cat){
+  const lista=document.getElementById('pubLista');lista.innerHTML='<div class="pub-empty">Cargando...</div>';
+  try{
+    const ciudad=U?.ciudad?.toLowerCase()||'tauramena';
+    const col=collection(db,'ciudades',ciudad,'anuncios');
+    const snap=await getDocs(col);
+    const anuncios=[];
+    snap.forEach(d=>{const data=d.data();if(data.activo&&(!cat||data.categoria===cat))anuncios.push({id:d.id,...data});});
+    if(!anuncios.length){lista.innerHTML='<div class="pub-empty">📭 Sin anuncios en esta categoría<br><small>¡Sé el primero en anunciarte!</small></div>';return;}
+    lista.innerHTML=anuncios.map(a=>`
+      <div class="pub-card">
+        <div class="pub-nom">${a.nombre}</div>
+        <div class="pub-desc">${a.descripcion||''}</div>
+        <div class="pub-btns">
+          ${a.whatsapp?`<button class="btn-wsp-pub" onclick="abrirWspAnuncio('${a.whatsapp}','${a.nombre}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.856L0 24l6.335-1.502A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.733.885.918-3.638-.234-.374A9.768 9.768 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+            WhatsApp</button>`:''}
+          ${a.lat&&a.lng?`<button class="btn-gps-pub" onclick="abrirMaps(${a.lat},${a.lng})">🗺️ Cómo llegar</button>`:''}
+        </div>
+      </div>`).join('');
+  }catch(e){lista.innerHTML='<div class="pub-empty">Sin anuncios disponibles</div>';}
+}
+
+window.abrirWspAnuncio=(num,nom)=>window.open(`https://wa.me/57${num.replace(/\D/g,'')}?text=${encodeURIComponent('Hola, vi tu anuncio en RUTA LIBRE sobre '+nom)}`, '_blank');
+window.abrirMaps=(lat,lng)=>window.open(`https://maps.google.com/?q=${lat},${lng}`, '_blank');
+
+// ─── PUNTOS DE LA VÍA ───
+let puntosList=[];
+async function cargarPuntos(){
+  const ciudad=U?.ciudad?.toLowerCase()||'tauramena';
+  try{
+    const snap=await getDocs(collection(db,'ciudades',ciudad,'puntos'));
+    const pts=[];
+    snap.forEach(d=>pts.push({id:d.id,...d.data()}));
+    if(pts.length)puntosList=pts.map(p=>p.nombre);
+    else puntosList=[...PUNTOS_DEFAULT];
+  }catch(e){puntosList=[...PUNTOS_DEFAULT];}
+  renderPuntos({});
+}
+
+function renderPuntos(alertasMap){
+  const grid=document.getElementById('puntosGrid');
+  grid.innerHTML='';
+  const now=Date.now();
+  puntosList.forEach(nombre=>{
+    const al=alertasMap[nombre];
+    const tieneReten=al&&al.tipo==='reten'&&al.activa;
+    const tieneAcc=al&&al.tipo==='accidente'&&al.activa;
+    const cl=tieneReten?'pr':tieneAcc?'pa':'pv';
+    const dot=tieneReten?'r':tieneAcc?'a':'v';
+    const min=al?Math.floor((now-(al.timestamp?.seconds*1000||now))/60000):null;
+    const minStr=min!==null&&min>=0?` · ${min<1?'ahora':(min+'min')}` :'';
+    const div=document.createElement('div');
+    div.className=`punto-item ${cl}`;
+    div.innerHTML=`<div class="punto-dot ${dot}"></div><div><div class="punto-nombre">${nombre}</div><div class="punto-mini">${tieneReten?'🔴 Retén'+minStr:tieneAcc?'🟡 Accidente'+minStr:'🟢 Libre'}</div></div>`;
+    div.onclick=()=>toast((tieneReten?'🔴 RETÉN en ':'tieneAcc'?'🟡 ACCIDENTE en ':'🟢 Libre: ')+nombre,'info');
+    grid.appendChild(div);
+  });
+  document.getElementById('puntosTiem').textContent='Act: '+new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ─── AGREGAR PUNTO ───
+window.abrirAddPunto=()=>{document.getElementById('iNomPto').value='';document.getElementById('mPunto').classList.add('open');};
+window.guardarNuevoPunto=async()=>{
+  const nom=document.getElementById('iNomPto').value.trim();
+  if(!nom||nom.length<3){toast('⚠️ Escribe el nombre del punto','warning');return;}
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    await setDoc(doc(db,'ciudades',ciudad,'puntos',nom.toLowerCase().replace(/\s/g,'-')),{nombre:nom,ruta:document.getElementById('iRutaPto').value,creadoPor:U.uid,timestamp:serverTimestamp()});
+    puntosList.push(nom);
+    // Actualizar selector del modal de reporte
+    const sel=document.getElementById('selPM');
+    const opt=document.createElement('option');opt.value=nom;opt.textContent=nom;
+    sel.insertBefore(opt,sel.lastElementChild);
+    cerrarM('mPunto');toast('📍 Punto "'+nom+'" agregado');
+  }catch(e){toast('❌ Error: '+e.message,'error');}
+};
+
+// ─── ALERTAS TIEMPO REAL ───
+function escucharAlertas(){
+  if(unsubA)unsubA();
+  const ciudad=U.ciudad.toLowerCase();
+  unsubA=onSnapshot(collection(db,'ciudades',ciudad,'alertas'),snap=>{
+    const al=[];
+    snap.forEach(d=>{if(d.data().activa)al.push({id:d.id,...d.data()});});
+    al.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    // Mapa por punto para la lista
+    const alMap={};
+    al.forEach(a=>{if(!alMap[a.punto]||alMap[a.punto].timestamp<a.timestamp)alMap[a.punto]=a;});
+    renderPuntos(alMap);
+    renderHero(al);
+    renderAlertas(al);
+  });
+}
+
+function renderHero(alertas){
+  const hero=document.getElementById('vHero'),circ=document.getElementById('vCirc'),tit=document.getElementById('vTit'),sub=document.getElementById('vSub');
+  const row=document.getElementById('carritosRow'),ctxt=document.getElementById('confTxt'),btnCL=document.getElementById('btnConfLibre');
+  const now=Date.now();
+
+  if(!alertas.length){
+    hero.className='via-hero ok';circ.className='circ-main v';circ.textContent='🟢';
+    tit.textContent='VÍA DESPEJADA';sub.textContent='Sin novedades reportadas';
+    btnCL.style.display='inline-block';
+    // Cargar confirmaciones de vía libre
+    cargarConfirmacionesLibre(row,ctxt);
+    return;
+  }
+  btnCL.style.display='none';
+  const hasR=alertas.some(a=>a.tipo==='reten');
+  const hasA=alertas.some(a=>a.tipo==='accidente');
+  if(hasR){hero.className='via-hero alerta';circ.className='circ-main r';circ.textContent='🔴';tit.textContent='RETÉN ACTIVO';sub.textContent=alertas.length>1?alertas.length+' novedades en la vía':alertas[0].punto;}
+  else if(hasA){hero.className='via-hero prec';circ.className='circ-main a';circ.textContent='🟡';tit.textContent='PRECAUCIÓN EN VÍA';sub.textContent=alertas[0].punto;}
+  // Carritos de retén
+  const totalConf=alertas.reduce((s,a)=>s+(a.confirmaciones||0),0);
+  row.innerHTML='';ctxt.textContent='';
+  if(totalConf>0){
+    for(let i=0;i<Math.min(totalConf,5);i++){const s=document.createElement('span');s.className='carrito-conf';s.textContent='🚗';row.appendChild(s);}
+    ctxt.textContent=totalConf+' conductor'+(totalConf>1?'es confirmaron':'confirmó')+' la novedad';
+  }
+}
+
+async function cargarConfirmacionesLibre(row,ctxt){
+  row.innerHTML='';ctxt.textContent='';
+  try{
+    const ciudad=U.ciudad.toLowerCase();
+    const snap=await getDocs(collection(db,'ciudades',ciudad,'confLibre'));
+    const confs=[];
+    const limite=Date.now()-7200000; // 2 horas
+    snap.forEach(d=>{const data=d.data();if(data.timestamp?.seconds*1000>limite)confs.push(data);});
+    if(!confs.length)return;
+    confs.slice(0,5).forEach(c=>{const s=document.createElement('span');s.className='carrito-conf';s.textContent='🚗';row.appendChild(s);});
+    ctxt.textContent=confs.length+' conductor'+(confs.length>1?'es confirmaron':'confirmó')+' vía libre';
+  }catch(e){}
+}
+
+window.confirmarLibre=async()=>{
+  if(inact){toast('⚠️ Actívate primero','warning');return;}
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    await addDoc(collection(db,'ciudades',ciudad,'confLibre'),{conductorId:U.uid,conductorNombre:U.nombre,timestamp:serverTimestamp()});
+    toast('🚗 ¡Confirmaste vía libre! Gracias');
+    tonoR(SND.vol);
+  }catch(e){toast('❌ Error: '+e.message,'error');}
+};
+
+function renderAlertas(alertas){
+  const sec=document.getElementById('alertasSec');sec.innerHTML='';
+  if(alertas.length>1)sec.innerHTML=`<div style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--ts);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">Novedades activas <span style="background:var(--r);color:white;border-radius:var(--rfl);padding:2px 8px;font-size:11px">${alertas.length}</span></div>`;
+  alertas.forEach(a=>sec.appendChild(mkCard(a)));
+}
+
+function mkCard(a){
+  const eC=U?.rol==='conductor';
+  const min=Math.max(0,Math.floor((Date.now()-(a.timestamp?.seconds*1000||Date.now()))/60000));
+  const tStr=min<1?'Ahora mismo':min===1?'Hace 1 min':'Hace '+min+' min';
+  const isR=a.tipo==='reten',isA=a.tipo==='accidente';
+  const cl=isR?'r':isA?'a':'b';
+  const lbl=isR?'🚔 RETÉN POLICIAL':isA?'⚠️ ACCIDENTE':'🚧 NOVEDAD EN VÍA';
+  const sm={ida:"➡️ T'MENA→YOPAL",vuelta:"⬅️ YOPAL→T'MENA",ambos:'↔️ Ambos'};
+  const conf=a.confirmaciones||0;
+  const d=document.createElement('div');
+  d.className='alerta-card '+(isR?'cr':isA?'ca':'co');
+  const carrsHTML=conf>0?`<div class="carr-confirm">${'<span class="carrito-conf">🚗</span>'.repeat(Math.min(conf,5))}<span>${conf} conductor${conf>1?'es':''} confirmó</span></div>`:'';
+  d.innerHTML=`<div class="ac-tipo ${cl}">${lbl}</div><div class="ac-lugar ${cl}">${a.punto||'?'}</div><div class="ac-meta">${sm[a.sentido]?`<span>${sm[a.sentido]}</span>`:''}<span>🕐 ${tStr}</span></div>${carrsHTML}${a.nota?`<div style="font-size:12px;color:var(--ts);margin-bottom:10px;padding:8px;background:var(--elev);border-radius:var(--rsm)">${a.nota}</div>`:''}${eC?`<div class="ac-btns"><button class="btn-sigue" onclick="confA('${a.id}')">🚗 SIGUE ACTIVO</button><button class="btn-paso" onclick="yaP('${a.id}')">🟢 YA PASÓ</button></div>`:`<button onclick="leerVoz('${a.punto}','${a.tipo}','${a.sentido}')" style="background:none;border:none;font-size:12px;color:var(--tm);cursor:pointer;font-family:'Inter',sans-serif;text-decoration:underline;padding:4px 0">🔊 Escuchar alerta</button>`}`;
+  return d;
+}
+
+window.leerVoz=(p,t,s)=>{if(!('speechSynthesis' in window)){toast('No hay altavoz disponible');return;}const sm={ida:'sentido Tauramena a Yopal',vuelta:'sentido Yopal a Tauramena',ambos:'ambos sentidos'};const m=new SpeechSynthesisUtterance(`Alerta. ${t==='reten'?'Retén policial':t==='accidente'?'Accidente':'Novedad'} en ${p}. ${sm[s]||''}.`);m.lang='es-CO';m.rate=.9;window.speechSynthesis.speak(m);};
+
+window.confA=async id=>{
+  try{const c=U.ciudad.toLowerCase(),r=doc(db,'ciudades',c,'alertas',id),s=await getDoc(r);if(s.exists()){await updateDoc(r,{confirmaciones:(s.data().confirmaciones||0)+1});toast('🚗 Confirmado — gracias');tonoR(SND.vol);}}catch(e){toast('❌ '+e.message,'error');}
+};
+window.yaP=async id=>{
+  try{const c=U.ciudad.toLowerCase(),r=doc(db,'ciudades',c,'alertas',id),s=await getDoc(r);if(s.exists()){const yp=(s.data().yaPasaron||0)+1,u={yaPasaron:yp};if(yp>=2)u.activa=false;await updateDoc(r,u);toast(yp>=2?'🟢 Alerta desactivada':'🟡 Reporte registrado');}}catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ─── MODAL REPORTE ───
+window.abrirModal=()=>{
+  if(inact){toast('⚠️ Actívate primero para reportar','warning');return;}
+  tipoR=null;sentR=null;ptoR=null;
+  document.getElementById('pGps').textContent='Detectando...';
+  document.getElementById('iNota').value='';document.getElementById('iNvoP').value='';
+  document.getElementById('nvoP').style.display='none';document.getElementById('selPM').value='';
+  document.querySelectorAll('.tipo-b,.sent-b').forEach(b=>b.className=b.className.replace(/s[rao]|on/g,'').trim());
+  document.getElementById('mRep').classList.add('open');
+  navigator.geolocation?.getCurrentPosition(p=>{document.getElementById('pGps').textContent='✅ Ubicación detectada';},()=>{document.getElementById('pGps').textContent='Sin GPS — elige manualmente';},{timeout:5000});
+};
+window.sTipo=t=>{tipoR=t;document.querySelectorAll('.tipo-b').forEach(b=>b.classList.remove('sr','sa','so'));document.getElementById(t==='reten'?'tR':t==='accidente'?'tA':'tO').classList.add(t==='reten'?'sr':t==='accidente'?'sa':'so');};
+window.sSent=s=>{sentR=s;document.querySelectorAll('.sent-b').forEach(b=>b.classList.remove('on'));document.getElementById(s==='ida'?'sI':s==='vuelta'?'sV':'sA').classList.add('on');};
+window.sPtoM=()=>{const v=document.getElementById('selPM').value;if(v==='nuevo'){document.getElementById('nvoP').style.display='block';ptoR=null;}else if(v){ptoR=v;document.getElementById('pGps').textContent=v;document.getElementById('nvoP').style.display='none';}};
+window.cerrarM=id=>document.getElementById(id).classList.remove('open');
+document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+window.enviar=async()=>{
+  if(!tipoR){toast('⚠️ Elige qué encontraste','warning');return;}
+  if(!sentR){toast('⚠️ Elige el sentido de la vía','warning');return;}
+  let pf=ptoR;if(!pf){const nv=document.getElementById('iNvoP').value.trim();if(nv)pf=nv;else{toast('⚠️ Elige o escribe el punto','warning');return;}}
+  const btn=document.getElementById('btnEnv');btn.disabled=true;btn.textContent='Enviando...';
+  try{
+    await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'alertas'),{tipo:tipoR,punto:pf,sentido:sentR,nota:document.getElementById('iNota').value.trim(),activa:true,confirmaciones:0,yaPasaron:0,conductorId:U.uid,conductorNombre:U.nombre,timestamp:serverTimestamp(),ciudad:U.ciudad.toLowerCase()});
+    cerrarM('mRep');tonoR(SND.vol);toast('🚨 Alerta enviada a todos');
+  }catch(e){toast('❌ '+e.message,'error');}
+  btn.disabled=false;btn.textContent='🚨 Enviar alerta a todos';
+};
+
+// ─── INACTIVO ───
+window.toggleInact=()=>{
+  inact=!inact;
+  const b=document.getElementById('btnInact'),e=document.getElementById('bgest'),r=document.getElementById('btnRet');
+  if(inact){b.textContent='Activarme';b.classList.add('off');e.className='bgest off';e.textContent='⚫ Inactivo';r.classList.remove('show');if(unsubA)unsubA();toast('😴 Modo inactivo');}
+  else{b.textContent='Inactivo';b.classList.remove('off');e.className='bgest on';e.textContent='🟢 Activo';r.classList.add('show');escucharAlertas();toast('✅ Estás activo');}
+  if(U){updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'usuarios',U.uid),{inactivo:inact}).catch(()=>{});}
+};
+
+window.abrirWsp=()=>{const n=(CFG.wsp||'3114571322').replace(/\D/g,'');window.open(`https://wa.me/57${n}?text=${encodeURIComponent(CFG.msg||'Hola, necesito información sobre RUTA LIBRE 👋')}`, '_blank');};
+
+// ─── NAV ───
+window.navGo=(id,nid)=>{
+  document.querySelectorAll('.pant').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(nid)document.getElementById(nid).classList.add('on');
+  const r=document.getElementById('btnRet');
+  if(r)r.style.display=id==='pVia'&&U?.rol==='conductor'?'flex':'none';
+};
+
+window.salir=()=>{if(!confirm('¿Cerrar sesión?'))return;localStorage.clear();window.location.reload();};
+
+// ─── TOAST ───
+window.toast=(m,t='info')=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const cols={success:'#22c55e',error:'#ef4444',warning:'#f59e0b',info:'#6366f1'};const el=document.createElement('div');el.className='toast';el.style.borderLeftColor=cols[t]||cols.info;el.textContent=m;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);};
+
+// ─── ARRANCAR ───
+// ── REGISTRO SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(reg => {
+        console.log('✅ SW registrado:', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('🔄 Nueva versión disponible');
+            }
+          });
+        });
+      })
+      .catch(err => console.log('❌ SW error:', err));
+  });
+}
+
+window.addEventListener('load',init);
+</script>
+</body>
+</html>
