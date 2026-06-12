@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Admin — RUTA LIBRE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0a0a0f;--surf:#12121a;--elev:#1a1a26;--hov:#22223a;
+      --acc:#6366f1;--accg:rgba(99,102,241,0.2);
+      --v:#22c55e;--r:#ef4444;--am:#f59e0b;--az:#3b82f6;
+      --tp:#f1f5f9;--ts:#94a3b8;--tm:#475569;
+      --bs:rgba(255,255,255,0.06);--bn:rgba(255,255,255,0.12);
+      --wsp:#25d366;
+      --rsm:8px;--rmd:12px;--rlg:16px;--rxl:24px;--rfl:9999px
+    }
+    html,body{min-height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--tp);font-size:14px;line-height:1.6}
+
+    /* LOGIN */
+    #loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,0.15) 0%,transparent 65%)}
+    .login-card{background:var(--surf);border:1px solid var(--bn);border-radius:var(--rxl);padding:36px 32px;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,0.4),0 0 20px rgba(99,102,241,0.1)}
+    .login-logo{text-align:center;margin-bottom:28px}
+    .login-logo .ico{font-size:48px;display:block;margin-bottom:10px}
+    .login-logo h1{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,#f1f5f9,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .login-logo p{color:var(--tm);font-size:13px;margin-top:4px}
+    .login-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accg);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc;border-radius:var(--rfl);padding:4px 14px;font-size:11px;font-weight:600;margin-bottom:24px;letter-spacing:0.5px}
+    .fgrp{margin-bottom:14px}
+    .fgrp label{display:block;font-size:11px;color:var(--ts);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+    .inp{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);color:var(--tp);padding:12px 14px;font-size:15px;width:100%;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s,box-shadow 0.2s}
+    .inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accg)}
+    .inp::placeholder{color:var(--tm)}
+    .lerr{display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:var(--rmd);padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:14px}
+    .btn-p{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:var(--rmd);padding:13px;font-weight:700;font-size:14px;cursor:pointer;width:100%;font-family:'Inter',sans-serif;transition:all 0.2s;box-shadow:0 4px 14px rgba(99,102,241,0.35)}
+    .btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(99,102,241,0.45)}
+    .btn-p:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn-s{background:var(--elev);color:var(--tp);border:1px solid var(--bn);border-radius:var(--rmd);padding:10px 18px;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
+    .btn-s:hover{border-color:var(--acc);color:var(--acc)}
+    .btn-d{background:rgba(239,68,68,0.12);color:#fca5a5;border:1px solid rgba(239,68,68,0.25);border-radius:var(--rmd);padding:10px 18px;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
+    .btn-d:hover{background:rgba(239,68,68,0.2)}
+    .btn-sm{padding:6px 12px;border-radius:var(--rsm);font-size:12px;font-weight:600;border:1px solid var(--bn);background:var(--elev);color:var(--ts);cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;white-space:nowrap}
+    .btn-sm:hover{border-color:var(--acc);color:var(--acc)}
+    .btn-sm.v{border-color:rgba(34,197,94,0.3);color:var(--v);background:rgba(34,197,94,0.08)}
+    .btn-sm.r{border-color:rgba(239,68,68,0.3);color:var(--r);background:rgba(239,68,68,0.08)}
+
+    /* PANEL */
+    #panel{display:none}
+
+    /* TOPBAR */
+    .topbar{background:var(--surf);border-bottom:1px solid var(--bs);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .tb-brand{display:flex;align-items:center;gap:10px}
+    .tb-brand .ico{font-size:24px}
+    .tb-brand h1{font-family:'Sora',sans-serif;font-size:16px;font-weight:700}
+    .tb-brand .sub{font-size:11px;color:var(--tm);margin-top:-2px}
+    .tb-right{display:flex;align-items:center;gap:12px}
+    .tb-user{font-size:12px;color:var(--ts)}
+    .tb-user span{color:#a5b4fc;font-weight:600}
+
+    /* LAYOUT */
+    .layout{display:flex;min-height:calc(100vh - 60px)}
+    .sidebar{width:220px;background:var(--surf);border-right:1px solid var(--bs);padding:20px 12px;flex-shrink:0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    @media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+    .nav-sec{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--tm);font-weight:600;padding:0 8px;margin-bottom:6px;margin-top:16px}
+    .nav-sec:first-child{margin-top:0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rmd);cursor:pointer;font-size:13px;font-weight:500;color:var(--ts);transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:'Inter',sans-serif}
+    .nav-item:hover{background:var(--elev);color:var(--tp)}
+    .nav-item.on{background:var(--accg);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3)}
+    .nav-ico{font-size:16px;flex-shrink:0}
+    .nav-bdg{margin-left:auto;background:var(--am);color:#000;border-radius:var(--rfl);padding:1px 7px;font-size:10px;font-weight:700}
+
+    /* TABS MÓVIL */
+    .mob-tabs{display:none;background:var(--surf);border-bottom:1px solid var(--bs);overflow-x:auto;padding:0 16px;scrollbar-width:none}
+    .mob-tabs::-webkit-scrollbar{display:none}
+    @media(max-width:768px){.mob-tabs{display:flex}}
+    .mob-tab{padding:14px 14px;font-size:12px;font-weight:600;color:var(--tm);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;font-family:'Inter',sans-serif}
+    .mob-tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+
+    .content{flex:1;padding:28px 24px;max-width:960px}
+    .sec{display:none;animation:fadeUp 0.2s ease}
+    .sec.on{display:block}
+
+    /* PAGE HEADER */
+    .ph{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;margin-bottom:4px}
+    .ps{color:var(--ts);font-size:13px;margin-bottom:24px}
+
+    /* KPIS */
+    .kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
+    @media(min-width:600px){.kpi-grid{grid-template-columns:repeat(4,1fr)}}
+    .kpi{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:18px 16px;transition:all 0.2s}
+    .kpi:hover{border-color:var(--bn);box-shadow:var(--shadow-glow)}
+    .kpi-ico{font-size:22px;margin-bottom:8px;display:block}
+    .kpi-n{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;line-height:1;display:block;margin-bottom:4px}
+    .kpi-l{font-size:12px;color:var(--tm);font-weight:500}
+    .kpi.gv .kpi-n{color:var(--v)}
+    .kpi.ga .kpi-n{color:var(--am)}
+    .kpi.gr .kpi-n{color:var(--r)}
+    .kpi.gi .kpi-n{color:var(--acc)}
+
+    /* CARDS */
+    .card{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:20px;margin-bottom:12px;transition:all 0.2s}
+    .card:hover{border-color:var(--bn)}
+    .card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:12px}
+    .card-titulo{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:3px}
+    .card-sub{font-size:12px;color:var(--ts)}
+    .card-acciones{display:flex;gap:6px;flex-wrap:wrap}
+
+    /* BADGE */
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--rfl);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;flex-shrink:0}
+    .badge.v{background:rgba(34,197,94,0.12);color:var(--v)}
+    .badge.a{background:rgba(245,158,11,0.12);color:var(--am)}
+    .badge.r{background:rgba(239,68,68,0.12);color:var(--r)}
+    .badge.i{background:rgba(99,102,241,0.12);color:var(--acc)}
+    .badge.g{background:rgba(71,85,105,0.2);color:var(--tm)}
+
+    /* FORM */
+    .form-card{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:24px;margin-bottom:16px}
+    .form-sec{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--ts);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--bs);display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:0.5px}
+    .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
+    .fg label{font-size:11px;color:var(--ts);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+    .fg .hint{font-size:11px;color:var(--tm)}
+    .fgrid{display:grid;gap:13px}
+    .fgrid.c2{grid-template-columns:1fr 1fr}
+    @media(max-width:500px){.fgrid.c2{grid-template-columns:1fr}}
+    select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+
+    /* TOGGLE */
+    .tog-row{display:flex;align-items:center;justify-content:space-between;background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:14px 16px;margin-bottom:14px}
+    .tog-info .tog-tit{font-weight:600;font-size:14px}
+    .tog-info .tog-des{font-size:12px;color:var(--tm);margin-top:2px}
+    .tog{position:relative;width:48px;height:26px;flex-shrink:0}
+    .tog input{display:none}
+    .tog-s{position:absolute;inset:0;background:var(--hov);border-radius:var(--rfl);cursor:pointer;transition:0.3s;border:1px solid var(--bn)}
+    .tog-s::before{content:'';position:absolute;width:20px;height:20px;left:3px;top:2px;background:var(--tm);border-radius:50%;transition:0.3s}
+    .tog input:checked+.tog-s{background:var(--acc);border-color:var(--acc)}
+    .tog input:checked+.tog-s::before{transform:translateX(22px);background:white}
+
+    /* COLOR PICKER CARRITO */
+    .color-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+    .color-opt{height:50px;border-radius:var(--rmd);cursor:pointer;border:3px solid transparent;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:22px;position:relative}
+    .color-opt.sel{border-color:white;box-shadow:0 0 0 2px var(--acc);transform:scale(1.08)}
+    .color-opt .car-preview{font-size:20px}
+
+    /* PUNTOS LISTA */
+    .punto-row{display:flex;align-items:center;gap:12px;background:var(--elev);border-radius:var(--rmd);padding:12px 14px;margin-bottom:7px}
+    .punto-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tm);min-width:24px}
+    .punto-nom{flex:1;font-weight:600;font-size:14px}
+    .punto-ruta{font-size:11px;color:var(--ts)}
+
+    /* ALERTAS LIVE */
+    .alerta-live{border-radius:var(--rmd);padding:14px;margin-bottom:8px;border:1px solid var(--bs)}
+    .alerta-live.r{border-left:4px solid var(--r);background:rgba(239,68,68,0.06)}
+    .alerta-live.a{border-left:4px solid var(--am);background:rgba(245,158,11,0.06)}
+    .alerta-live.v{border-left:4px solid var(--v);background:rgba(34,197,94,0.06)}
+    .al-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+    .al-tipo{font-size:11px;font-weight:700;text-transform:uppercase}
+    .al-punto{font-family:'Sora',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px}
+    .al-meta{font-size:12px;color:var(--ts)}
+
+    /* SPINNER */
+    .spinner{width:28px;height:28px;border:3px solid var(--bn);border-top-color:var(--acc);border-radius:50%;animation:spin 0.8s linear infinite;margin:32px auto}
+    .empty{text-align:center;padding:40px 24px;color:var(--tm)}
+    .empty .eico{font-size:40px;margin-bottom:10px;opacity:0.4}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:20px;background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:12px 18px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:9999;max-width:320px;animation:fadeUp 0.25s ease;border-left:3px solid var(--acc)}
+
+    /* MODAL */
+    .mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;z-index:1000;padding:16px}
+    .mov.open{display:flex}
+    .mc{background:var(--surf);border:1px solid var(--bn);border-radius:var(--rxl);padding:28px 24px;width:100%;max-width:460px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.7);animation:fadeUp 0.25s ease;max-height:90vh;overflow-y:auto}
+    .mc-tit{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;margin-bottom:6px}
+    .mc-sub{font-size:13px;color:var(--ts);margin-bottom:20px}
+    .mc-close{position:absolute;top:16px;right:16px;background:var(--elev);border:1px solid var(--bs);color:var(--ts);border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+    .mc-close:hover{background:var(--hov);color:var(--tp)}
+
+    /* CATEGORÍAS TABLA */
+    .cat-row{display:flex;align-items:center;gap:12px;background:var(--elev);border-radius:var(--rmd);padding:10px 14px;margin-bottom:6px}
+    .cat-ico{font-size:20px;min-width:28px;text-align:center}
+    .cat-nom{flex:1;font-weight:600;font-size:13px}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="ico">🚗</span>
+      <h1>RUTA LIBRE</h1>
+      <p>Panel de administración</p>
+    </div>
+    <div style="text-align:center;margin-bottom:22px">
+      <span class="login-badge">🔐 Super Admin</span>
+    </div>
+    <div class="lerr" id="lerr"></div>
+    <div class="fgrp"><label>Correo electrónico</label><input type="email" id="lEmail" class="inp" placeholder="admin@rutalibre.com" autocomplete="email"></div>
+    <div class="fgrp" style="margin-bottom:20px"><label>Contraseña</label><input type="password" id="lPass" class="inp" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="btn-p" id="btnLogin" onclick="hacerLogin()">Iniciar sesión</button>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div id="panel">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-brand">
+      <span class="ico">🚗</span>
+      <div><div style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700">RUTA LIBRE</div><div class="sub">Super Admin</div></div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-user">👤 <span id="adminEmail">admin</span></div>
+      <button class="btn-s" style="padding:7px 14px;font-size:12px" onclick="cerrarSesion()">Salir</button>
+    </div>
+  </div>
+
+  <!-- TABS MÓVIL -->
+  <div class="mob-tabs">
+    <button class="mob-tab on" onclick="goSec('sDash',this)">📊 Dashboard</button>
+    <button class="mob-tab" onclick="goSec('sAlertas',this)">🚨 Alertas</button>
+    <button class="mob-tab" onclick="goSec('sPuntos',this)">📍 Puntos</button>
+    <button class="mob-tab" onclick="goSec('sUsuarios',this)">👥 Usuarios</button>
+    <button class="mob-tab" onclick="goSec('sApariencia',this)">🎨 Apariencia</button>
+    <button class="mob-tab" onclick="goSec('sPublicidad',this)">📣 Publicidad</button>
+    <button class="mob-tab" onclick="goSec('sConfig',this)">⚙️ Config</button>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="nav-sec">Principal</div>
+      <button class="nav-item on" id="n-dash" onclick="goSec('sDash',this)"><span class="nav-ico">📊</span>Dashboard</button>
+      <div class="nav-sec">Operación</div>
+      <button class="nav-item" id="n-alertas" onclick="goSec('sAlertas',this)"><span class="nav-ico">🚨</span>Alertas en vivo<span class="nav-bdg" id="bdgAl" style="display:none">0</span></button>
+      <button class="nav-item" id="n-puntos" onclick="goSec('sPuntos',this)"><span class="nav-ico">📍</span>Puntos de retén</button>
+      <button class="nav-item" id="n-usuarios" onclick="goSec('sUsuarios',this)"><span class="nav-ico">👥</span>Usuarios</button>
+      <div class="nav-sec">Plataforma</div>
+      <button class="nav-item" id="n-apariencia" onclick="goSec('sApariencia',this)"><span class="nav-ico">🎨</span>Apariencia</button>
+      <button class="nav-item" id="n-publicidad" onclick="goSec('sPublicidad',this)"><span class="nav-ico">📣</span>Publicidad</button>
+      <button class="nav-item" id="n-config" onclick="goSec('sConfig',this)"><span class="nav-ico">⚙️</span>Configuración</button>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main class="content">
+
+      <!-- DASHBOARD -->
+      <section class="sec on" id="sDash">
+        <div class="ph">📊 Dashboard</div>
+        <div class="ps" id="dashFecha">Cargando...</div>
+        <div class="kpi-grid">
+          <div class="kpi gv"><span class="kpi-ico">🚗</span><span class="kpi-n" id="kCond">—</span><div class="kpi-l">Conductores</div></div>
+          <div class="kpi gi"><span class="kpi-ico">👤</span><span class="kpi-n" id="kPas">—</span><div class="kpi-l">Pasajeros</div></div>
+          <div class="kpi gr"><span class="kpi-ico">🚨</span><span class="kpi-n" id="kAl">—</span><div class="kpi-l">Alertas hoy</div></div>
+          <div class="kpi ga"><span class="kpi-ico">📍</span><span class="kpi-n" id="kPtos">—</span><div class="kpi-l">Puntos activos</div></div>
+        </div>
+        <div id="dashSpinner"><div class="spinner"></div></div>
+        <div id="dashAlertas"></div>
+      </section>
+
+      <!-- ALERTAS EN VIVO -->
+      <section class="sec" id="sAlertas">
+        <div class="ph">🚨 Alertas en tiempo real</div>
+        <div class="ps">Todas las alertas activas en tu ciudad</div>
+        <div class="fgrp" style="max-width:280px">
+          <label>Filtrar por ciudad</label>
+          <input type="text" id="filtCiudad" class="inp" placeholder="Ej: Tauramena" value="tauramena" oninput="cargarAlertas()">
+        </div>
+        <div id="alertasLive"><div class="spinner"></div></div>
+        <div style="margin-top:16px">
+          <button class="btn-s" onclick="cargarAlertas()">↻ Actualizar</button>
+        </div>
+      </section>
+
+      <!-- PUNTOS DE RETÉN -->
+      <section class="sec" id="sPuntos">
+        <div class="ph">📍 Puntos de retén</div>
+        <div class="ps">Gestiona los puntos conocidos de la vía</div>
+        <div class="fgrp" style="max-width:280px">
+          <label>Ciudad</label>
+          <input type="text" id="filtPtoCiudad" class="inp" placeholder="Ej: Tauramena" value="tauramena" oninput="cargarPuntos()">
+        </div>
+        <button class="btn-p" style="max-width:220px;margin-bottom:16px" onclick="abrirAddPunto()">➕ Agregar punto</button>
+        <div id="puntosLista"><div class="spinner"></div></div>
+      </section>
+
+      <!-- USUARIOS -->
+      <section class="sec" id="sUsuarios">
+        <div class="ph">👥 Usuarios</div>
+        <div class="ps">Gestiona conductores y pasajeros registrados</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <input type="text" id="busUsr" class="inp" placeholder="🔍 Buscar por nombre..." style="flex:1;min-width:180px" oninput="filtrarUsuarios()">
+          <select class="inp" id="filtRol" style="width:auto" onchange="filtrarUsuarios()">
+            <option value="">Todos los roles</option>
+            <option value="conductor">Conductores</option>
+            <option value="pasajero">Pasajeros</option>
+          </select>
+          <input type="text" id="filtCiudadUsr" class="inp" placeholder="Ciudad..." style="width:140px" value="tauramena" oninput="cargarUsuarios()">
+        </div>
+        <button class="btn-s" style="margin-bottom:16px" onclick="cargarUsuarios()">↻ Actualizar</button>
+        <div id="usuariosLista"><div class="spinner"></div></div>
+      </section>
+
+      <!-- APARIENCIA -->
+      <section class="sec" id="sApariencia">
+        <div class="ph">🎨 Apariencia de la app</div>
+        <div class="ps">Los cambios se aplican automáticamente a todos los usuarios</div>
+
+        <div class="form-card">
+          <div class="form-sec">🚗 Color del carrito</div>
+          <p style="font-size:13px;color:var(--ts);margin-bottom:14px">Elige el color del carrito que aparece en toda la app</p>
+          <div class="color-grid">
+            <div class="color-opt sel" style="background:rgba(239,68,68,0.15);border-color:var(--r)" id="col-r" onclick="selColor('#ef4444','col-r')"><span class="car-preview" style="filter:hue-rotate(0deg)">🚗</span></div>
+            <div class="color-opt" style="background:rgba(34,197,94,0.15)" id="col-v" onclick="selColor('#22c55e','col-v')"><span class="car-preview" style="filter:hue-rotate(120deg) saturate(1.2)">🚗</span></div>
+            <div class="color-opt" style="background:rgba(245,158,11,0.15)" id="col-a" onclick="selColor('#f59e0b','col-a')"><span class="car-preview" style="filter:hue-rotate(40deg) saturate(1.5)">🚗</span></div>
+            <div class="color-opt" style="background:rgba(59,130,246,0.15)" id="col-az" onclick="selColor('#3b82f6','col-az')"><span class="car-preview" style="filter:hue-rotate(220deg) saturate(1.2)">🚗</span></div>
+            <div class="color-opt" style="background:rgba(139,92,246,0.15)" id="col-p" onclick="selColor('#8b5cf6','col-p')"><span class="car-preview" style="filter:hue-rotate(270deg) saturate(1.2)">🚗</span></div>
+          </div>
+          <button class="btn-p" style="max-width:200px" onclick="guardarColor()">💾 Aplicar color</button>
+        </div>
+
+        <div class="form-card">
+          <div class="form-sec">📢 Franja de mensaje</div>
+          <div class="tog-row">
+            <div class="tog-info"><div class="tog-tit">Franja activa</div><div class="tog-des">Aparece en ambas pantallas de la app</div></div>
+            <label class="tog"><input type="checkbox" id="togFranja" onchange=""><div class="tog-s"></div></label>
+          </div>
+          <div class="fg"><label>Texto del mensaje</label><input type="text" id="franjaTexto" class="inp" placeholder="Ej: Mañana festivo — servicio especial desde las 2am" maxlength="100"></div>
+          <div class="fg"><label>Color de fondo</label>
+            <select id="franjaColor" class="inp">
+              <option value="indigo">Índigo (por defecto)</option>
+              <option value="verde">Verde</option>
+              <option value="rojo">Rojo — urgente</option>
+              <option value="amarillo">Amarillo — alerta</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn-p" style="max-width:180px" onclick="guardarFranja()">💾 Guardar franja</button>
+            <button class="btn-s" onclick="apagarFranja()">⏸ Apagar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PUBLICIDAD -->
+      <section class="sec" id="sPublicidad">
+        <div class="ph">📣 Publicidad</div>
+        <div class="ps">Gestiona categorías y anunciantes</div>
+
+        <div class="form-card">
+          <div class="form-sec">🏷️ Categorías de anuncios</div>
+          <div id="catsLista" style="margin-bottom:14px"></div>
+          <button class="btn-s" onclick="abrirAddCat()">➕ Agregar categoría</button>
+        </div>
+
+        <div class="form-card">
+          <div class="form-sec">📋 Anunciantes activos</div>
+          <div class="fgrp" style="max-width:280px">
+            <label>Ciudad</label>
+            <input type="text" id="filtAnuCiudad" class="inp" placeholder="Tauramena" value="tauramena" oninput="cargarAnuncios()">
+          </div>
+          <button class="btn-p" style="max-width:200px;margin-bottom:14px" onclick="abrirAddAnuncio()">➕ Nuevo anuncio</button>
+          <div id="anunciosLista"></div>
+        </div>
+      </section>
+
+      <!-- CONFIGURACIÓN -->
+      <section class="sec" id="sConfig">
+        <div class="ph">⚙️ Configuración</div>
+        <div class="ps">Ajustes generales de la plataforma</div>
+
+        <div class="form-card">
+          <div class="form-sec">📲 Botón WhatsApp</div>
+          <div class="fgrid c2">
+            <div class="fg"><label>Número WhatsApp *</label><input type="tel" id="cfgWsp" class="inp" placeholder="3114571322" maxlength="15"><div class="hint">Número que contactan los usuarios</div></div>
+            <div class="fg" style="grid-column:1/-1"><label>Mensaje pre-escrito</label><textarea id="cfgMsg" class="inp" rows="2" style="resize:vertical" placeholder="Hola, necesito información sobre RUTA LIBRE 👋"></textarea></div>
+          </div>
+          <button class="btn-p" style="max-width:180px" onclick="guardarWsp()">💾 Guardar</button>
+        </div>
+
+        <div class="form-card">
+          <div class="form-sec">💰 Créditos de bienvenida</div>
+          <div class="fgrid c2">
+            <div class="fg"><label>Créditos al registrarse</label><input type="number" id="cfgCred" class="inp" placeholder="10" min="0" max="100"></div>
+          </div>
+          <button class="btn-p" style="max-width:180px" onclick="guardarCreditos()">💾 Guardar</button>
+        </div>
+
+        <div class="form-card">
+          <div class="form-sec">🔮 Servicios futuros</div>
+          <p style="font-size:13px;color:var(--ts);margin-bottom:16px">Activa los 3 botones reservados en la pantalla 2</p>
+          <div id="srvFuturos"></div>
+        </div>
+
+        <div class="form-card">
+          <div class="form-sec">⏱️ Tiempos de alertas</div>
+          <div class="fgrid c2">
+            <div class="fg"><label>Minutos para "sin confirmar"</label><input type="number" id="cfgT1" class="inp" placeholder="45" min="10" max="180"></div>
+            <div class="fg"><label>Minutos para desactivar sola</label><input type="number" id="cfgT2" class="inp" placeholder="120" min="30" max="480"></div>
+            <div class="fg"><label>Confirmaciones para "libre"</label><input type="number" id="cfgT3" class="inp" placeholder="2" min="1" max="10"></div>
+          </div>
+          <button class="btn-p" style="max-width:180px" onclick="guardarTiempos()">💾 Guardar</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR PUNTO -->
+<div class="mov" id="mPunto">
+  <div class="mc">
+    <button class="mc-close" onclick="cerrarM('mPunto')">✕</button>
+    <div class="mc-tit">📍 Agregar punto</div>
+    <div class="mc-sub">El punto quedará disponible para todos los conductores</div>
+    <div class="fg"><label>Nombre del punto *</label><input type="text" id="pNom" class="inp" placeholder="Ej: La Ye de Aguazul" maxlength="40"></div>
+    <div class="fg"><label>Ciudad</label><input type="text" id="pCiu" class="inp" placeholder="Tauramena" value="tauramena"></div>
+    <div class="fg"><label>Ruta</label>
+      <select id="pRuta" class="inp">
+        <option value="ambas">Ambas rutas</option>
+        <option value="tauramena-yopal">Tauramena → Yopal</option>
+        <option value="yopal-tauramena">Yopal → Tauramena</option>
+      </select>
+    </div>
+    <button class="btn-p" onclick="guardarPunto()">📍 Guardar punto</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PUNTO -->
+<div class="mov" id="mEditPunto">
+  <div class="mc">
+    <button class="mc-close" onclick="cerrarM('mEditPunto')">✕</button>
+    <div class="mc-tit">✏️ Editar punto</div>
+    <input type="hidden" id="editPtoId">
+    <div class="fg"><label>Nombre del punto *</label><input type="text" id="editPNom" class="inp"></div>
+    <div class="fg"><label>Ruta</label>
+      <select id="editPRuta" class="inp">
+        <option value="ambas">Ambas rutas</option>
+        <option value="tauramena-yopal">Tauramena → Yopal</option>
+        <option value="yopal-tauramena">Yopal → Tauramena</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-p" onclick="actualizarPunto()">💾 Actualizar</button>
+      <button class="btn-d" onclick="eliminarPunto()">🗑 Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR CATEGORÍA -->
+<div class="mov" id="mCat">
+  <div class="mc">
+    <button class="mc-close" onclick="cerrarM('mCat')">✕</button>
+    <div class="mc-tit">🏷️ Nueva categoría</div>
+    <div class="fg"><label>Ícono (emoji)</label><input type="text" id="catIco" class="inp" placeholder="🍽️" maxlength="4"></div>
+    <div class="fg"><label>Nombre de la categoría *</label><input type="text" id="catNom" class="inp" placeholder="Restaurantes" maxlength="30"></div>
+    <button class="btn-p" onclick="guardarCat()">💾 Guardar categoría</button>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR ANUNCIO -->
+<div class="mov" id="mAnuncio">
+  <div class="mc">
+    <button class="mc-close" onclick="cerrarM('mAnuncio')">✕</button>
+    <div class="mc-tit">📣 Nuevo anuncio</div>
+    <div class="fg"><label>Nombre del negocio *</label><input type="text" id="aNom" class="inp" placeholder="Ej: Restaurante Don Pedro" maxlength="50"></div>
+    <div class="fg"><label>Descripción</label><input type="text" id="aDesc" class="inp" placeholder="El mejor sancocho del llano" maxlength="80"></div>
+    <div class="fgrid c2">
+      <div class="fg"><label>Categoría</label><input type="text" id="aCat" class="inp" placeholder="Restaurantes"></div>
+      <div class="fg"><label>Ciudad</label><input type="text" id="aCiu" class="inp" placeholder="Tauramena" value="tauramena"></div>
+      <div class="fg"><label>WhatsApp</label><input type="tel" id="aWsp" class="inp" placeholder="3001234567"></div>
+      <div class="fg"><label>Dirección</label><input type="text" id="aDir" class="inp" placeholder="Calle 5 # 8-23"></div>
+    </div>
+    <button class="btn-p" onclick="guardarAnuncio()">💾 Publicar anuncio</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection,
+         onSnapshot, updateDoc, addDoc, deleteDoc, query, orderBy,
+         where, serverTimestamp, arrayUnion, arrayRemove }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const FC={apiKey:"AIzaSyBvT_SEwvXKrLwZfYsFu3vFU8hIWY-Pz8U",authDomain:"rutalibre-455cf.firebaseapp.com",databaseURL:"https://rutalibre-455cf-default-rtdb.firebaseio.com",projectId:"rutalibre-455cf",storageBucket:"rutalibre-455cf.firebasestorage.app",messagingSenderId:"352770988370",appId:"1:352770988370:web:3020bbbe006c841070828b"};
+const app=initializeApp(FC),db=getFirestore(app),auth=getAuth(app);
+
+let _colorSel='#ef4444',_catsPub=[],_unsubAl=null,_todosUsuarios=[];
+
+// ── AUTH ──
+onAuthStateChanged(auth,user=>{
+  if(user){
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('panel').style.display='block';
+    document.getElementById('adminEmail').textContent=user.email;
+    cargarDashboard();cargarConfigActual();cargarCats();cargarAnuncios();cargarSrvFuturos();
+    escucharAlertasLive();
+  } else {
+    document.getElementById('loginWrap').style.display='flex';
+    document.getElementById('panel').style.display='none';
+  }
+});
+
+window.hacerLogin=async()=>{
+  const e=document.getElementById('lEmail').value.trim(),p=document.getElementById('lPass').value,err=document.getElementById('lerr'),btn=document.getElementById('btnLogin');
+  if(!e||!p){err.textContent='❌ Completa email y contraseña';err.style.display='block';return;}
+  btn.disabled=true;btn.textContent='Ingresando...';err.style.display='none';
+  try{await signInWithEmailAndPassword(auth,e,p);}
+  catch(ex){err.textContent='❌ Credenciales incorrectas';err.style.display='block';btn.disabled=false;btn.textContent='Iniciar sesión';}
+};
+document.getElementById('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')window.hacerLogin();});
+window.cerrarSesion=()=>signOut(auth);
+
+// ── NAV ──
+window.goSec=(id,el)=>{
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-item,.mob-tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(el)el.classList.add('on');
+  const nid='n-'+id.replace('s','');
+  const nel=document.getElementById(nid);if(nel)nel.classList.add('on');
+};
+
+// ── DASHBOARD ──
+async function cargarDashboard(){
+  document.getElementById('dashFecha').textContent='Hoy: '+new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});
+  try{
+    const snap=await getDocs(collection(db,'ciudades','tauramena','usuarios'));
+    let c=0,p=0;snap.forEach(d=>{if(d.data().rol==='conductor')c++;else p++;});
+    document.getElementById('kCond').textContent=c;
+    document.getElementById('kPas').textContent=p;
+    const ptos=await getDocs(collection(db,'ciudades','tauramena','puntos'));
+    document.getElementById('kPtos').textContent=ptos.size||13;
+    const als=await getDocs(collection(db,'ciudades','tauramena','alertas'));
+    let hoy=0;const hoy0=new Date();hoy0.setHours(0,0,0,0);
+    als.forEach(d=>{const t=d.data().timestamp?.toDate?.();if(t&&t>hoy0)hoy++;});
+    document.getElementById('kAl').textContent=hoy;
+  }catch(e){console.log(e);}
+  document.getElementById('dashSpinner').style.display='none';
+}
+
+// ── ALERTAS EN VIVO ──
+function escucharAlertasLive(){
+  if(_unsubAl)_unsubAl();
+  _unsubAl=onSnapshot(collection(db,'ciudades','tauramena','alertas'),snap=>{
+    const al=[];snap.forEach(d=>{if(d.data().activa)al.push({id:d.id,...d.data()});});
+    al.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    const bdg=document.getElementById('bdgAl');
+    if(al.length){bdg.style.display='inline';bdg.textContent=al.length;}
+    else bdg.style.display='none';
+    // Dashboard preview
+    const da=document.getElementById('dashAlertas');
+    if(al.length){
+      da.innerHTML=`<div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;color:var(--r)">🚨 ${al.length} alerta${al.length>1?'s':''} activa${al.length>1?'s':''}</div>`+al.slice(0,3).map(a=>mkAlCard(a)).join('');
+    } else da.innerHTML='<div class="empty"><div class="eico">✅</div><p>Vía despejada</p></div>';
+  });
+}
+
+window.cargarAlertas=async()=>{
+  const ciudad=document.getElementById('filtCiudad').value.trim().toLowerCase()||'tauramena';
+  const c=document.getElementById('alertasLive');c.innerHTML='<div class="spinner"></div>';
+  try{
+    const snap=await getDocs(collection(db,'ciudades',ciudad,'alertas'));
+    const al=[];snap.forEach(d=>{if(d.data().activa)al.push({id:d.id,...d.data()});});
+    al.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    if(!al.length){c.innerHTML='<div class="empty"><div class="eico">✅</div><p>Sin alertas activas en '+ciudad+'</p></div>';return;}
+    c.innerHTML=al.map(a=>mkAlCard(a,true)).join('');
+  }catch(e){c.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
+};
+
+function mkAlCard(a,conBtn=false){
+  const min=Math.max(0,Math.floor((Date.now()-(a.timestamp?.seconds*1000||Date.now()))/60000));
+  const isR=a.tipo==='reten',isA=a.tipo==='accidente';
+  const cl=isR?'r':isA?'a':'v';
+  const lbl=isR?'🚔 RETÉN':isA?'⚠️ ACCIDENTE':'🚧 NOVEDAD';
+  const sm={ida:"T'MENA→YOPAL",vuelta:"YOPAL→T'MENA",ambos:'Ambos sentidos'};
+  return `<div class="alerta-live ${cl}">
+    <div class="al-top"><div class="ac-tipo" style="color:${isR?'var(--r)':isA?'var(--am)':'var(--v)'}">${lbl}</div>${conBtn?`<button class="btn-sm r" onclick="desactivarAlerta('${a.id}','${a.ciudad||'tauramena'}')">✕ Desactivar</button>`:''}</div>
+    <div class="al-punto">${a.punto||'?'}</div>
+    <div class="al-meta">${sm[a.sentido]?sm[a.sentido]+' · ':''} 🕐 ${min<1?'Ahora':min+' min'} · ✅ ${a.confirmaciones||0} conf.</div>
+    ${a.nota?`<div style="font-size:12px;color:var(--ts);margin-top:6px">${a.nota}</div>`:''}
+    ${conBtn?`<div style="margin-top:8px"><button class="btn-sm v" onclick="confAdmin('${a.id}','${a.ciudad||'tauramena'}')">🚗 Confirmar</button></div>`:''}
+  </div>`;
+}
+
+window.desactivarAlerta=async(id,ciudad)=>{
+  try{await updateDoc(doc(db,'ciudades',ciudad,'alertas',id),{activa:false});toast('✅ Alerta desactivada');window.cargarAlertas();}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+window.confAdmin=async(id,ciudad)=>{
+  try{const s=await getDoc(doc(db,'ciudades',ciudad,'alertas',id));if(s.exists()){await updateDoc(doc(db,'ciudades',ciudad,'alertas',id),{confirmaciones:(s.data().confirmaciones||0)+1});toast('🚗 Confirmación enviada');}}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ── PUNTOS ──
+window.cargarPuntos=async()=>{
+  const ciudad=document.getElementById('filtPtoCiudad').value.trim().toLowerCase()||'tauramena';
+  const c=document.getElementById('puntosLista');c.innerHTML='<div class="spinner"></div>';
+  const DEFAULT=['El Venado','Puente El Venado','Mordizco','Choricera','Valle Verde','Puente Peatonal Sonora','Los Troncos','Uñete','Pozo Ramiriquí','La Ceiba','Puente Cachaguas','Antiguo Toro','Aguazul - El Toro'];
+  try{
+    const snap=await getDocs(collection(db,'ciudades',ciudad,'puntos'));
+    let pts=[];snap.forEach(d=>pts.push({id:d.id,...d.data()}));
+    if(!pts.length){
+      // Cargar los defaults si no hay ninguno
+      for(const n of DEFAULT){await setDoc(doc(db,'ciudades',ciudad,'puntos',n.toLowerCase().replace(/\s/g,'-')),{nombre:n,ruta:'ambas',timestamp:serverTimestamp()});}
+      pts=DEFAULT.map(n=>({id:n.toLowerCase().replace(/\s/g,'-'),nombre:n,ruta:'ambas'}));
+    }
+    c.innerHTML=pts.map((p,i)=>`
+      <div class="punto-row">
+        <span class="punto-num">${(i+1).toString().padStart(2,'0')}</span>
+        <div style="flex:1"><div class="punto-nom">${p.nombre}</div><div class="punto-ruta">${p.ruta==='ambas'?'↔️ Ambas rutas':p.ruta==='tauramena-yopal'?"➡️ T'MENA→YOPAL":"⬅️ YOPAL→T'MENA"}</div></div>
+        <button class="btn-sm" onclick="editarPunto('${p.id}','${p.nombre}','${p.ruta||'ambas'}','${ciudad}')">✏️ Editar</button>
+      </div>`).join('');
+  }catch(e){c.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
+};
+
+window.abrirAddPunto=()=>{document.getElementById('pNom').value='';document.getElementById('mPunto').classList.add('open');};
+window.guardarPunto=async()=>{
+  const n=document.getElementById('pNom').value.trim(),c=document.getElementById('pCiu').value.trim().toLowerCase(),r=document.getElementById('pRuta').value;
+  if(!n){toast('⚠️ Escribe el nombre del punto','warning');return;}
+  try{await setDoc(doc(db,'ciudades',c,'puntos',n.toLowerCase().replace(/[\s]/g,'-')),{nombre:n,ruta:r,timestamp:serverTimestamp()});cerrarM('mPunto');toast('📍 Punto agregado');cargarPuntos();}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+window.editarPunto=(id,nom,ruta,ciudad)=>{
+  document.getElementById('editPtoId').value=id+'|'+ciudad;
+  document.getElementById('editPNom').value=nom;
+  document.getElementById('editPRuta').value=ruta;
+  document.getElementById('mEditPunto').classList.add('open');
+};
+window.actualizarPunto=async()=>{
+  const [id,ciudad]=document.getElementById('editPtoId').value.split('|');
+  const nom=document.getElementById('editPNom').value.trim(),ruta=document.getElementById('editPRuta').value;
+  if(!nom){toast('⚠️ Escribe el nombre','warning');return;}
+  try{await updateDoc(doc(db,'ciudades',ciudad,'puntos',id),{nombre:nom,ruta});cerrarM('mEditPunto');toast('✅ Punto actualizado');cargarPuntos();}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+window.eliminarPunto=async()=>{
+  if(!confirm('¿Eliminar este punto?'))return;
+  const [id,ciudad]=document.getElementById('editPtoId').value.split('|');
+  try{await deleteDoc(doc(db,'ciudades',ciudad,'puntos',id));cerrarM('mEditPunto');toast('🗑 Punto eliminado');cargarPuntos();}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ── USUARIOS ──
+window.cargarUsuarios=async()=>{
+  const ciudad=document.getElementById('filtCiudadUsr').value.trim().toLowerCase()||'tauramena';
+  const c=document.getElementById('usuariosLista');c.innerHTML='<div class="spinner"></div>';
+  try{
+    const snap=await getDocs(collection(db,'ciudades',ciudad,'usuarios'));
+    _todosUsuarios=[];snap.forEach(d=>_todosUsuarios.push({id:d.id,...d.data()}));
+    filtrarUsuarios();
+  }catch(e){c.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
+};
+
+window.filtrarUsuarios=()=>{
+  const q=document.getElementById('busUsr').value.toLowerCase();
+  const rol=document.getElementById('filtRol').value;
+  const f=_todosUsuarios.filter(u=>{
+    const matchQ=!q||(u.nombre||'').toLowerCase().includes(q)||(u.telefono||'').includes(q);
+    const matchR=!rol||u.rol===rol;
+    return matchQ&&matchR;
+  });
+  const c=document.getElementById('usuariosLista');
+  if(!f.length){c.innerHTML='<div class="empty"><div class="eico">📭</div><p>Sin usuarios encontrados</p></div>';return;}
+  c.innerHTML=f.map(u=>`
+    <div class="card">
+      <div class="card-h">
+        <div>
+          <div class="card-titulo">${u.nombre||'Sin nombre'}</div>
+          <div class="card-sub">📱 ${u.telefono||'—'} · ${u.ciudad||'—'}</div>
+        </div>
+        <span class="badge ${u.rol==='conductor'?'v':'i'}">${u.rol==='conductor'?'🚗 Conductor':'👤 Pasajero'}</span>
+      </div>
+      <div style="font-size:12px;color:var(--ts);margin-bottom:10px">
+        ⭐ ${u.estrellas||5}/5 · 💰 ${u.creditos||0} créditos · ${u.inactivo?'😴 Inactivo':'🟢 Activo'}
+      </div>
+      <div class="card-acciones">
+        ${u.rol==='pasajero'?`<button class="btn-sm v" onclick="cambiarRol('${u.id}','conductor','${u.ciudad?.toLowerCase()||'tauramena'}')">→ Hacer conductor</button>`:`<button class="btn-sm" onclick="cambiarRol('${u.id}','pasajero','${u.ciudad?.toLowerCase()||'tauramena'}')">→ Hacer pasajero</button>`}
+        <button class="btn-sm r" onclick="bloquearUsuario('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}')">🚫 Bloquear</button>
+      </div>
+    </div>`).join('');
+};
+
+window.cambiarRol=async(uid,nuevoRol,ciudad)=>{
+  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{rol:nuevoRol});toast('✅ Rol actualizado');cargarUsuarios();}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+window.bloquearUsuario=async(uid,ciudad)=>{
+  if(!confirm('¿Bloquear este usuario?'))return;
+  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{bloqueado:true,activo:false});toast('🚫 Usuario bloqueado');cargarUsuarios();}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ── APARIENCIA ──
+let _colorSelId='col-r';
+window.selColor=(hex,id)=>{
+  _colorSel=hex;_colorSelId=id;
+  document.querySelectorAll('.color-opt').forEach(el=>el.classList.remove('sel'));
+  document.getElementById(id).classList.add('sel');
+};
+
+window.guardarColor=async()=>{
+  try{
+    await setDoc(doc(db,'config','plataforma'),{carColor:_colorSel},{merge:true});
+    toast('🎨 Color del carrito actualizado en todos los dispositivos');
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+
+window.guardarFranja=async()=>{
+  const txt=document.getElementById('franjaTexto').value.trim();
+  const on=document.getElementById('togFranja').checked;
+  const col=document.getElementById('franjaColor').value;
+  if(on&&!txt){toast('⚠️ Escribe el mensaje de la franja','warning');return;}
+  try{
+    await setDoc(doc(db,'config','plataforma'),{franjaActiva:on,franjaTexto:txt,franjaColor:col},{merge:true});
+    toast(on?'📢 Franja activada en todos los dispositivos':'⏸ Franja desactivada');
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+window.apagarFranja=async()=>{
+  try{await setDoc(doc(db,'config','plataforma'),{franjaActiva:false},{merge:true});document.getElementById('togFranja').checked=false;toast('⏸ Franja apagada');}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ── PUBLICIDAD ──
+async function cargarCats(){
+  try{
+    const snap=await getDoc(doc(db,'config','plataforma'));
+    if(snap.exists()&&snap.data().catPub){
+      _catsPub=snap.data().catPub||[];
+      renderCats();
+    }else{renderCats();}
+  }catch(e){}
+}
+
+function renderCats(){
+  const c=document.getElementById('catsLista');
+  if(!_catsPub.length){c.innerHTML='<div class="empty"><p>Sin categorías — agrega la primera</p></div>';return;}
+  c.innerHTML=_catsPub.map((cat,i)=>`
+    <div class="cat-row">
+      <span class="cat-ico">${cat.icono||'📌'}</span>
+      <div class="cat-nom">${cat.nombre}</div>
+      <button class="btn-sm r" onclick="eliminarCat(${i})">✕</button>
+    </div>`).join('');
+}
+
+window.abrirAddCat=()=>{document.getElementById('catIco').value='';document.getElementById('catNom').value='';document.getElementById('mCat').classList.add('open');};
+window.guardarCat=async()=>{
+  const ico=document.getElementById('catIco').value.trim()||'📌';
+  const nom=document.getElementById('catNom').value.trim();
+  if(!nom){toast('⚠️ Escribe el nombre de la categoría','warning');return;}
+  _catsPub.push({icono:ico,nombre:nom});
+  try{await setDoc(doc(db,'config','plataforma'),{catPub:_catsPub},{merge:true});renderCats();cerrarM('mCat');toast('🏷️ Categoría agregada');}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+window.eliminarCat=async i=>{
+  if(!confirm('¿Eliminar esta categoría?'))return;
+  _catsPub.splice(i,1);
+  try{await setDoc(doc(db,'config','plataforma'),{catPub:_catsPub},{merge:true});renderCats();toast('🗑 Categoría eliminada');}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+window.cargarAnuncios=async()=>{
+  const ciudad=document.getElementById('filtAnuCiudad').value.trim().toLowerCase()||'tauramena';
+  const c=document.getElementById('anunciosLista');c.innerHTML='<div class="spinner"></div>';
+  try{
+    const snap=await getDocs(collection(db,'ciudades',ciudad,'anuncios'));
+    const al=[];snap.forEach(d=>al.push({id:d.id,...d.data()}));
+    if(!al.length){c.innerHTML='<div class="empty"><div class="eico">📭</div><p>Sin anuncios aún</p></div>';return;}
+    c.innerHTML=al.map(a=>`
+      <div class="card">
+        <div class="card-h">
+          <div><div class="card-titulo">${a.nombre}</div><div class="card-sub">${a.categoria||'—'} · ${ciudad}</div></div>
+          <span class="badge ${a.activo?'v':'g'}">${a.activo?'✅ Activo':'⏸ Inactivo'}</span>
+        </div>
+        <div style="font-size:12px;color:var(--ts);margin-bottom:10px">${a.descripcion||''}</div>
+        <div class="card-acciones">
+          <button class="btn-sm ${a.activo?'r':'v'}" onclick="toggleAnuncio('${a.id}','${ciudad}',${!a.activo})">${a.activo?'⏸ Desactivar':'▶️ Activar'}</button>
+          <button class="btn-sm r" onclick="eliminarAnuncio('${a.id}','${ciudad}')">🗑 Eliminar</button>
+        </div>
+      </div>`).join('');
+  }catch(e){c.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
+};
+
+window.abrirAddAnuncio=()=>{['aNom','aDesc','aCat','aWsp','aDir'].forEach(i=>document.getElementById(i).value='');document.getElementById('mAnuncio').classList.add('open');};
+window.guardarAnuncio=async()=>{
+  const n=document.getElementById('aNom').value.trim(),ciudad=document.getElementById('aCiu').value.trim().toLowerCase();
+  if(!n){toast('⚠️ Escribe el nombre del negocio','warning');return;}
+  try{
+    await addDoc(collection(db,'ciudades',ciudad,'anuncios'),{nombre:n,descripcion:document.getElementById('aDesc').value.trim(),categoria:document.getElementById('aCat').value.trim(),whatsapp:document.getElementById('aWsp').value.trim().replace(/\D/g,''),direccion:document.getElementById('aDir').value.trim(),activo:true,timestamp:serverTimestamp()});
+    cerrarM('mAnuncio');toast('📣 Anuncio publicado');cargarAnuncios();
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+window.toggleAnuncio=async(id,ciudad,activo)=>{
+  try{await updateDoc(doc(db,'ciudades',ciudad,'anuncios',id),{activo});toast(activo?'▶️ Anuncio activado':'⏸ Anuncio desactivado');cargarAnuncios();}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+window.eliminarAnuncio=async(id,ciudad)=>{
+  if(!confirm('¿Eliminar este anuncio?'))return;
+  try{await deleteDoc(doc(db,'ciudades',ciudad,'anuncios',id));toast('🗑 Anuncio eliminado');cargarAnuncios();}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ── CONFIGURACIÓN ──
+async function cargarConfigActual(){
+  try{
+    const snap=await getDoc(doc(db,'config','plataforma'));
+    if(snap.exists()){
+      const d=snap.data();
+      if(d.wspAdmin)document.getElementById('cfgWsp').value=d.wspAdmin;
+      if(d.wspMensaje)document.getElementById('cfgMsg').value=d.wspMensaje;
+      if(d.creditosBienvenida)document.getElementById('cfgCred').value=d.creditosBienvenida;
+      if(d.franjaTexto)document.getElementById('franjaTexto').value=d.franjaTexto;
+      if(d.franjaActiva)document.getElementById('togFranja').checked=d.franjaActiva;
+      if(d.tiempoSinConfirmar)document.getElementById('cfgT1').value=d.tiempoSinConfirmar;
+      if(d.tiempoDesactivar)document.getElementById('cfgT2').value=d.tiempoDesactivar;
+      if(d.confirmsParaLibre)document.getElementById('cfgT3').value=d.confirmsParaLibre;
+      if(d.carColor){
+        const m={'#ef4444':'col-r','#22c55e':'col-v','#f59e0b':'col-a','#3b82f6':'col-az','#8b5cf6':'col-p'};
+        if(m[d.carColor]){document.querySelectorAll('.color-opt').forEach(el=>el.classList.remove('sel'));document.getElementById(m[d.carColor])?.classList.add('sel');_colorSel=d.carColor;}
+      }
+    }
+  }catch(e){}
+}
+
+window.guardarWsp=async()=>{
+  const wsp=document.getElementById('cfgWsp').value.trim().replace(/\D/g,'');
+  const msg=document.getElementById('cfgMsg').value.trim();
+  if(!wsp||wsp.length<10){toast('⚠️ Número inválido','warning');return;}
+  try{await setDoc(doc(db,'config','plataforma'),{wspAdmin:wsp,wspMensaje:msg||'Hola, necesito información sobre RUTA LIBRE 👋'},{merge:true});toast('📲 WhatsApp actualizado en todos los dispositivos');}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+window.guardarCreditos=async()=>{
+  const c=parseInt(document.getElementById('cfgCred').value)||10;
+  try{await setDoc(doc(db,'config','plataforma'),{creditosBienvenida:c},{merge:true});toast('💰 Créditos actualizados');}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+window.guardarTiempos=async()=>{
+  const t1=parseInt(document.getElementById('cfgT1').value)||45;
+  const t2=parseInt(document.getElementById('cfgT2').value)||120;
+  const t3=parseInt(document.getElementById('cfgT3').value)||2;
+  try{await setDoc(doc(db,'config','plataforma'),{tiempoSinConfirmar:t1,tiempoDesactivar:t2,confirmsParaLibre:t3},{merge:true});toast('⏱ Tiempos actualizados');}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+// Servicios futuros
+function cargarSrvFuturos(){
+  const w=document.getElementById('srvFuturos');
+  ['srv4','srv5','srv6'].forEach((k,i)=>{
+    w.innerHTML+=`<div class="card" style="margin-bottom:12px">
+      <div class="form-sec">Botón ${i+4}</div>
+      <div class="fgrid c2" style="margin-bottom:12px">
+        <div class="fg"><label>Ícono</label><input type="text" id="${k}Ico" class="inp" placeholder="🔧" maxlength="4"></div>
+        <div class="fg"><label>Nombre</label><input type="text" id="${k}Nom" class="inp" placeholder="Ej: Domicilios" maxlength="20"></div>
+        <div class="fg"><label>Descripción</label><input type="text" id="${k}Des" class="inp" placeholder="Ej: Pedidos a domicilio" maxlength="40"></div>
+      </div>
+      <button class="btn-p" style="max-width:180px" onclick="activarSrv('${k}')">✅ Activar servicio</button>
+    </div>`;
+  });
+}
+
+window.activarSrv=async k=>{
+  const ico=document.getElementById(k+'Ico').value.trim()||'🔧';
+  const nom=document.getElementById(k+'Nom').value.trim();
+  const des=document.getElementById(k+'Des').value.trim();
+  if(!nom){toast('⚠️ Escribe el nombre del servicio','warning');return;}
+  const data={};data[k]={icono:ico,nombre:nom,desc:des,activo:true};
+  try{await setDoc(doc(db,'config','plataforma'),data,{merge:true});toast('✅ Servicio activado en todos los dispositivos');}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ── MODAL Y TOAST ──
+window.cerrarM=id=>document.getElementById(id).classList.remove('open');
+document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+
+window.toast=(m,t='success')=>{
+  document.querySelectorAll('.toast').forEach(x=>x.remove());
+  const cols={success:'#22c55e',error:'#ef4444',warning:'#f59e0b',info:'#6366f1'};
+  const el=document.createElement('div');el.className='toast';el.style.borderLeftColor=cols[t]||cols.info;el.textContent=m;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+};
+
+// Cargar usuarios al entrar a esa sección
+document.getElementById('n-usuarios')?.addEventListener('click',()=>cargarUsuarios());
+document.getElementById('n-alertas')?.addEventListener('click',()=>window.cargarAlertas());
+document.getElementById('n-puntos')?.addEventListener('click',()=>cargarPuntos());
+</script>
+</body>
+</html>
