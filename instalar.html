@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Instalar RUTA LIBRE</title>
+  <!-- Open Graph para WhatsApp -->
+  <meta property="og:title" content="🚗 RUTA LIBRE — Instalar App">
+  <meta property="og:description" content="App comunitaria de alertas de retenes para conductores. Gratis. Sin tienda de apps.">
+  <meta property="og:image" content="./icon-512.png">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0a0a0f;--surf:#12121a;--elev:#1a1a26;--hov:#22223a;
+      --acc:#6366f1;--acc-g:rgba(99,102,241,0.18);
+      --v:#22c55e;--r:#ef4444;--am:#f59e0b;
+      --tp:#f1f5f9;--ts:#94a3b8;--tm:#475569;
+      --bs:rgba(255,255,255,0.06);--bn:rgba(255,255,255,0.12);
+      --wsp:#25d366;--ios:#007aff;
+      --rmd:12px;--rlg:16px;--rxl:22px;--rfl:9999px
+    }
+    html,body{min-height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--tp);line-height:1.55;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+
+    /* FONDO SUTIL */
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(99,102,241,0.18) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+    .wrap{max-width:440px;margin:0 auto;padding:32px 20px 60px;position:relative;z-index:1}
+
+    /* CABECERA */
+    .head{text-align:center;margin-bottom:36px}
+    .car-wrap{width:88px;height:88px;border-radius:24px;background:var(--surf);border:1px solid var(--bn);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:48px;box-shadow:0 8px 32px rgba(99,102,241,0.2)}
+    .head h1{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,#f1f5f9,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+    .head p{color:var(--ts);font-size:14px;line-height:1.5;max-width:280px;margin:0 auto}
+
+    /* BADGE GRATIS */
+    .badge-gratis{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);border-radius:var(--rfl);padding:5px 14px;font-size:12px;font-weight:700;color:var(--v);margin:12px auto 0;letter-spacing:0.3px}
+
+    /* TABS DE OS */
+    .os-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:6px}
+    .os-tab{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:var(--rmd);cursor:pointer;font-weight:600;font-size:14px;border:none;background:transparent;color:var(--ts);transition:all 0.2s;font-family:'Inter',sans-serif}
+    .os-tab.on{background:var(--elev);color:var(--tp);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+    .os-tab svg{width:18px;height:18px;flex-shrink:0}
+
+    /* SECCIONES DE OS */
+    .os-content{display:none}
+    .os-content.on{display:block;animation:fadeUp 0.25s ease}
+
+    /* PASOS */
+    .step-list{display:flex;flex-direction:column;gap:14px;margin-bottom:24px}
+    .step{display:flex;gap:14px;align-items:flex-start;background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:16px}
+    .step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:14px;flex-shrink:0;margin-top:1px}
+    .step-num.a{background:rgba(34,197,94,0.15);color:var(--v);border:1.5px solid rgba(34,197,94,0.3)}
+    .step-num.i{background:rgba(0,122,255,0.15);color:var(--ios);border:1.5px solid rgba(0,122,255,0.3)}
+    .step-body h3{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:3px}
+    .step-body p{font-size:13px;color:var(--ts);line-height:1.5}
+    .step-body .hint{display:inline-flex;align-items:center;gap:4px;background:var(--elev);border-radius:var(--rmd);padding:4px 10px;font-size:12px;color:var(--ts);margin-top:8px}
+    .step-body .tag{background:var(--acc-g);color:#a5b4fc;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;border:1px solid rgba(99,102,241,0.25)}
+
+    /* BOTÓN PRINCIPAL ANDROID */
+    .btn-android{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:var(--rlg);font-family:'Sora',sans-serif;font-weight:700;font-size:16px;cursor:pointer;text-decoration:none;box-shadow:0 4px 20px rgba(34,197,94,0.35);transition:all 0.2s;margin-bottom:10px}
+    .btn-android:hover,.btn-android:active{transform:translateY(-1px);box-shadow:0 6px 28px rgba(34,197,94,0.45)}
+
+    /* BOTÓN ENLACE iOS */
+    .btn-ios{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px;background:linear-gradient(135deg,#007aff,#0055cc);color:white;border:none;border-radius:var(--rlg);font-family:'Sora',sans-serif;font-weight:700;font-size:16px;cursor:pointer;text-decoration:none;box-shadow:0 4px 20px rgba(0,122,255,0.35);transition:all 0.2s;margin-bottom:10px}
+    .btn-ios:hover,.btn-ios:active{transform:translateY(-1px);box-shadow:0 6px 28px rgba(0,122,255,0.45)}
+
+    /* NOTA COMPARTIR */
+    .share-note{background:var(--surf);border:1px solid var(--bn);border-radius:var(--rlg);padding:16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
+    .share-note .ico{font-size:24px;flex-shrink:0;margin-top:2px}
+    .share-note h4{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px}
+    .share-note p{font-size:12px;color:var(--ts);line-height:1.5}
+
+    /* URL COPIABLE */
+    .url-box{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;margin-bottom:6px}
+    .url-txt{font-size:13px;color:var(--ts);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace}
+    .btn-copy{background:var(--acc-g);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc;border-radius:var(--rmd);padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:'Inter',sans-serif}
+    .btn-copy:hover{background:rgba(99,102,241,0.3)}
+    .btn-copy.ok{background:rgba(34,197,94,0.2);border-color:rgba(34,197,94,0.3);color:var(--v)}
+
+    /* BOTÓN COMPARTIR POR WSP */
+    .btn-wsp{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#25d366;color:white;border:none;border-radius:var(--rlg);font-family:'Sora',sans-serif;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;box-shadow:0 4px 16px rgba(37,211,102,0.3);transition:all 0.2s;margin-top:8px}
+    .btn-wsp:hover,.btn-wsp:active{background:#1da851;transform:translateY(-1px)}
+
+    /* FEATURES */
+    .features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
+    .feat{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px 12px;text-align:center}
+    .feat .ico{font-size:28px;display:block;margin-bottom:6px}
+    .feat .nom{font-family:'Sora',sans-serif;font-size:12px;font-weight:700;display:block;margin-bottom:2px}
+    .feat .des{font-size:11px;color:var(--tm);line-height:1.4}
+
+    /* ADVERTENCIA APK */
+    .warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:var(--rlg);padding:14px;margin-bottom:14px;font-size:12px;color:#fde68a;line-height:1.6}
+    .warn strong{display:block;margin-bottom:4px;font-size:13px}
+
+    /* FOOTER */
+    .foot{text-align:center;margin-top:32px;color:var(--tm);font-size:12px}
+    .foot span{color:var(--ts)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- CABECERA -->
+  <div class="head">
+    <div class="car-wrap">🚗</div>
+    <h1>RUTA LIBRE</h1>
+    <p>App comunitaria de alertas de retenes para conductores del Casanare</p>
+    <div class="badge-gratis">✅ Gratis · Sin anuncios · Sin tienda de apps</div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="feat"><span class="ico">🚨</span><span class="nom">Alertas en vivo</span><span class="des">Retenes y accidentes en tiempo real</span></div>
+    <div class="feat"><span class="ico">🗺️</span><span class="nom">Puntos de vía</span><span class="des">Estado de cada punto de la ruta</span></div>
+    <div class="feat"><span class="ico">📦</span><span class="nom">Encomiendas</span><span class="des">Envía y recibe paquetes</span></div>
+    <div class="feat"><span class="ico">💬</span><span class="nom">Comunidad</span><span class="des">Conductores conectados</span></div>
+  </div>
+
+  <!-- TABS ANDROID / iOS -->
+  <div class="os-tabs">
+    <button class="os-tab on" id="tab-and" onclick="switchOS('android')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a.82.82 0 1 1 0-1.64.82.82 0 0 1 0 1.64m-11.046 0a.82.82 0 1 1 0-1.64.82.82 0 0 1 0 1.64m11.4-6.01l1.64-2.84a.34.34 0 1 0-.589-.34l-1.66 2.875A10.2 10.2 0 0 0 12 8.16c-1.504 0-2.93.324-4.268.866L6.07 6.151a.34.34 0 1 0-.589.34l1.639 2.84C4.63 10.743 2.8 13.3 2.8 16.28h18.4c0-2.98-1.83-5.537-4.323-6.949"/></svg>
+      Android
+    </button>
+    <button class="os-tab" id="tab-ios" onclick="switchOS('ios')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      iPhone (iOS)
+    </button>
+  </div>
+
+  <!-- CONTENIDO ANDROID -->
+  <div class="os-content on" id="cnt-android">
+
+    <div class="warn">
+      <strong>⚠️ Antes de instalar en Android:</strong>
+      Android pedirá que actives "Instalar apps desconocidas". Es normal en apps fuera de Play Store. Solo toca <strong>Permitir</strong> cuando aparezca la advertencia.
+    </div>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step-num a">1</div>
+        <div class="step-body">
+          <h3>Descarga el archivo APK</h3>
+          <p>Toca el botón verde de abajo. El archivo se descarga directo a tu celular.</p>
+          <span class="hint">📁 Archivo: <strong>ruta-libre.apk</strong> (~2 MB)</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num a">2</div>
+        <div class="step-body">
+          <h3>Abre el archivo descargado</h3>
+          <p>Ve a <strong>Descargas</strong> en tu celular o desliza la barra de notificaciones y toca el archivo.</p>
+          <span class="hint">📂 O abre el administrador de archivos → Descargas</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num a">3</div>
+        <div class="step-body">
+          <h3>Permite la instalación</h3>
+          <p>Si Android pregunta "¿Permitir instalar apps de fuentes desconocidas?", toca <strong>Configuración</strong> y activa el permiso. Luego regresa e instala.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num a">4</div>
+        <div class="step-body">
+          <h3>Abre RUTA LIBRE</h3>
+          <p>Toca <strong>Abrir</strong> o busca el ícono del carrito 🚗 en tu pantalla principal.</p>
+          <span class="hint">✅ Listo — ya puedes registrarte</span>
+        </div>
+      </div>
+    </div>
+
+    <a href="./ruta-libre.apk" download="ruta-libre.apk" class="btn-android" id="btnApk">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Descargar APK para Android
+    </a>
+
+    <div class="share-note">
+      <span class="ico">📤</span>
+      <div>
+        <h4>Comparte con otros conductores</h4>
+        <p>Copia el enlace y mándalo por WhatsApp — así cualquiera lo instala desde el celular sin complicaciones.</p>
+      </div>
+    </div>
+
+    <div class="url-box">
+      <span class="url-txt" id="urlTexto">https://tu-usuario.github.io/ruta-libre/instalar</span>
+      <button class="btn-copy" id="btnCopy" onclick="copiarUrl()">Copiar</button>
+    </div>
+
+    <a class="btn-wsp" id="btnWspAnd" href="#" onclick="compartirWsp()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+      Enviar por WhatsApp
+    </a>
+  </div>
+
+  <!-- CONTENIDO iOS -->
+  <div class="os-content" id="cnt-ios">
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step-num i">1</div>
+        <div class="step-body">
+          <h3>Abre este enlace en Safari</h3>
+          <p>En iPhone, la instalación debe hacerse desde <strong>Safari</strong> (no Chrome ni otro navegador). Si estás en WhatsApp, toca los 3 puntos <span class="tag">···</span> → <strong>Abrir en Safari</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num i">2</div>
+        <div class="step-body">
+          <h3>Toca el botón "Compartir"</h3>
+          <p>En Safari, en la parte de abajo, toca el ícono de compartir <span class="tag">⬆️</span> (cuadrado con flechita arriba).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num i">3</div>
+        <div class="step-body">
+          <h3>Selecciona "Agregar a inicio"</h3>
+          <p>En el menú que aparece, busca y toca <strong>"Agregar a pantalla de inicio"</strong> o <strong>"Add to Home Screen"</strong>.</p>
+          <span class="hint">📱 Baja en el menú si no lo ves a primera vista</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num i">4</div>
+        <div class="step-body">
+          <h3>Confirma el nombre y agrega</h3>
+          <p>Aparecerá el nombre <strong>"RUTA LIBRE"</strong>. Toca <strong>Agregar</strong> arriba a la derecha.</p>
+          <span class="hint">✅ El ícono del carrito 🚗 aparece en tu pantalla</span>
+        </div>
+      </div>
+    </div>
+
+    <a href="./index.html" class="btn-ios">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Abrir en Safari (paso previo)
+    </a>
+
+    <div class="share-note">
+      <span class="ico">ℹ️</span>
+      <div>
+        <h4>¿Por qué no hay APK para iPhone?</h4>
+        <p>Apple no permite instalar apps fuera de su tienda. Pero la PWA (instalada desde Safari) funciona igual: ícono en la pantalla, abre sola y se usa como una app normal.</p>
+      </div>
+    </div>
+
+    <a class="btn-wsp" href="#" onclick="compartirWsp()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+      Enviar enlace por WhatsApp
+    </a>
+  </div>
+
+  <div class="foot">
+    <span>RUTA LIBRE</span> · Tauramena, Casanare 🇨🇴<br>
+    Hecho por y para la comunidad de conductores
+  </div>
+
+</div>
+
+<script>
+  // ── DETECTAR OS ──
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+
+  // Auto-seleccionar tab según el dispositivo
+  window.addEventListener('load', () => {
+    if(isIOS) switchOS('ios');
+    else switchOS('android');
+    // Poner la URL actual
+    document.getElementById('urlTexto').textContent = window.location.href;
+  });
+
+  function switchOS(os) {
+    document.getElementById('cnt-android').classList.toggle('on', os === 'android');
+    document.getElementById('cnt-ios').classList.toggle('on', os === 'ios');
+    document.getElementById('tab-and').classList.toggle('on', os === 'android');
+    document.getElementById('tab-ios').classList.toggle('on', os === 'ios');
+  }
+
+  // ── COPIAR URL ──
+  function copiarUrl() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById('btnCopy');
+      btn.textContent = '✅ Copiado';
+      btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 2000);
+    }).catch(() => {
+      // Fallback para navegadores sin clipboard API
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const btn = document.getElementById('btnCopy');
+      btn.textContent = '✅ Copiado';
+      btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 2000);
+    });
+  }
+
+  // ── COMPARTIR POR WHATSAPP ──
+  function compartirWsp() {
+    const url = encodeURIComponent(window.location.href);
+    const msg = encodeURIComponent(
+      '🚗 *RUTA LIBRE* — La app comunitaria de alertas de retenes\n\n' +
+      '✅ Gratis · Sin tienda de apps · Funciona en Android e iPhone\n\n' +
+      'Instálala desde aquí → ' + window.location.href
+    );
+    window.open(`https://wa.me/?text=${msg}`, '_blank');
+    return false;
+  }
+
+  // ── PROMPT INSTALACIÓN ANDROID (PWA) ──
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Mostrar botón extra de "Instalar como app" si hay soporte
+    const extra = document.createElement('button');
+    extra.textContent = '📲 Instalar como app (sin APK)';
+    extra.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--elev);color:var(--ts);border:1px solid var(--bn);border-radius:16px;font-family:Sora,sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-top:10px';
+    extra.onclick = () => { deferredPrompt.prompt(); };
+    document.getElementById('cnt-android').appendChild(extra);
+  });
+</script>
+</body>
+</html>
