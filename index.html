@@ -248,6 +248,32 @@
     @keyframes pa{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.5)}50%{box-shadow:0 0 0 14px rgba(245,158,11,0)}}
     @keyframes pcr{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.15)}50%{box-shadow:0 0 10px rgba(239,68,68,0.25)}}
     @keyframes pulso-dot{0%,100%{opacity:1}50%{opacity:0.5}}
+    /* ── VÍA V3: mini-panels solicitudes y encomiendas ── */
+    .via-panel{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);margin:0 16px 10px;overflow:hidden}
+    .via-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none}
+    .via-panel-tit{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+    .via-panel-badge{background:var(--r);color:white;border-radius:var(--rfl);font-size:10px;font-weight:700;padding:1px 7px;min-width:18px;text-align:center}
+    .via-panel-badge.am{background:var(--am)}
+    .via-panel-body{display:none;border-top:1px solid var(--bs);max-height:320px;overflow-y:auto}
+    .via-panel-body.open{display:block}
+    .via-sol-card{padding:12px 14px;border-bottom:1px solid var(--bs);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .via-sol-card:last-child{border-bottom:none}
+    .via-sol-info .ruta{font-family:'Sora',sans-serif;font-size:13px;font-weight:700}
+    .via-sol-info .meta{font-size:11px;color:var(--ts);margin-top:2px}
+    .via-sol-info .precio{font-size:11px;color:var(--v);font-weight:600;margin-top:2px}
+    .btn-tomar-via{background:linear-gradient(135deg,var(--acc),#8b5cf6);color:white;border:none;border-radius:var(--rmd);padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;transition:all 0.15s}
+    .btn-tomar-via:hover{transform:scale(1.04)}
+    .btn-tomar-via.enc{background:linear-gradient(135deg,var(--am),#d97706)}
+    .via-empty-panel{padding:16px;text-align:center;font-size:12px;color:var(--tm)}
+    /* Botón ir a pantalla compartida */
+    .btn-shared-screen{display:flex;align-items:center;justify-content:space-between;margin:0 16px 12px;background:var(--surf);border:1px solid var(--bn);border-radius:var(--rlg);padding:11px 16px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
+    .btn-shared-screen:hover{border-color:var(--acc)}
+    .btn-shared-screen span{font-size:13px;font-weight:600;color:var(--ts)}
+    .btn-shared-screen .arr{color:var(--acc);font-size:16px}
+    /* Botón regresar a pantalla conductor */
+    .btn-back-via{display:none;align-items:center;gap:8px;margin:12px 16px;background:var(--acc-g);border:1px solid rgba(99,102,241,0.3);border-radius:var(--rlg);padding:10px 16px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--acc)}
+    .btn-back-via.show{display:flex}
+
     /* ── V3 SOS ── */
     .btn-sos{position:fixed;bottom:144px;right:16px;background:linear-gradient(135deg,#dc2626,#991b1b);color:white;border:none;border-radius:50%;width:54px;height:54px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:51;box-shadow:0 4px 20px rgba(239,68,68,0.6);font-size:22px;animation:prSOS 2s infinite;flex-direction:column;gap:0}
     .btn-sos.show{display:flex}
@@ -380,13 +406,49 @@
       <div class="puntos-tit"><span>📍 Puntos de la vía</span><span id="puntosTiem" style="font-size:10px;font-weight:400"></span></div>
       <div class="puntos-grid" id="puntosGrid"></div>
       <button class="btn-add-punto co" onclick="abrirM('mPunto')">+ Agregar punto</button>
-      <button class="btn-add-punto co" onclick="abrirCondiciones()" style="border-color:rgba(245,158,11,0.4);color:var(--am);margin-top:6px">⚠️ Reportar condición de vía</button>
+      <button class="btn-add-punto co" onclick="abrirCondiciones()"  style="border-color:rgba(245,158,11,0.4);color:var(--am);margin-top:6px">⚠️ Reportar condición de vía</button>
     </div>
+    <!-- MINI-PANEL SOLICITUDES DE PASAJEROS -->
+    <div class="via-panel co" id="viaPanelPas">
+      <div class="via-panel-hdr" onclick="toggleViaPanel('viaPanelPasBod','viaPasArr')">
+        <div class="via-panel-tit">👤 Solicitudes de pasajeros
+          <span class="via-panel-badge am" id="viaPasBadge">0</span>
+        </div>
+        <span style="color:var(--tm);font-size:12px" id="viaPasArr">▼</span>
+      </div>
+      <div class="via-panel-body" id="viaPanelPasBod">
+        <div id="viaPasLista"><div class="via-empty-panel">Sin solicitudes pendientes</div></div>
+      </div>
+    </div>
+
+    <!-- MINI-PANEL ENCOMIENDAS -->
+    <div class="via-panel co" id="viaPanelEnc">
+      <div class="via-panel-hdr" onclick="toggleViaPanel('viaPanelEncBod','viaEncArr')">
+        <div class="via-panel-tit">📦 Encomiendas disponibles
+          <span class="via-panel-badge" id="viaEncBadge">0</span>
+        </div>
+        <span style="color:var(--tm);font-size:12px" id="viaEncArr">▼</span>
+      </div>
+      <div class="via-panel-body" id="viaPanelEncBod">
+        <div id="viaEncLista"><div class="via-empty-panel">Sin encomiendas pendientes</div></div>
+      </div>
+    </div>
+
+    <!-- BOTÓN IR A PANTALLA COMPARTIDA -->
+    <button class="btn-shared-screen co" onclick="irPantallaCompartida()">
+      <span>🏠 Inicio, anuncios y servicios</span>
+      <span class="arr">→</span>
+    </button>
+
     <div style="height:16px"></div>
   </div>
 
   <!-- INICIO -->
   <div class="pant" id="pIni">
+    <!-- Botón regresar a pantalla conductor (solo conductores) -->
+    <button class="btn-back-via co" id="btnBackVia" onclick="navGo('pVia','nV')">
+      ← Regresar a La Vía
+    </button>
     <div class="p2-wrap">
       <div class="p2-title">👋 Hola, <span id="pSaludo">—</span></div>
       <div class="p2-sub" id="pSubtitle">Servicios de tu comunidad</div>
@@ -748,13 +810,34 @@ const VECINAS={
   'pore':['pore','yopal','paz de ariporo','trinidad'],
   'default':['tauramena','yopal','aguazul','villanueva']
 };
-let ciudadVista=null; // ciudad que el usuario está explorando manualmentelet estadoVia='libre';let encTab='disponibles';let pasTab='solicitudes';let chatAbierto=false;let ultimoReporte=0;let timerAlertas=null;
+let ciudadVista=null;
+let estadoVia='libre';
+let encTab='disponibles';
+let pasTab='solicitudes';
+let chatAbierto=false;
+let ultimoReporte=0;
+let timerAlertas=null;
 
 // ── AUDIO ──
 let aC=null;
 const gA=()=>{if(!aC)aC=new(window.AudioContext||window.webkitAudioContext)();return aC;};
 const tonoR=(v=7)=>{const c=gA(),vl=v/10;[0,.4,.8].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;o.type='square';g.gain.setValueAtTime(0,c.currentTime+t);g.gain.linearRampToValueAtTime(vl*.4,c.currentTime+t+.05);g.gain.linearRampToValueAtTime(0,c.currentTime+t+.25);o.start(c.currentTime+t);o.stop(c.currentTime+t+.3);});};
-const tonoP=()=>{if(!SND.pas)return;const c=gA();[[523.25,0],[392,.35]].forEach(([f,t])=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.3,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.6);o.start(c.currentTime+t);o.stop(c.currentTime+t+.7);});};
+const tonoP=()=>{
+  if(!SND.pas)return;
+  const ctx=gA();
+  // 3 notas ascendentes más llamativas para pasajero
+  [[440,0,'sine'],[554,.3,'sine'],[659,.6,'triangle']].forEach(([f,t,type])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=f;o.type=type;
+    g.gain.setValueAtTime(0,ctx.currentTime+t);
+    g.gain.linearRampToValueAtTime(.4,ctx.currentTime+t+.05);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+t+.55);
+    o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.6);
+  });
+  // Vibración distintiva para pasajero
+  if(navigator.vibrate)navigator.vibrate([150,80,150,80,300]);
+};
 const tonoE=()=>{if(!SND.enc)return;const c=gA();[0,.25,.5].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=1047;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.4);o.start(c.currentTime+t);o.stop(c.currentTime+t+.45);});};
 const tonoChat=()=>{if(!SND.chat)return;const c=gA();[[880,0],[1100,.2]].forEach(([f,t])=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.2,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.3);o.start(c.currentTime+t);o.stop(c.currentTime+t+.35);});};
 window.probar=t=>{if(t==='r')tonoR(SND.vol);if(t==='p'){SND.pas=true;tonoP();}if(t==='e'){SND.enc=true;tonoE();}if(t==='c'){SND.chat=true;tonoChat();}};
@@ -899,7 +982,7 @@ function mostrarApp(){
   document.getElementById('pCred2').textContent=(U.creditos||0)+' créditos';document.getElementById('credSaldo').textContent=U.creditos||0;
   document.getElementById('pFecha').textContent=new Date(U.fechaReg).toLocaleDateString('es-CO');
   if(!eC)escucharAlertasPas();loadSnd();cargarCFG();cargarPuntos();
-  if(eC){escucharAlertasCiudadActiva();escucharEncDisp();escucharSolsDisp();iniciarAutoExpiry();mostrarBtnSOS(true);}
+  if(eC){escucharAlertasCiudadActiva();escucharEncDisp();escucharSolsDisp();iniciarAutoExpiry();mostrarBtnSOS(true);escucharSolsEnVia();escucharEncEnVia();}
   if(deferredPWA)document.getElementById('btnInstalar').style.display='block';
   setTimeout(cargarEstadisticasPerfil,2000);
   // Solicitar permisos de notificación (una vez)
@@ -1052,7 +1135,10 @@ window.confA=async id=>{try{const r=doc(db,'ciudades',U.ciudad.toLowerCase(),'al
 window.yaP=async id=>{try{const r=doc(db,'ciudades',U.ciudad.toLowerCase(),'alertas',id),s=await getDoc(r);if(s.exists()){const yp=(s.data().yaPasaron||0)+1;await updateDoc(r,{yaPasaron:yp,...(yp>=2?{activa:false}:{})});toast(yp>=2?'🟢 Alerta desactivada':'🟡 Registrado');}}catch(e){toast('❌ '+e.message,'error');}};
 
 // ── MODAL REPORTE ──
-window.abrirModal=()=>{if(inact){toast('⚠️ Actívate primero','warning');return;}tipoR=null;sentR=null;ptoR=null;document.getElementById('pGps').textContent='Detectando...';document.getElementById('iNota').value='';document.getElementById('iNvoP').value='';document.getElementById('nvoP').style.display='none';document.getElementById('selPM').value='';document.querySelectorAll('.tipo-b,.sent-b').forEach(b=>b.className=b.className.replace(/\s*(sr|sa|so|on)\b/g,''));abrirM('mRep');navigator.geolocation?.getCurrentPosition(()=>document.getElementById('pGps').textContent='✅ Ubicación detectada',()=>document.getElementById('pGps').textContent='Sin GPS — elige manual',{timeout:5000});};
+window.abrirModal=()=>{if(inact){toast('⚠️ Actívate primero','warning');return;}tipoR=null;sentR=null;ptoR=null;document.getElementById('pGps').textContent='Detectando...';document.getElementById('iNota').value='';document.getElementById('iNvoP').value='';document.getElementById('nvoP').style.display='none';document.getElementById('selPM').value='';document.querySelectorAll('.tipo-b,.sent-b').forEach(b=>b.className=b.className.replace(/\s*(sr|sa|so|on)\b/g,''));abrirM('mRep');navigator.geolocation?.getCurrentPosition(pos=>{
+    gpsLat=pos.coords.latitude;gpsLng=pos.coords.longitude;
+    document.getElementById('pGps').textContent='✅ '+gpsLat.toFixed(4)+', '+gpsLng.toFixed(4);
+  },()=>{gpsLat=null;gpsLng=null;document.getElementById('pGps').textContent='Sin GPS — elige punto manual';},{timeout:5000});};
 window.sTipo=t=>{tipoR=t;document.querySelectorAll('.tipo-b').forEach(b=>b.classList.remove('sr','sa','so'));document.getElementById(t==='reten'?'tR':t==='accidente'?'tA':'tO').classList.add(t==='reten'?'sr':t==='accidente'?'sa':'so');};
 window.sSent=s=>{sentR=s;document.querySelectorAll('.sent-b').forEach(b=>b.classList.remove('on'));document.getElementById(s==='ida'?'sI':s==='vuelta'?'sV':'sA').classList.add('on');};
 window.sPtoM=()=>{const v=document.getElementById('selPM').value;if(v==='nuevo'){document.getElementById('nvoP').style.display='block';ptoR=null;}else if(v){ptoR=v;document.getElementById('pGps').textContent=v;document.getElementById('nvoP').style.display='none';}};
@@ -1064,7 +1150,7 @@ window.enviar=async()=>{
   const ahora=Date.now();if(ahora-ultimoReporte<300000){const rest=Math.ceil((300000-(ahora-ultimoReporte))/60000);toast(`⏳ Espera ${rest} min antes de reportar de nuevo`,'warning');return;}
   let pf=ptoR;if(!pf){const nv=document.getElementById('iNvoP').value.trim();if(nv)pf=nv;else{toast('⚠️ Elige el punto','warning');return;}}
   const btn=document.getElementById('btnEnv');btn.disabled=true;btn.textContent='Enviando...';
-  try{await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'alertas'),{tipo:tipoR,punto:pf,sentido:sentR,nota:document.getElementById('iNota').value.trim(),activa:true,confirmaciones:0,yaPasaron:0,conductorId:U.uid,conductorNombre:U.nombre,timestamp:serverTimestamp(),ciudad:U.ciudad.toLowerCase()});ultimoReporte=Date.now();cerrarM('mRep');tonoR(SND.vol);toast('🚨 Alerta enviada a todos');celebrar();}
+  try{await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'alertas'),{tipo:tipoR,punto:pf,sentido:sentR,nota:document.getElementById('iNota').value.trim(),activa:true,confirmaciones:0,yaPasaron:0,conductorId:U.uid,conductorNombre:U.nombre,lat:gpsLat,lng:gpsLng,timestamp:serverTimestamp(),ciudad:U.ciudad.toLowerCase()});ultimoReporte=Date.now();cerrarM('mRep');tonoR(SND.vol);toast('🚨 Alerta enviada a todos');celebrar();}
   catch(e){toast('❌ '+e.message,'error');}
   btn.disabled=false;btn.textContent='🚨 Enviar alerta a todos';
 };
@@ -1096,10 +1182,12 @@ window.cargarEncomiendas=()=>{
   });
 };
 function escucharEncDisp(){
+  let prevEnc=-1;
   onSnapshot(collection(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas'),snap=>{
-    let c=0;snap.forEach(d=>{if(d.data().activa&&d.data().estado==='esperando')c++;});
-    const b=document.getElementById('encBadge');if(b){b.textContent=c;b.style.display=c>0?'flex':'none';}
-    if(c>0)tonoE();
+    let cnt=0;snap.forEach(d=>{if(d.data().activa&&d.data().estado==='esperando')cnt++;});
+    const b=document.getElementById('encBadge');if(b){b.textContent=cnt;b.style.display=cnt>0?'flex':'none';}
+    if(prevEnc>=0&&cnt>prevEnc)tonoE();
+    prevEnc=cnt;
   });
 }
 window.enviarEncomienda=async()=>{
@@ -1186,11 +1274,13 @@ window.cargarSolicitudes=()=>{
   });
 };
 function escucharSolsDisp(){
+  let prevCntSol=-1;
   onSnapshot(collection(db,'ciudades',U.ciudad.toLowerCase(),'solicitudes'),snap=>{
     let cnt=0;snap.forEach(d=>{if(d.data().activa&&d.data().estado==='esperando')cnt++;});
     const b=document.getElementById('pasBadge');
     if(b){b.textContent=cnt;b.style.display=cnt>0?'flex':'none';}
-    if(cnt>0)tonoP();
+    if(prevCntSol>=0&&cnt>prevCntSol)tonoP(); // solo si aumentaron
+    prevCntSol=cnt;
   });
 }
 window.enviarSolicitud=async()=>{
@@ -1232,7 +1322,9 @@ window.abrirChat=()=>{
     if(primero){msgs.innerHTML='';primero=false;}
     snap.docChanges().forEach(change=>{
       if(change.type==='added'){
-        const data=change.doc.data();const mio=data.uid===U.uid;
+        const data=change.doc.data();
+        if(data.eliminado)return;
+        const mio=data.uid===U.uid;
         const b=document.createElement('div');b.className='msg-bubble '+(mio?'mine':'other');
         b.innerHTML=`${!mio?`<span style="font-size:10px;font-weight:700;color:var(--acc);display:block;margin-bottom:2px">${data.nombre}</span>`:''}${data.texto}<span class="msg-meta">${data.timestamp?.seconds?new Date(data.timestamp.seconds*1000).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}):''}</span>`;
         msgs.appendChild(b);msgs.scrollTop=msgs.scrollHeight;
@@ -1262,6 +1354,12 @@ window.navGo=(id,nid)=>{
   const ci=document.getElementById('chatInputArea');if(ci)ci.classList.toggle('show',id==='pChat');
   const wf=document.getElementById('wspFl');if(wf)wf.style.display=id==='pChat'?'none':'flex';
   chatAbierto=id==='pChat';
+  // Botón regresar a La Vía — visible en pIni para conductores
+  const bkv=document.getElementById('btnBackVia');
+  if(bkv)bkv.classList.toggle('show',id==='pIni'&&U?.rol==='conductor');
+  // Auto-cargar
+  if(id==='pPerf')cargarEstadisticasPerfil();
+  if(id==='pHist')cargarHistorial();
 };
 
 // ── UTILS ──
@@ -1394,6 +1492,138 @@ async function registrarCiudadNueva(ciudad){
   }catch(e){}
 }
 
+
+// ── MINI-PANELS EN PANTALLA VÍA ──
+window.toggleViaPanel=(bodyId,arrId)=>{
+  const body=document.getElementById(bodyId);
+  const arr=document.getElementById(arrId);
+  if(!body)return;
+  const open=body.classList.toggle('open');
+  if(arr)arr.textContent=open?'▲':'▼';
+};
+
+window.irPantallaCompartida=()=>{
+  navGo('pIni','nI');
+  const btn=document.getElementById('btnBackVia');
+  if(btn)btn.classList.add('show');
+};
+
+// Escuchar y renderizar solicitudes de pasajeros en pVia
+function escucharSolsEnVia(){
+  if(U.rol!=='conductor')return;
+  const ciudad=U.ciudad.toLowerCase();
+  let prevSol=-1;
+  onSnapshot(collection(db,'ciudades',ciudad,'solicitudes'),snap=>{
+    const sols=[];
+    snap.forEach(d=>{const data=d.data();if(data.activa&&data.estado==='esperando')sols.push({id:d.id,...data});});
+    sols.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    // Badge
+    const badge=document.getElementById('viaPasBadge');
+    if(badge){badge.textContent=sols.length;badge.style.background=sols.length>0?'var(--am)':'var(--tm)';}
+    // Sonido solo en nuevas
+    if(prevSol>=0&&sols.length>prevSol)tonoP();
+    prevSol=sols.length;
+    // Render
+    const lista=document.getElementById('viaPasLista');if(!lista)return;
+    if(!sols.length){lista.innerHTML='<div class="via-empty-panel">Sin solicitudes pendientes</div>';return;}
+    lista.innerHTML=sols.map(s=>{
+      const hora=s.hora?new Date(s.hora).toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Flexible';
+      const min=s.timestamp?.seconds?Math.floor((Date.now()-s.timestamp.seconds*1000)/60000):0;
+      const publicada=min<1?'Ahora':min<60?min+'min':Math.floor(min/60)+'h';
+      return `<div class="via-sol-card">
+        <div class="via-sol-info">
+          <div class="ruta">📍 ${s.origen} → ${s.destino}</div>
+          <div class="meta">👤 ${s.pasajeroNombre} · ${s.personas} persona${s.personas>1?'s':''} · 🕐 ${hora}</div>
+          ${s.precio?`<div class="precio">💵 $${parseInt(s.precio).toLocaleString()}</div>`:''}
+          ${s.nota?`<div class="meta" style="font-style:italic">${s.nota}</div>`:''}
+          <div class="meta" style="color:var(--tm)">Publicado hace ${publicada}</div>
+        </div>
+        <button class="btn-tomar-via" onclick="aceptarViajeRapido('${s.id}','${s.pasajeroTel}','${s.pasajeroNombre}','${s.origen}','${s.destino}')">✅ Tomar</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+// Escuchar encomiendas en pVia
+function escucharEncEnVia(){
+  if(U.rol!=='conductor')return;
+  const ciudad=U.ciudad.toLowerCase();
+  let prevEnc=-1;
+  onSnapshot(collection(db,'ciudades',ciudad,'encomiendas'),snap=>{
+    const encs=[];
+    snap.forEach(d=>{const data=d.data();if(data.activa&&data.estado==='esperando')encs.push({id:d.id,...data});});
+    encs.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    // Badge
+    const badge=document.getElementById('viaEncBadge');
+    if(badge){badge.textContent=encs.length;badge.style.background=encs.length>0?'var(--r)':'var(--tm)';}
+    // Sonido solo en nuevas
+    if(prevEnc>=0&&encs.length>prevEnc)tonoE();
+    prevEnc=encs.length;
+    // Render
+    const lista=document.getElementById('viaEncLista');if(!lista)return;
+    if(!encs.length){lista.innerHTML='<div class="via-empty-panel">Sin encomiendas pendientes</div>';return;}
+    lista.innerHTML=encs.map(e=>{
+      return `<div class="via-sol-card">
+        <div class="via-sol-info">
+          <div class="ruta">📦 ${e.descripcion}</div>
+          <div class="meta">Destino: ${e.destino} · De: ${e.remitenteNombre}</div>
+          ${e.valor?`<div class="precio">💵 $${parseInt(e.valor).toLocaleString()} COP</div>`:''}
+          ${e.nota?`<div class="meta" style="font-style:italic">${e.nota}</div>`:''}
+        </div>
+        <button class="btn-tomar-via enc" onclick="tomarEncRapido('${e.id}','${e.remitenteTel}','${e.descripcion}')">📦 Tomar</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+// Aceptar viaje rápido desde pVia
+window.aceptarViajeRapido=async(id,tel,nombre,origen,destino)=>{
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    await updateDoc(doc(db,'ciudades',ciudad,'solicitudes',id),{
+      estado:'aceptada',conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono
+    });
+    toast('✅ Viaje tomado — notificando al pasajero');
+    // Vibración de confirmación
+    if(navigator.vibrate)navigator.vibrate([100,50,100]);
+    // WhatsApp al pasajero con info del conductor
+    const msg=`🚗 RUTA LIBRE — Tu viaje fue aceptado!\n\nConductor: ${U.nombre}\nTel: ${U.telefono}\nRuta: ${origen} → ${destino}\n\n¿Listos para coordinar el punto de recogida?`;
+    setTimeout(()=>window.open(`https://wa.me/57${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'),800);
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+
+// Tomar encomienda rápido desde pVia
+window.tomarEncRapido=async(id,telRemitente,desc)=>{
+  if((U.creditos||0)<1){toast('💰 Sin créditos. Recarga por WhatsApp.','warning');return;}
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    await updateDoc(doc(db,'ciudades',ciudad,'encomiendas',id),{
+      estado:'en_camino',conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono
+    });
+    const nc=(U.creditos||0)-1;U.creditos=nc;
+    await updateDoc(doc(db,'ciudades',ciudad,'usuarios',U.uid),{creditos:nc});
+    guardarSesion(U);
+    document.getElementById('credSaldo').textContent=nc;
+    toast('📦 Encomienda tomada — 1 crédito descontado');
+    if(navigator.vibrate)navigator.vibrate([100,50,100]);
+    // WhatsApp al remitente
+    const msg=`📦 RUTA LIBRE — Tu encomienda fue tomada!\nConductor: ${U.nombre} · Tel: ${U.telefono}\nCoordina la entrega con él.`;
+    setTimeout(()=>window.open(`https://wa.me/57${telRemitente.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'),800);
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+
+// Alerta de llegada (WhatsApp al pasajero)
+window.alertarLlegada=async(solicitudId)=>{
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    const snap=await getDoc(doc(db,'ciudades',ciudad,'solicitudes',solicitudId));
+    if(!snap.exists())return;
+    const s=snap.data();
+    const msg=`🚗 RUTA LIBRE — ¡Tu conductor está llegando!\n\n${U.nombre} está cerca de tu punto de recogida.\nTen listo tu equipaje 👋`;
+    window.open(`https://wa.me/57${s.pasajeroTel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+
 // ── AUTO EXPIRAR ALERTAS VIEJAS ──
 function iniciarAutoExpiry(){
   if(timerAlertas)clearInterval(timerAlertas);
@@ -1482,6 +1712,7 @@ window.enviarSOS=async tipo=>{
 // V3 — CONDICIONES ESPECIALES DE VÍA
 // ════════════════════════════════════
 let condicionSel=null;
+let gpsLat=null;let gpsLng=null;
 window.abrirCondiciones=()=>{
   condicionSel=null;
   document.querySelectorAll('.cond-btn').forEach(b=>b.classList.remove('sel-c'));
@@ -1549,16 +1780,17 @@ window.enviarRating=async()=>{
       estrellas:ratingActual,comentario:document.getElementById('iComentario').value.trim(),
       viajeId:ratingData.viajeId,timestamp:serverTimestamp()
     });
-    // Actualizar promedio en perfil del conductor
-    const condRef=collection(db,'ciudades',U.ciudad.toLowerCase(),'usuarios');
-    const condSnap=await getDocs(condRef);
-    condSnap.forEach(async d=>{
-      if(d.id===ratingData.conductorId){
-        const actual=d.data().estrellas||5;const total=d.data().totalRatings||0;
+    // Actualizar promedio en perfil del conductor (for..of para await correcto)
+    try{
+      const condRef=doc(db,'ciudades',U.ciudad.toLowerCase(),'usuarios',ratingData.conductorId);
+      const condSnap=await getDoc(condRef);
+      if(condSnap.exists()){
+        const actual=condSnap.data().estrellas||5;
+        const total=condSnap.data().totalRatings||0;
         const nuevo=Math.round(((actual*total)+ratingActual)/(total+1)*10)/10;
-        await updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'usuarios',d.id),{estrellas:nuevo,totalRatings:total+1});
+        await updateDoc(condRef,{estrellas:nuevo,totalRatings:total+1});
       }
-    });
+    }catch(e){console.log('Rating update error:',e);}
     cerrarM('mRating');toast('⭐ Calificación enviada. ¡Gracias!','success');
   }catch(e){toast('❌ '+e.message,'error');}
   btn.disabled=false;
@@ -1615,7 +1847,9 @@ window.cargarHistorial=async()=>{
           <div class="hist-body">
             <div class="hist-tit">📍 ${s.origen||'—'} → ${s.destino||'—'}</div>
             <div class="hist-meta">${fecha} · <span style="color:${estadoCol[s.estado]||'var(--ts)'};font-weight:600">${s.estado||'—'}</span></div>
-            ${puedeCal?`<button onclick="abrirRating('${s.id}','${s.conductorId}','${s.conductorNombre||'conductor'}')" style="margin-top:6px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:var(--rfl);padding:4px 12px;font-size:11px;font-weight:700;color:var(--am);cursor:pointer;font-family:'Inter',sans-serif">⭐ Calificar</button>`:''}
+            ${U.rol==='conductor'&&s.conductorId===U.uid&&s.estado==='aceptada'?
+              '<button onclick="alertarLlegada(\'' + s.id + '\')" style="margin-top:6px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:var(--rfl);padding:4px 12px;font-size:11px;font-weight:700;color:var(--v);cursor:pointer;font-family:Inter,sans-serif">📍 Avisar llegada</button>':''}
+            ${puedeCal?`<button onclick="abrirRating('${s.id}','${s.conductorId}','${s.conductorNombre||'conductor'}')" style="margin-top:6px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:var(--rfl);padding:4px 12px;font-size:11px;font-weight:700;color:var(--am);cursor:pointer;font-family:'Inter',sans-serif">⭐ Calificar</button>`:''}`
           </div>
         </div>`;
       }).join('');
