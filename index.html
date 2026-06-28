@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RUTA LIBRE">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" type="image/png" id="faviconDin" href="./icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>RUTA LIBRE 🚗</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+  <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0a0a0f;--surf:#12121a;--elev:#1a1a26;--hov:#22223a;
+      --acc:#6366f1;--acc-g:rgba(99,102,241,0.2);
+      --v:#22c55e;--r:#ef4444;--am:#f59e0b;--az:#3b82f6;
+      --tp:#f1f5f9;--ts:#94a3b8;--tm:#475569;
+      --bs:rgba(255,255,255,0.06);--bn:rgba(255,255,255,0.12);
+      --wsp:#25d366;
+      --rsm:8px;--rmd:12px;--rlg:16px;--rxl:24px;--rfl:9999px
+    }
+    html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--tp);font-size:14px;line-height:1.6;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+    #splash{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:9999;transition:opacity 0.5s}
+    .splash-car{font-size:72px;animation:bounce-car 0.8s ease-in-out infinite alternate}
+    .splash-title{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,#f1f5f9,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .splash-sub{color:var(--tm);font-size:13px}
+    .splash-bar{width:200px;height:4px;background:var(--elev);border-radius:2px;overflow:hidden}
+    .splash-fill{height:100%;background:linear-gradient(90deg,var(--acc),#8b5cf6);border-radius:2px;animation:fill-bar 1.5s ease forwards}
+    #onboard{display:none;min-height:100vh;padding:24px 20px 40px;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,0.15) 0%,transparent 65%)}
+    .ob-step{display:none;animation:fadeUp 0.3s ease}.ob-step.on{display:block}
+    .ob-logo{text-align:center;margin-bottom:24px;padding-top:32px}
+    .ob-logo .car-icon{font-size:56px;display:block;margin-bottom:8px}
+    .ob-logo h1{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;background:linear-gradient(135deg,#f1f5f9,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .ob-logo p{color:var(--tm);font-size:13px;margin-top:4px}
+    .ob-card{background:var(--surf);border:1px solid var(--bn);border-radius:var(--rxl);padding:24px 20px;margin-bottom:14px}
+    .ob-title{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px}
+    .ob-sub{color:var(--ts);font-size:13px;margin-bottom:16px}
+    .dots{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--bn);transition:all 0.3s}
+    .dot.on{background:var(--acc);width:24px;border-radius:4px}
+    .rol-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .rol-btn{background:var(--elev);border:2px solid var(--bn);border-radius:var(--rlg);padding:20px 12px;text-align:center;cursor:pointer;transition:all 0.2s}
+    .rol-btn.sel{border-color:var(--acc);background:var(--acc-g)}
+    .rol-ico{font-size:36px;display:block;margin-bottom:8px}
+    .rol-nom{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;display:block;margin-bottom:3px}
+    .rol-des{font-size:11px;color:var(--tm)}
+    .fgrp{margin-bottom:13px}
+    .fgrp label{display:block;font-size:11px;color:var(--ts);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+    .inp{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);color:var(--tp);padding:13px 14px;font-size:15px;width:100%;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s,box-shadow 0.2s}
+    .inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-g)}
+    .inp::placeholder{color:var(--tm)}
+    .btn-p{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:var(--rmd);padding:14px;font-weight:700;font-size:15px;cursor:pointer;width:100%;font-family:'Inter',sans-serif;transition:all 0.2s;box-shadow:0 4px 14px rgba(99,102,241,0.35)}
+    .btn-p:hover{transform:translateY(-1px)}.btn-p:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .ferr{display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:var(--rmd);padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:12px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .chip{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:4px 12px;font-size:12px;cursor:pointer;color:var(--ts);transition:all 0.15s}
+    .chip:hover{border-color:var(--acc);color:var(--acc)}
+    .btn-back{background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;margin-top:12px;font-family:'Inter',sans-serif;padding:8px}
+    .priv-box{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:12px;margin-bottom:14px;font-size:12px;color:var(--ts);line-height:1.6}
+    .priv-box strong{color:var(--tp);display:block;margin-bottom:4px}
+    .priv-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer}
+    .priv-check input{width:18px;height:18px;margin-top:2px;accent-color:var(--acc);flex-shrink:0}
+    .priv-check span{font-size:12px;color:var(--ts);line-height:1.5}
+    .priv-check span a{color:var(--acc);text-decoration:underline}
+    #app{display:none;height:100vh;flex-direction:column}
+    .tbar{background:var(--surf);border-bottom:1px solid var(--bs);padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
+    .tbar-l{display:flex;align-items:center;gap:8px}
+    .tbar-car{font-size:24px;transition:all 0.3s}
+    .tbar-info h2{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;line-height:1.1}
+    .tbar-city{font-size:10px;color:var(--tm)}
+    .tbar-r{display:flex;align-items:center;gap:8px}
+    .bgest{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--rfl);font-size:11px;font-weight:700}
+    .bgest.on{background:rgba(34,197,94,0.15);color:var(--v)}.bgest.off{background:rgba(71,85,105,0.2);color:#64748b}
+    .btn-inact{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:5px 12px;font-size:11px;font-weight:600;color:var(--ts);cursor:pointer;transition:all 0.2s}
+    .btn-inact.off{background:rgba(71,85,105,0.2);color:#64748b;border-color:#64748b}
+    .franja{background:rgba(99,102,241,0.1);border-bottom:1px solid rgba(99,102,241,0.2);padding:5px 0;overflow:hidden;flex-shrink:0;display:none}
+    .franja-txt{white-space:nowrap;font-size:12px;font-weight:500;color:#a5b4fc;display:inline-block;animation:marquee 25s linear infinite;padding-left:100vw}
+    .pant{display:none;flex:1;overflow-y:auto;padding-bottom:76px}.pant.on{display:block}
+    .via-hero{margin:16px;border-radius:var(--rxl);padding:22px 20px;text-align:center;border:2px solid transparent;transition:all 0.4s}
+    .via-hero.ok{background:rgba(34,197,94,0.07);border-color:rgba(34,197,94,0.2)}
+    .via-hero.alerta{background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.25)}
+    .via-hero.prec{background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.2)}
+    .circ-main{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid transparent;transition:all 0.4s;margin:0 auto 12px}
+    .circ-main.v{background:rgba(34,197,94,0.15);border-color:var(--v);animation:pv 2.5s infinite}
+    .circ-main.r{background:rgba(239,68,68,0.15);border-color:var(--r);animation:pr 1.5s infinite}
+    .circ-main.a{background:rgba(245,158,11,0.15);border-color:var(--am);animation:pa 1.5s infinite}
+    .via-tit{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;margin-bottom:3px}
+    .via-sub{font-size:12px;color:var(--ts);margin-bottom:10px}
+    .carritos-row{display:flex;align-items:center;justify-content:center;gap:4px;margin:8px 0;min-height:28px;flex-wrap:wrap}
+    .carrito-conf{font-size:20px;animation:fadeUp 0.3s ease}
+    .conf-txt{font-size:11px;color:var(--ts);margin-top:4px}
+    .btn-conf-libre{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:var(--rfl);padding:7px 18px;color:var(--v);font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;margin-top:8px}
+    .alertas-sec{padding:0 16px}
+    .alerta-card{border-radius:var(--rlg);padding:16px;margin-bottom:10px;border:2px solid transparent}
+    .alerta-card.cr{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.35);animation:pcr 2s infinite}
+    .alerta-card.ca{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.35)}
+    .alerta-card.co2{background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.3)}
+    .ac-tipo{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px}
+    .ac-tipo.r{color:var(--r)}.ac-tipo.a{color:var(--am)}.ac-tipo.b{color:var(--az)}
+    .ac-lugar{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px}
+    .ac-lugar.r{color:var(--r)}.ac-lugar.a{color:var(--am)}.ac-lugar.b{color:var(--az)}
+    .ac-meta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+    .ac-meta span{font-size:12px;color:var(--ts)}
+    .carr-confirm{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+    .carr-confirm span{font-size:12px;color:var(--ts)}
+    .ac-btns{display:flex;gap:8px}
+    .btn-sigue{flex:1;padding:10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:var(--rmd);color:var(--r);font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
+    .btn-paso{flex:1;padding:10px;background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);color:var(--ts);font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
+    .puntos-sec{margin:12px 16px}
+    .puntos-tit{font-size:11px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+    .puntos-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .punto-item{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rmd);padding:10px 12px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:8px}
+    .punto-item.pv{border-left:3px solid var(--v)}.punto-item.pr{border-left:3px solid var(--r);background:rgba(239,68,68,0.06)}.punto-item.pa{border-left:3px solid var(--am);background:rgba(245,158,11,0.06)}
+    .punto-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .punto-dot.v{background:var(--v);box-shadow:0 0 6px rgba(34,197,94,0.5)}
+    .punto-dot.r{background:var(--r);box-shadow:0 0 6px rgba(239,68,68,0.5);animation:pulso-dot 1.5s infinite}
+    .punto-dot.a{background:var(--am);box-shadow:0 0 6px rgba(245,158,11,0.5);animation:pulso-dot 1.5s infinite}
+    .punto-nombre{font-size:12px;font-weight:600;flex:1;line-height:1.2}
+    .punto-mini{font-size:10px;color:var(--tm);margin-top:1px}
+    .btn-add-punto{background:var(--elev);border:1px dashed var(--bn);border-radius:var(--rmd);padding:10px;cursor:pointer;font-size:11px;color:var(--ts);font-family:'Inter',sans-serif;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;grid-column:1/-1}
+    #pChat{display:none;flex-direction:column;padding-bottom:0}#pChat.on{display:flex}
+    .chat-header{padding:14px 16px 10px;border-bottom:1px solid var(--bs);flex-shrink:0}
+    .chat-header h3{font-family:'Sora',sans-serif;font-size:15px;font-weight:700}
+    .chat-header p{font-size:11px;color:var(--tm)}
+    .chat-msgs{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;padding-bottom:140px}
+    .msg-bubble{max-width:85%;padding:10px 13px;border-radius:16px;font-size:13px;line-height:1.5;word-break:break-word;animation:fadeUp 0.2s ease}
+    .msg-bubble.mine{align-self:flex-end;background:var(--acc);color:white;border-bottom-right-radius:4px}
+    .msg-bubble.other{align-self:flex-start;background:var(--surf);border:1px solid var(--bs);border-bottom-left-radius:4px}
+    .msg-meta{font-size:10px;opacity:0.7;margin-top:4px;display:block}
+    .chat-input-area{position:fixed;bottom:64px;left:0;right:0;background:var(--surf);border-top:1px solid var(--bs);padding:10px 12px;display:none;gap:8px;align-items:flex-end;z-index:60}
+    .chat-input-area.show{display:flex}
+    .chat-inp{flex:1;background:var(--elev);border:1px solid var(--bn);border-radius:var(--rlg);padding:10px 14px;font-size:14px;color:var(--tp);outline:none;font-family:'Inter',sans-serif;resize:none;max-height:100px}
+    .chat-inp:focus{border-color:var(--acc)}.chat-inp::placeholder{color:var(--tm)}
+    .btn-send{background:var(--acc);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+    .chat-empty{text-align:center;padding:40px 20px;color:var(--tm);font-size:13px}
+    .p2-wrap{padding:16px}
+    .p2-title{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:3px}
+    .p2-sub{font-size:12px;color:var(--tm);margin-bottom:14px}
+    .pub-cats{overflow-x:auto;margin-bottom:16px;padding-bottom:4px;scrollbar-width:none}
+    .pub-cats::-webkit-scrollbar{display:none}
+    .cats-row{display:flex;gap:8px;width:max-content}
+    .cat-btn{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:7px 16px;font-size:12px;font-weight:600;color:var(--ts);cursor:pointer;transition:all 0.15s;white-space:nowrap;font-family:'Inter',sans-serif}
+    .cat-btn.on{border-color:var(--acc);color:var(--acc);background:var(--acc-g)}
+    .pub-lista{margin-bottom:16px;min-height:60px}
+    .pub-card{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px;margin-bottom:8px}
+    .pub-nom{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:3px}
+    .pub-desc{font-size:12px;color:var(--ts);margin-bottom:10px}
+    .pub-btns{display:flex;gap:8px}
+    .btn-wsp-pub{background:var(--wsp);color:white;border:none;border-radius:var(--rfl);padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+    .btn-gps-pub{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:7px 14px;font-size:12px;color:var(--ts);cursor:pointer;font-family:'Inter',sans-serif}
+    .pub-empty{text-align:center;padding:20px;color:var(--tm);font-size:13px}
+    .serv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .sg-item{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:18px 12px;text-align:center;cursor:pointer;transition:all 0.2s}
+    .sg-item:hover{border-color:var(--acc)}.sg-item.off{opacity:0.4;cursor:not-allowed;pointer-events:none}
+    .sg-ico{font-size:30px;display:block;margin-bottom:7px}
+    .sg-nom{font-family:'Sora',sans-serif;font-size:13px;font-weight:700}
+    .sg-des{font-size:11px;color:var(--tm);margin-top:2px}
+    .enc-wrap,.pas-wrap,.cred-wrap,.son-wrap,.perf-wrap{padding:16px}
+    .tab-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:5px}
+    .tab-b{background:transparent;border:none;border-radius:var(--rmd);padding:10px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:var(--ts);cursor:pointer;transition:all 0.2s}
+    .tab-b.on{background:var(--elev);color:var(--tp)}
+    .enc-card,.sol-card{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px;margin-bottom:10px}
+    .enc-estado{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--rfl);font-size:11px;font-weight:700;margin-bottom:8px}
+    .enc-estado.esp{background:rgba(245,158,11,0.15);color:var(--am)}
+    .enc-estado.cam{background:rgba(59,130,246,0.15);color:var(--az)}
+    .enc-estado.ent{background:rgba(34,197,94,0.15);color:var(--v)}
+    .enc-estado.can{background:rgba(239,68,68,0.15);color:var(--r)}
+    .enc-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:3px}
+    .enc-meta,.sol-meta{font-size:12px;color:var(--ts);margin-bottom:8px}
+    .sol-ruta{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px}
+    .enc-btns,.sol-btns{display:flex;gap:8px;flex-wrap:wrap}
+    .btn-accion{flex:1;min-width:100px;padding:9px;border:none;border-radius:var(--rmd);font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
+    .btn-tomar{background:rgba(99,102,241,0.15);color:var(--acc);border:1px solid rgba(99,102,241,0.3)}
+    .btn-entregar{background:rgba(34,197,94,0.15);color:var(--v);border:1px solid rgba(34,197,94,0.3)}
+    .btn-wsp-accion{background:var(--wsp);color:white}
+    .btn-cancel{background:rgba(239,68,68,0.1);color:var(--r);border:1px solid rgba(239,68,68,0.25)}
+    .btn-aceptar{flex:1;padding:10px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:var(--rmd);color:var(--acc);font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
+    .cred-hero{background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1));border:1px solid rgba(99,102,241,0.25);border-radius:var(--rxl);padding:24px;text-align:center;margin-bottom:16px}
+    .cred-big{font-family:'Sora',sans-serif;font-size:52px;font-weight:800;color:var(--acc);line-height:1}
+    .cred-label{font-size:14px;color:var(--ts);margin-top:4px}
+    .son-tit{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px}
+    .son-item{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rmd);padding:14px;margin-bottom:8px}
+    .son-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+    .son-n{font-weight:600;font-size:14px}.son-d{font-size:11px;color:var(--tm);margin-bottom:8px}
+    .vol-r{display:flex;align-items:center;gap:10px}
+    .vol-l{font-size:11px;color:var(--tm)}.vol-n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--acc);min-width:22px;text-align:right}
+    input[type=range]{flex:1;height:4px;-webkit-appearance:none;background:var(--elev);border-radius:2px;outline:none}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer}
+    .tog{position:relative;width:44px;height:24px;flex-shrink:0}.tog input{display:none}
+    .tog-s{position:absolute;inset:0;background:var(--hov);border-radius:var(--rfl);cursor:pointer;transition:0.3s;border:1px solid var(--bn)}
+    .tog-s::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:2px;background:var(--tm);border-radius:50%;transition:0.3s}
+    .tog input:checked+.tog-s{background:var(--acc);border-color:var(--acc)}
+    .tog input:checked+.tog-s::before{transform:translateX(20px);background:white}
+    .btn-probar{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rsm);padding:6px 14px;font-size:12px;color:var(--ts);cursor:pointer;font-family:'Inter',sans-serif}
+    .perf-card{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rxl);padding:24px;text-align:center;margin-bottom:14px}
+    .perf-av{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;border:3px solid var(--acc);background:var(--acc-g)}
+    .perf-nom{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
+    .perf-rol{font-size:12px;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px}
+    .info-c{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px;margin-bottom:12px}
+    .info-r{font-size:13px;color:var(--ts);margin-bottom:7px;display:flex;justify-content:space-between}
+    .info-r:last-child{margin-bottom:0}.info-r strong{color:var(--tp)}
+    .btn-sal{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:var(--rmd);padding:13px;width:100%;color:#fca5a5;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:8px}
+    .btn-instalar{background:var(--acc-g);border:1px solid rgba(99,102,241,0.3);border-radius:var(--rmd);padding:13px;width:100%;color:var(--acc);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:none;margin-bottom:8px}
+    .nav{position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bs);display:flex;height:64px;z-index:100;padding:0 4px}
+    .nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--tm);font-family:'Inter',sans-serif;transition:all 0.15s;padding:8px 2px;border-radius:var(--rmd);position:relative}
+    .nb.on{color:var(--acc)}.nb-ico{font-size:20px}.nb-txt{font-size:9px;font-weight:600}
+    .nb-badge{position:absolute;top:6px;right:10px;background:var(--r);color:white;border-radius:var(--rfl);font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center}
+    .co{display:none}
+    .btn-ret{position:fixed;bottom:76px;left:16px;right:16px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;border:none;border-radius:var(--rlg);padding:15px;font-family:'Sora',sans-serif;font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 6px 24px rgba(239,68,68,0.45);display:none;align-items:center;justify-content:center;gap:10px;transition:all 0.2s;z-index:50}
+    .btn-ret.show{display:flex}
+    .wsp-fl{position:fixed;bottom:78px;right:16px;background:var(--wsp);color:white;border:none;border-radius:var(--rfl);width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:49;box-shadow:0 4px 18px rgba(37,211,102,0.45);font-size:22px}
+    .mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;z-index:200}
+    .mov.open{display:flex}
+    .mc{background:var(--surf);border:1px solid var(--bn);border-radius:var(--rxl) var(--rxl) 0 0;padding:24px 20px 40px;width:100%;animation:slideUp 0.3s cubic-bezier(0.34,1.1,0.64,1);max-height:90vh;overflow-y:auto}
+    .mh{width:40px;height:4px;background:var(--bn);border-radius:2px;margin:0 auto 16px}
+    .mt{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
+    .ms{font-size:13px;color:var(--ts);margin-bottom:16px}
+    .slbl{font-size:11px;color:var(--ts);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px}
+    .tipo-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .tipo-b{background:var(--elev);border:2px solid var(--bn);border-radius:var(--rmd);padding:11px 6px;text-align:center;cursor:pointer;transition:all 0.15s}
+    .tipo-b .ti{font-size:22px;display:block;margin-bottom:4px}.tipo-b .tt{font-size:11px;font-weight:600;color:var(--ts)}
+    .tipo-b.sr{border-color:var(--r);background:rgba(239,68,68,0.1)}.tipo-b.sr .tt{color:var(--r)}
+    .tipo-b.sa{border-color:var(--am);background:rgba(245,158,11,0.1)}.tipo-b.sa .tt{color:var(--am)}
+    .tipo-b.so{border-color:var(--az);background:rgba(59,130,246,0.1)}.tipo-b.so .tt{color:var(--az)}
+    .sent-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .sent-b{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:9px 5px;text-align:center;cursor:pointer;font-size:11px;font-weight:600;color:var(--ts);transition:all 0.15s;font-family:'Inter',sans-serif}
+    .sent-b.on{border-color:var(--acc);color:var(--acc);background:var(--acc-g)}
+    .pto-d{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:11px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .pto-l{font-size:11px;color:var(--ts)}.pto-v{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}
+    .sel-rl{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);color:var(--tp);padding:9px 28px 9px 10px;font-size:12px;outline:none;font-family:'Inter',sans-serif;cursor:pointer;appearance:none}
+    .nvo-pto{display:none;margin-bottom:12px}
+    .toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:10px 20px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:9999;white-space:nowrap;animation:fadeUpToast 0.25s ease;border-left:3px solid var(--acc);pointer-events:none}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes bounce-car{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+    @keyframes fill-bar{from{width:0}to{width:100%}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeUpToast{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    @keyframes pv{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)}50%{box-shadow:0 0 0 14px rgba(34,197,94,0)}}
+    @keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{box-shadow:0 0 0 16px rgba(239,68,68,0)}}
+    @keyframes pa{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.5)}50%{box-shadow:0 0 0 14px rgba(245,158,11,0)}}
+    @keyframes pcr{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.15)}50%{box-shadow:0 0 10px rgba(239,68,68,0.25)}}
+    @keyframes pulso-dot{0%,100%{opacity:1}50%{opacity:0.5}}
+    /* ── VÍA V3: mini-panels solicitudes y encomiendas ── */
+    .via-panel{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);margin:0 16px 10px;overflow:hidden}
+    .via-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none}
+    .via-panel-tit{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+    .via-panel-badge{background:var(--r);color:white;border-radius:var(--rfl);font-size:10px;font-weight:700;padding:1px 7px;min-width:18px;text-align:center}
+    .via-panel-badge.am{background:var(--am)}
+    .via-panel-body{display:none;border-top:1px solid var(--bs);max-height:320px;overflow-y:auto}
+    .via-panel-body.open{display:block}
+    .via-sol-card{padding:12px 14px;border-bottom:1px solid var(--bs);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .via-sol-card:last-child{border-bottom:none}
+    .via-sol-info .ruta{font-family:'Sora',sans-serif;font-size:13px;font-weight:700}
+    .via-sol-info .meta{font-size:11px;color:var(--ts);margin-top:2px}
+    .via-sol-info .precio{font-size:11px;color:var(--v);font-weight:600;margin-top:2px}
+    .btn-tomar-via{background:linear-gradient(135deg,var(--acc),#8b5cf6);color:white;border:none;border-radius:var(--rmd);padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;transition:all 0.15s}
+    .btn-tomar-via:hover{transform:scale(1.04)}
+    .btn-tomar-via.enc{background:linear-gradient(135deg,var(--am),#d97706)}
+    .via-empty-panel{padding:16px;text-align:center;font-size:12px;color:var(--tm)}
+    /* Botón ir a pantalla compartida */
+    .btn-shared-screen{display:flex;align-items:center;justify-content:space-between;margin:0 16px 12px;background:var(--surf);border:1px solid var(--bn);border-radius:var(--rlg);padding:11px 16px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
+    .btn-shared-screen:hover{border-color:var(--acc)}
+    .btn-shared-screen span{font-size:13px;font-weight:600;color:var(--ts)}
+    .btn-shared-screen .arr{color:var(--acc);font-size:16px}
+    /* Botón regresar a pantalla conductor */
+    .btn-back-via{display:none;align-items:center;gap:8px;margin:12px 16px;background:var(--acc-g);border:1px solid rgba(99,102,241,0.3);border-radius:var(--rlg);padding:10px 16px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--acc)}
+    .btn-back-via.show{display:flex}
+
+    /* ── V3 SOS ── */
+    .btn-sos{position:fixed;bottom:144px;right:16px;background:linear-gradient(135deg,#dc2626,#991b1b);color:white;border:none;border-radius:50%;width:54px;height:54px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:51;box-shadow:0 4px 20px rgba(239,68,68,0.6);font-size:22px;animation:prSOS 2s infinite;flex-direction:column;gap:0}
+    .btn-sos.show{display:flex}
+    .btn-sos span{font-size:8px;font-weight:800;letter-spacing:0.5px;margin-top:-2px}
+    @keyframes prSOS{0%,100%{box-shadow:0 4px 20px rgba(239,68,68,0.6)}50%{box-shadow:0 4px 32px rgba(239,68,68,0.9)}}
+    /* ── V3 HISTORIAL ── */
+    .hist-item{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rmd);padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
+    .hist-ico{font-size:22px;flex-shrink:0}
+    .hist-body{flex:1}
+    .hist-tit{font-size:13px;font-weight:600;margin-bottom:2px}
+    .hist-meta{font-size:11px;color:var(--tm)}
+    /* ── V3 CONDICIONES VÍA ── */
+    .cond-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .cond-btn{background:var(--elev);border:2px solid var(--bn);border-radius:var(--rmd);padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.15s}
+    .cond-btn .ci{font-size:24px;display:block;margin-bottom:4px}
+    .cond-btn .cn{font-size:11px;font-weight:600;color:var(--ts)}
+    .cond-btn.sel-c{border-color:var(--am);background:rgba(245,158,11,0.1)}
+    .cond-btn.sel-c .cn{color:var(--am)}
+    /* ── V3 RATING ── */
+    .stars-row{display:flex;gap:4px;margin:6px 0}
+    .star{font-size:22px;cursor:pointer;transition:transform 0.1s;opacity:0.4}
+    .star.on{opacity:1}
+    .star:hover{transform:scale(1.2)}
+    /* ── V3 HISTORIAL PANTALLA ── */
+    #pHist{padding-bottom:76px}
+    /* ── V3 TABS EXTRA ── */
+    .tab3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:5px}
+
+  </style>
+</head>
+<body>
+<!-- SPLASH -->
+<div id="splash"><div class="splash-car" id="splashCar">🚗</div><div class="splash-title">RUTA LIBRE</div><div class="splash-sub">Conectando conductores...</div><div class="splash-bar"><div class="splash-fill"></div></div></div>
+
+<!-- ONBOARDING -->
+<div id="onboard">
+  <div class="ob-step on" id="ob1">
+    <div class="ob-logo"><span class="car-icon" id="obCar">🚗</span><h1>RUTA LIBRE</h1><p>Alertas · Transporte · Encomiendas · Comunidad</p></div>
+    <div class="dots"><div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="ob-card">
+      <div class="ob-title">¿Cómo usarás la app?</div>
+      <div class="ob-sub">Elige tu rol para personalizar tu experiencia</div>
+      <div class="rol-grid">
+        <div class="rol-btn" id="rC" onclick="elegirRol('conductor')"><span class="rol-ico">🚗</span><span class="rol-nom">Conductor</span><span class="rol-des">Ofrezco transporte y reporto novedades</span></div>
+        <div class="rol-btn" id="rP" onclick="elegirRol('pasajero')"><span class="rol-ico">👤</span><span class="rol-nom">Pasajero</span><span class="rol-des">Solicito viajes y envío encomiendas</span></div>
+      </div>
+    </div>
+    <button class="btn-p" id="btnS1" onclick="goOb('ob2')" disabled>Continuar →</button>
+  </div>
+  <div class="ob-step" id="ob2">
+    <div class="ob-logo" style="padding-top:20px"><span class="car-icon" style="font-size:40px">📋</span><h1 style="font-size:22px">Tus datos</h1></div>
+    <div class="dots"><div class="dot"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="ob-card">
+      <div class="ob-title">¿Cómo te llamamos?</div><div class="ob-sub">Para coordinar servicios con otros conductores</div>
+      <div class="ferr" id="e2"></div>
+      <div class="fgrp"><label>Nombre completo *</label><input type="text" id="iNom" class="inp" placeholder="Ej: Carlos Martínez" maxlength="50" autocomplete="name"></div>
+      <div class="fgrp"><label>WhatsApp / Teléfono *</label><input type="tel" id="iTel" class="inp" placeholder="Ej: 3001234567" maxlength="15" autocomplete="tel"></div>
+    </div>
+    <button class="btn-p" onclick="goOb3()">Continuar →</button>
+    <button class="btn-back" onclick="goOb('ob1')">← Volver</button>
+  </div>
+  <div class="ob-step" id="ob3">
+    <div class="ob-logo" style="padding-top:20px"><span class="car-icon" style="font-size:40px">📍</span><h1 style="font-size:22px">Tu ciudad</h1></div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot on"></div><div class="dot"></div></div>
+    <div class="ob-card">
+      <div class="ob-title">¿Desde dónde operas?</div><div class="ob-sub">Verás alertas y servicios de tu zona</div>
+      <div class="ferr" id="e3"></div>
+      <div class="fgrp"><label>Municipio o ciudad *</label><input type="text" id="iCiu" class="inp" placeholder="Ej: Tauramena" maxlength="50" autocomplete="off">
+        <div class="chips">
+          <span class="chip" onclick="sCiu('Tauramena')">Tauramena</span><span class="chip" onclick="sCiu('Yopal')">Yopal</span>
+          <span class="chip" onclick="sCiu('Aguazul')">Aguazul</span><span class="chip" onclick="sCiu('Villanueva')">Villanueva</span>
+          <span class="chip" onclick="sCiu('Maní')">Maní</span><span class="chip" onclick="sCiu('Paz de Ariporo')">Paz de Ariporo</span>
+          <span class="chip" onclick="sCiu('Trinidad')">Trinidad</span><span class="chip" onclick="sCiu('Orocué')">Orocué</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-p" onclick="goOb4()">Continuar →</button>
+    <button class="btn-back" onclick="goOb('ob2')">← Volver</button>
+  </div>
+  <div class="ob-step" id="ob4">
+    <div class="ob-logo" style="padding-top:20px"><span class="car-icon" style="font-size:40px">🔒</span><h1 style="font-size:22px">Privacidad</h1></div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot on"></div></div>
+    <div class="ob-card">
+      <div class="ob-title">Tus datos, tus reglas</div><div class="ob-sub">Leemos tus datos solo para prestarte el servicio</div>
+      <div class="priv-box">
+        <strong>¿Qué guardamos?</strong>Tu nombre, teléfono y ciudad para identificarte y coordinar servicios. Nunca los vendemos ni compartimos con terceros.<br><br>
+        <strong>¿Para qué usamos tu teléfono?</strong>Para que conductores y pasajeros se contacten por WhatsApp al coordinar viajes o encomiendas.<br><br>
+        <strong>Ley 1581 de 2012 (Colombia)</strong> — Al registrarte autorizas el tratamiento de tus datos con los fines descritos. Puedes pedir la eliminación escribiendo al administrador.
+      </div>
+      <label class="priv-check"><input type="checkbox" id="chkPriv" onchange="document.getElementById('btnReg').disabled=!this.checked"><span>He leído y acepto la <a href="#" onclick="return false">Política de Privacidad</a> y los <a href="#" onclick="return false">Términos de Uso</a></span></label>
+    </div>
+    <button class="btn-p" id="btnReg" onclick="registrar()" disabled>✅ Entrar a RUTA LIBRE</button>
+    <button class="btn-back" onclick="goOb('ob3')">← Volver</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="tbar">
+    <div class="tbar-l"><span class="tbar-car" id="tbarCar">🚗</span><div class="tbar-info"><h2>RUTA LIBRE</h2><div class="tbar-city" id="tCity">—</div></div></div>
+    <div class="tbar-r"><div class="bgest on" id="bgest">🟢 Activo</div><button class="btn-inact co" id="btnInact" onclick="toggleInact()">Inactivo</button></div>
+  </div>
+  <div class="franja" id="franja"><span class="franja-txt" id="franjaT"></span></div>
+
+  <!-- VÍA -->
+  <div class="pant on co" id="pVia">
+    <!-- Barra de ciudad activa + explorador -->
+    <div style="margin:12px 16px 0;display:flex;gap:8px;align-items:center">
+      <div style="flex:1;background:var(--surf);border:1px solid var(--bn);border-radius:var(--rlg);padding:8px 14px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:14px">📍</span>
+        <span id="ciudadActivaLabel" style="font-size:13px;font-weight:600;flex:1">Tu ciudad</span>
+        <button id="btnResetCiudad" onclick="resetCiudadVista()" style="display:none;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:var(--rfl);padding:3px 10px;font-size:11px;color:var(--acc);cursor:pointer;font-family:'Inter',sans-serif">← Mi zona</button>
+      </div>
+      <button onclick="abrirBuscadorCiudad()" style="background:var(--elev);border:1px solid var(--bn);border-radius:var(--rlg);padding:8px 12px;color:var(--ts);font-size:18px;cursor:pointer;flex-shrink:0" title="Explorar otra región">🔍</button>
+    </div>
+    <!-- Chips de ciudades vecinas -->
+    <div style="overflow-x:auto;padding:8px 16px 4px;scrollbar-width:none" id="chipsVecinas">
+      <div style="display:flex;gap:6px;width:max-content" id="chipsVecinasRow"></div>
+    </div>
+    <div class="via-hero ok" id="vHero">
+      <div class="circ-main v" id="vCirc">🟢</div>
+      <div class="via-tit" id="vTit">VÍA DESPEJADA</div>
+      <div class="via-sub" id="vSub">Sin novedades reportadas</div>
+      <div class="carritos-row" id="carritosRow"></div>
+      <div class="conf-txt" id="confTxt"></div>
+      <button class="btn-conf-libre co" id="btnConfLibre" onclick="confirmarLibre()">🚗 Confirmar vía libre</button>
+    </div>
+    <div class="alertas-sec" id="alertasSec"></div>
+    <div class="puntos-sec co">
+      <div class="puntos-tit"><span>📍 Puntos de la vía</span><span id="puntosTiem" style="font-size:10px;font-weight:400"></span></div>
+      <div class="puntos-grid" id="puntosGrid"></div>
+      <button class="btn-add-punto co" onclick="abrirM('mPunto')">+ Agregar punto</button>
+      <button class="btn-add-punto co" onclick="abrirCondiciones()"  style="border-color:rgba(245,158,11,0.4);color:var(--am);margin-top:6px">⚠️ Reportar condición de vía</button>
+    </div>
+    <!-- MINI-PANEL SOLICITUDES DE PASAJEROS -->
+    <div class="via-panel co" id="viaPanelPas">
+      <div class="via-panel-hdr" onclick="toggleViaPanel('viaPanelPasBod','viaPasArr')">
+        <div class="via-panel-tit">👤 Solicitudes de pasajeros
+          <span class="via-panel-badge am" id="viaPasBadge">0</span>
+        </div>
+        <span style="color:var(--tm);font-size:12px" id="viaPasArr">▼</span>
+      </div>
+      <div class="via-panel-body" id="viaPanelPasBod">
+        <div id="viaPasLista"><div class="via-empty-panel">Sin solicitudes pendientes</div></div>
+      </div>
+    </div>
+
+    <!-- MINI-PANEL ENCOMIENDAS -->
+    <div class="via-panel co" id="viaPanelEnc">
+      <div class="via-panel-hdr" onclick="toggleViaPanel('viaPanelEncBod','viaEncArr')">
+        <div class="via-panel-tit">📦 Encomiendas disponibles
+          <span class="via-panel-badge" id="viaEncBadge">0</span>
+        </div>
+        <span style="color:var(--tm);font-size:12px" id="viaEncArr">▼</span>
+      </div>
+      <div class="via-panel-body" id="viaPanelEncBod">
+        <div id="viaEncLista"><div class="via-empty-panel">Sin encomiendas pendientes</div></div>
+      </div>
+    </div>
+
+    <!-- BOTÓN IR A PANTALLA COMPARTIDA -->
+    <button class="btn-shared-screen co" onclick="irPantallaCompartida()">
+      <span>🏠 Inicio, anuncios y servicios</span>
+      <span class="arr">→</span>
+    </button>
+
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- INICIO -->
+  <div class="pant" id="pIni">
+    <!-- Botón regresar a pantalla conductor (solo conductores) -->
+    <button class="btn-back-via co" id="btnBackVia" onclick="navGo('pVia','nV')">
+      ← Regresar a La Vía
+    </button>
+    <div class="p2-wrap">
+      <div class="p2-title">👋 Hola, <span id="pSaludo">—</span></div>
+      <div class="p2-sub" id="pSubtitle">Servicios de tu comunidad</div>
+      <div id="alertasPas" style="display:none;margin-bottom:16px"></div>
+      <div class="pub-cats"><div class="cats-row" id="catsRow"><div class="cat-btn on" onclick="filtrarCat(null,this)">Todos</div></div></div>
+      <div class="pub-lista" id="pubLista"><div class="pub-empty">Cargando...</div></div>
+      <div class="p2-title" style="margin-bottom:10px">🛠️ Servicios</div>
+      <div class="serv-grid">
+        <div class="sg-item" onclick="abrirServicio('transporte')"><span class="sg-ico">🚗</span><span class="sg-nom">Transporte</span><span class="sg-des">Solicitar viaje</span></div>
+        <div class="sg-item" onclick="abrirServicio('encomiendas')"><span class="sg-ico">📦</span><span class="sg-nom">Encomiendas</span><span class="sg-des">Enviar paquetes</span></div>
+        <div class="sg-item co" onclick="abrirServicio('chat')"><span class="sg-ico">💬</span><span class="sg-nom">Chat</span><span class="sg-des">Conductores</span></div>
+        <div class="sg-item" onclick="abrirWsp()"><span class="sg-ico">📣</span><span class="sg-nom">Anúnciate</span><span class="sg-des">Tu negocio aquí</span></div>
+        <div class="sg-item off" id="srv4"><span class="sg-ico">🔧</span><span class="sg-nom">Próximamente</span><span class="sg-des">Nuevo servicio</span></div>
+        <div class="sg-item off" id="srv5"><span class="sg-ico">🔧</span><span class="sg-nom">Próximamente</span><span class="sg-des">Nuevo servicio</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENCOMIENDAS -->
+  <div class="pant" id="pEnc">
+    <div class="enc-wrap">
+      <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px">📦 Encomiendas</div>
+      <div style="font-size:12px;color:var(--tm);margin-bottom:14px">Envía y recibe con conductores de confianza</div>
+      <div class="tab-g"><button class="tab-b on" id="etDisp" onclick="switchEncTab('disponibles')">Disponibles</button><button class="tab-b" id="etMias" onclick="switchEncTab('mias')">Mis envíos</button></div>
+      <div id="encLista"><div class="pub-empty">Cargando...</div></div>
+      <button class="btn-p" onclick="abrirM('mEnc')" style="margin-top:12px">📦 Nueva encomienda</button>
+    </div>
+  </div>
+
+  <!-- TRANSPORTE/PASAJEROS -->
+  <div class="pant" id="pPas">
+    <div class="pas-wrap">
+      <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:2px">🚗 Transporte</div>
+      <div style="font-size:12px;color:var(--tm);margin-bottom:12px" id="pasSubtitle">Solicitudes de viaje en tu zona</div>
+      <!-- Filtro de ruta rápido -->
+      <div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none" id="pasFiltroPills">
+        <span class="cat-btn on" onclick="filtrarRuta(null,this)">Todas las rutas</span>
+        <span class="cat-btn" onclick="filtrarRuta('tauramena-yopal',this)">Tauramena→Yopal</span>
+        <span class="cat-btn" onclick="filtrarRuta('yopal-tauramena',this)">Yopal→Tauramena</span>
+        <span class="cat-btn" onclick="filtrarRuta('aguazul',this)">Aguazul</span>
+      </div>
+      <div class="tab-g" style="grid-template-columns:1fr 1fr">
+        <button class="tab-b on" id="ptSols" onclick="switchPasTab('solicitudes')">Disponibles</button>
+        <button class="tab-b" id="ptMias" onclick="switchPasTab('mias')">Las mías</button>
+      </div>
+      <div id="pasLista"><div class="pub-empty">Cargando...</div></div>
+      <button class="btn-p" onclick="abrirM('mPas')" style="margin-top:12px">🚗 Publicar solicitud de viaje</button>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="pant co" id="pChat">
+    <div class="chat-header"><h3>💬 Chat Conductores</h3><p id="chatCiudadLabel">Canal de tu ciudad · Solo conductores</p></div>
+    <div class="chat-msgs" id="chatMsgs"><div class="chat-empty">💬 Sé el primero en escribir algo útil para tus compañeros</div></div>
+  </div>
+  <div class="chat-input-area" id="chatInputArea">
+    <textarea class="chat-inp" id="chatInp" placeholder="Escribe un mensaje..." rows="1" onkeydown="chatEnter(event)"></textarea>
+    <button class="btn-send" onclick="enviarChat()"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg></button>
+  </div>
+
+  <!-- CRÉDITOS -->
+  <div class="pant" id="pCredP">
+    <div class="cred-wrap">
+      <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px">💰 Mis Créditos</div>
+      <div class="cred-hero">
+        <div class="cred-big" id="credSaldo">0</div>
+        <div class="cred-label">créditos disponibles</div>
+        <button onclick="abrirWsp()" style="margin-top:14px;background:var(--wsp);color:white;border:none;border-radius:var(--rfl);padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">📲 Recargar por WhatsApp</button>
+      </div>
+      <div style="background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px">¿Para qué sirven?</div>
+        <div style="font-size:12px;color:var(--ts);line-height:1.8">📦 Tomar encomienda: <strong style="color:var(--tp)">1 crédito</strong><br>📣 Anunciarse (mes): <strong style="color:var(--tp)">5 créditos</strong><br>🎁 Bienvenida: <strong style="color:var(--v)">+10 gratis</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SONIDOS -->
+  <div class="pant co" id="pSon">
+    <div class="son-wrap">
+      <div class="son-tit">🔊 Sonidos y alertas</div>
+      <div class="son-item">
+        <div class="son-h"><span class="son-n">🚨 Retén / novedad</span><button class="btn-probar" onclick="probar('r')">▶ Probar</button></div>
+        <div class="son-d">Suena cuando se reporta un retén</div>
+        <div class="vol-r"><span class="vol-l">🔈</span><input type="range" id="vRet" min="1" max="10" value="7" oninput="updVol(this.value)"><span class="vol-l">🔊</span><span class="vol-n" id="nRet">7</span></div>
+      </div>
+      <div class="son-item">
+        <div class="son-h"><span class="son-n">👤 Solicitud pasajero</span><button class="btn-probar" onclick="probar('p')">▶ Probar</button></div>
+        <div class="son-d">Suena cuando llega una solicitud de viaje</div>
+        <div style="display:flex;align-items:center;gap:8px"><label class="tog"><input type="checkbox" id="tPas" checked onchange="updTog('p',this.checked)"><span class="tog-s"></span></label><span style="font-size:12px;color:var(--ts)">Activado</span></div>
+      </div>
+      <div class="son-item">
+        <div class="son-h"><span class="son-n">📦 Encomienda nueva</span><button class="btn-probar" onclick="probar('e')">▶ Probar</button></div>
+        <div class="son-d">Suena cuando hay una encomienda disponible</div>
+        <div style="display:flex;align-items:center;gap:8px"><label class="tog"><input type="checkbox" id="tEnc" checked onchange="updTog('e',this.checked)"><span class="tog-s"></span></label><span style="font-size:12px;color:var(--ts)">Activado</span></div>
+      </div>
+      <div class="son-item">
+        <div class="son-h"><span class="son-n">💬 Chat</span><button class="btn-probar" onclick="probar('c')">▶ Probar</button></div>
+        <div class="son-d">Suena cuando hay mensaje nuevo</div>
+        <div style="display:flex;align-items:center;gap:8px"><label class="tog"><input type="checkbox" id="tChat" checked onchange="updTog('c',this.checked)"><span class="tog-s"></span></label><span style="font-size:12px;color:var(--ts)">Activado</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFIL V3 -->
+  <div class="pant" id="pPerf">
+    <div class="perf-wrap">
+      <div class="perf-card">
+        <div class="perf-av" id="pAv">🚗</div>
+        <div class="perf-nom" id="pNom">—</div>
+        <div class="perf-rol" id="pRol">—</div>
+        <!-- Estrellas del conductor -->
+        <div class="stars-row co" id="starsRow" style="justify-content:center;margin-top:6px"></div>
+        <div class="co" id="starsLabel" style="font-size:11px;color:var(--tm);margin-top:2px"></div>
+      </div>
+      <!-- Estadísticas rápidas -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px" id="statsGrid">
+        <div style="background:var(--surf);border:1px solid var(--bs);border-radius:var(--rmd);padding:12px;text-align:center">
+          <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--acc)" id="statAlertas">0</div>
+          <div style="font-size:10px;color:var(--tm)">Alertas</div>
+        </div>
+        <div style="background:var(--surf);border:1px solid var(--bs);border-radius:var(--rmd);padding:12px;text-align:center">
+          <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--v)" id="statViajes">0</div>
+          <div style="font-size:10px;color:var(--tm)">Viajes</div>
+        </div>
+        <div style="background:var(--surf);border:1px solid var(--bs);border-radius:var(--rmd);padding:12px;text-align:center">
+          <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:var(--am)" id="statEnc">0</div>
+          <div style="font-size:10px;color:var(--tm)">Envíos</div>
+        </div>
+      </div>
+      <div class="info-c">
+        <div class="info-r"><span>📞 Teléfono</span><strong id="pTel">—</strong></div>
+        <div class="info-r"><span>📍 Ciudad</span><strong id="pCiu">—</strong></div>
+        <div class="info-r"><span>🎭 Rol</span><strong id="pRol2">—</strong></div>
+        <div class="info-r"><span>💰 Créditos</span><strong id="pCred2" style="color:var(--acc)">—</strong></div>
+        <div class="info-r"><span>📅 Registro</span><strong id="pFecha">—</strong></div>
+      </div>
+      <button class="btn-instalar" id="btnInstalar" onclick="instalarPWA()">📲 Instalar como app</button>
+      <button onclick="navGo('pCredP')" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:var(--rmd);padding:13px;width:100%;color:var(--acc);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:8px">💰 Ver mis créditos</button>
+      <button onclick="navGo('pHist','nHist');cargarHistorial()" class="co" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:var(--rmd);padding:13px;width:100%;color:var(--v);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:8px">📋 Ver mi historial</button>
+      <button class="btn-sal" onclick="salir()">🚪 Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nb on co" id="nV" onclick="navGo('pVia','nV')"><span class="nb-ico">🛣️</span><span class="nb-txt">La Vía</span></button>
+    <button class="nb" id="nI" onclick="navGo('pIni','nI')"><span class="nb-ico">🏠</span><span class="nb-txt">Inicio</span></button>
+    <button class="nb co" id="nChat" onclick="navGo('pChat','nChat');abrirChat()"><span class="nb-ico">💬</span><span class="nb-txt">Chat</span></button>
+    <button class="nb" id="nEnc" onclick="navGo('pEnc','nEnc');cargarEncomiendas()"><span class="nb-ico">📦</span><span class="nb-txt">Envíos</span><span class="nb-badge" id="encBadge" style="display:none">0</span></button>
+    <button class="nb" id="nPas" onclick="navGo('pPas','nPas');cargarSolicitudes()"><span class="nb-ico">🚗</span><span class="nb-txt">Viajes</span><span class="nb-badge" id="pasBadge" style="display:none">0</span></button>
+    <button class="nb co" id="nHist" onclick="navGo('pHist','nHist');cargarHistorial()"><span class="nb-ico">📋</span><span class="nb-txt">Historial</span></button>
+    <button class="nb" id="nPerf" onclick="navGo('pPerf','nPerf')"><span class="nb-ico">👤</span><span class="nb-txt">Perfil</span></button>
+  </nav>
+  <button class="btn-ret co" id="btnRet" onclick="abrirModal()">🚨 Reportar novedad</button>
+  <button class="btn-sos co" id="btnSOS" onclick="activarSOS()">🆘<span>SOS</span></button>
+  <button class="wsp-fl" id="wspFl" onclick="abrirWsp()"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.856L0 24l6.335-1.502A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.733.885.918-3.638-.234-.374A9.768 9.768 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg></button>
+  <!-- HISTORIAL V3 -->
+  <div class="pant" id="pHist">
+    <div style="padding:16px">
+      <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px">📋 Mi Historial</div>
+      <div style="font-size:12px;color:var(--tm);margin-bottom:14px">Tus actividades en RUTA LIBRE</div>
+      <div class="tab3">
+        <button class="tab-b on" id="hTabAl" onclick="switchHistTab('alertas')">🚨 Alertas</button>
+        <button class="tab-b" id="hTabVi" onclick="switchHistTab('viajes')">🚗 Viajes</button>
+        <button class="tab-b" id="hTabEnc" onclick="switchHistTab('envios')">📦 Envíos</button>
+      </div>
+      <div id="histLista"><div class="pub-empty">Cargando historial...</div></div>
+    </div>
+  </div>
+</div>
+<!-- MODALES -->
+<div class="mov" id="mRep">
+  <div class="mc">
+    <div class="mh"></div><div class="mt">🚨 Reportar novedad</div><div class="ms">Tu alerta llegará a todos los conductores activos</div>
+    <div class="slbl">¿Qué encontraste?</div>
+    <div class="tipo-g">
+      <div class="tipo-b" id="tR" onclick="sTipo('reten')"><span class="ti">🚔</span><span class="tt">Retén policial</span></div>
+      <div class="tipo-b" id="tA" onclick="sTipo('accidente')"><span class="ti">⚠️</span><span class="tt">Accidente</span></div>
+      <div class="tipo-b" id="tO" onclick="sTipo('otro')"><span class="ti">🚧</span><span class="tt">Otra novedad</span></div>
+    </div>
+    <div class="slbl">¿En qué punto?</div>
+    <div class="pto-d"><div><div class="pto-l">GPS</div><div class="pto-v" id="pGps">Detectando...</div></div>
+      <select class="sel-rl" id="selPM" onchange="sPtoM()"><option value="">Cambiar punto</option><option value="El Venado">El Venado</option><option value="Puente El Venado">Pte. El Venado</option><option value="Mordizco">Mordizco</option><option value="Choricera">Choricera</option><option value="Valle Verde">Valle Verde</option><option value="Puente Peatonal Sonora">Pte. Sonora</option><option value="Los Troncos">Los Troncos</option><option value="Uñete">Uñete</option><option value="Pozo Ramiriquí">Pozo Ramiriquí</option><option value="La Ceiba">La Ceiba</option><option value="Puente Cachaguas">Pte. Cachaguas</option><option value="Antiguo Toro">Antiguo Toro</option><option value="Aguazul - El Toro">Aguazul-El Toro</option><option value="nuevo">+ Nuevo punto</option></select>
+    </div>
+    <div class="nvo-pto" id="nvoP"><input type="text" id="iNvoP" class="inp" placeholder="¿Cómo se llama este lugar?"></div>
+    <div class="slbl">¿En qué sentido?</div>
+    <div class="sent-g">
+      <div class="sent-b" id="sI" onclick="sSent('ida')">➡️ Hacia Yopal</div>
+      <div class="sent-b" id="sV" onclick="sSent('vuelta')">⬅️ Hacia Tauramena</div>
+      <div class="sent-b" id="sA" onclick="sSent('ambos')">↔️ Ambos</div>
+    </div>
+    <div style="margin-bottom:14px"><input type="text" id="iNota" class="inp" placeholder="Nota adicional (opcional)..." maxlength="80"></div>
+    <button class="btn-p" id="btnEnv" onclick="enviar()">🚨 Enviar alerta a todos</button><br><br>
+    <button onclick="cerrarM('mRep')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+
+
+<div class="mov" id="mSOS">
+  <div class="mc" style="border-color:rgba(239,68,68,0.4)">
+    <div class="mh" style="background:var(--r)"></div>
+    <div class="mt" style="color:var(--r)">🆘 Emergencia</div>
+    <div class="ms">¿Qué tipo de emergencia?</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      <button onclick="enviarSOS('medica')" style="background:rgba(239,68,68,0.15);border:2px solid var(--r);border-radius:var(--rlg);padding:14px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--r);cursor:pointer">🏥 Emergencia médica</button>
+      <button onclick="enviarSOS('accidente_grave')" style="background:rgba(239,68,68,0.15);border:2px solid var(--r);border-radius:var(--rlg);padding:14px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--r);cursor:pointer">🚗 Accidente grave</button>
+      <button onclick="enviarSOS('robo')" style="background:rgba(239,68,68,0.15);border:2px solid var(--r);border-radius:var(--rlg);padding:14px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--r);cursor:pointer">🔫 Robo / Asalto</button>
+      <button onclick="enviarSOS('vehiculo')" style="background:rgba(245,158,11,0.15);border:2px solid var(--am);border-radius:var(--rlg);padding:14px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--am);cursor:pointer">🔧 Vehículo varado</button>
+    </div>
+    <button onclick="llamarEmergencias()" style="background:#ef4444;color:white;border:none;border-radius:var(--rlg);padding:14px;width:100%;font-family:'Sora',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px">📞 Llamar 123 — Policía</button>
+    <button onclick="cerrarM('mSOS')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+
+
+<div class="mov" id="mRating">
+  <div class="mc">
+    <div class="mh"></div>
+    <div class="mt">⭐ Calificar conductor</div>
+    <div class="ms" id="ratingSubtitle">¿Cómo estuvo el viaje?</div>
+    <div style="text-align:center;margin:16px 0">
+      <div class="stars-row" id="ratingStars" style="justify-content:center;gap:8px"></div>
+      <div style="font-size:13px;color:var(--ts);margin-top:8px" id="ratingLabel">Toca una estrella</div>
+    </div>
+    <div class="fgrp"><label>Comentario (opcional)</label><input type="text" id="iComentario" class="inp" placeholder="¿Qué tal el viaje?" maxlength="80"></div>
+    <button class="btn-p" id="btnEnvRating" onclick="enviarRating()">⭐ Enviar calificación</button>
+    <br><br>
+    <button onclick="cerrarM('mRating')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Ahora no</button>
+  </div>
+</div>
+
+
+<div class="mov" id="mCond">
+  <div class="mc">
+    <div class="mh"></div>
+    <div class="mt">⚠️ Condición especial en vía</div>
+    <div class="ms">Informa a otros conductores sobre el estado de la carretera</div>
+    <div class="slbl">¿Qué condición hay?</div>
+    <div class="cond-grid">
+      <div class="cond-btn" id="cd1" onclick="sCondicion('derrumbe')"><span class="ci">⛰️</span><span class="cn">Derrumbe</span></div>
+      <div class="cond-btn" id="cd2" onclick="sCondicion('ganado')"><span class="ci">🐄</span><span class="cn">Ganado en vía</span></div>
+      <div class="cond-btn" id="cd3" onclick="sCondicion('neblina')"><span class="ci">🌫️</span><span class="cn">Neblina</span></div>
+      <div class="cond-btn" id="cd4" onclick="sCondicion('inundacion')"><span class="ci">🌊</span><span class="cn">Inundación</span></div>
+      <div class="cond-btn" id="cd5" onclick="sCondicion('bache')"><span class="ci">🕳️</span><span class="cn">Bache peligroso</span></div>
+      <div class="cond-btn" id="cd6" onclick="sCondicion('obra')"><span class="ci">🚧</span><span class="cn">Obra en vía</span></div>
+    </div>
+    <div class="slbl">¿En qué punto?</div>
+    <select class="inp" id="selCondPunto" style="margin-bottom:12px">
+      <option value="">Selecciona el punto...</option>
+    </select>
+    <div class="fgrp"><label>Nota adicional</label><input type="text" id="iNotaCond" class="inp" placeholder="Describe la situación..." maxlength="80"></div>
+    <button class="btn-p" id="btnEnvCond" onclick="enviarCondicion()" style="background:linear-gradient(135deg,#f59e0b,#d97706)">⚠️ Reportar condición</button>
+    <br><br>
+    <button onclick="cerrarM('mCond')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+
+<div class="mov" id="mBuscaCiudad">
+  <div class="mc">
+    <div class="mh"></div>
+    <div class="mt">🔍 Explorar región</div>
+    <div class="ms">Consulta alertas de cualquier ciudad o departamento</div>
+    <div class="fgrp">
+      <label>Escribe la ciudad o municipio</label>
+      <input type="text" id="iBuscaCiudad" class="inp" placeholder="Ej: Villavicencio, Guateque, Arauca..." autocomplete="off" oninput="sugerirCiudades(this.value)">
+      <div id="sugerenciasCiudad" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+    <button class="btn-p" onclick="explorarCiudad()">🔍 Ver alertas de esta región</button>
+    <br><br>
+    <button onclick="cerrarM('mBuscaCiudad')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+
+<div class="mov" id="mPunto">
+  <div class="mc">
+    <div class="mh"></div><div class="mt">📍 Agregar punto</div><div class="ms">Quedará visible para todos en tu ciudad</div>
+    <div class="fgrp"><label>Nombre del punto *</label><input type="text" id="iNomPto" class="inp" placeholder="Ej: La Ye de Aguazul" maxlength="40"></div>
+    <div class="fgrp"><label>Ruta</label><select class="inp" id="iRutaPto"><option value="tauramena-yopal">Tauramena → Yopal</option><option value="yopal-tauramena">Yopal → Tauramena</option><option value="ambas">Ambas rutas</option></select></div>
+    <button class="btn-p" onclick="guardarNuevoPunto()">📍 Guardar punto</button><br><br>
+    <button onclick="cerrarM('mPunto')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+
+<div class="mov" id="mEnc">
+  <div class="mc">
+    <div class="mh"></div><div class="mt">📦 Nueva encomienda</div><div class="ms">Un conductor en tu ruta la llevará</div>
+    <div class="fgrp"><label>¿Qué envías? *</label><input type="text" id="eDesc" class="inp" placeholder="Ej: Medicamentos urgentes" maxlength="60"></div>
+    <div class="fgrp"><label>Nombre del destinatario *</label><input type="text" id="eDestNom" class="inp" placeholder="Ej: María García" maxlength="50"></div>
+    <div class="fgrp"><label>WhatsApp destinatario *</label><input type="tel" id="eDestTel" class="inp" placeholder="3001234567" maxlength="15"></div>
+    <div class="fgrp"><label>Ciudad destino *</label>
+      <select class="inp" id="eDestCiu"><option value="">Seleccionar destino</option><option value="Yopal">Yopal</option><option value="Tauramena">Tauramena</option><option value="Aguazul">Aguazul</option><option value="Villanueva">Villanueva</option><option value="Maní">Maní</option><option value="Bogotá">Bogotá</option><option value="otro">Otro</option></select>
+    </div>
+    <div class="fgrp"><label>Valor acordado (COP)</label><input type="number" id="eValor" class="inp" placeholder="Ej: 15000" min="0"></div>
+    <div class="fgrp"><label>Nota adicional</label><input type="text" id="eNota" class="inp" placeholder="Tamaño, instrucciones..." maxlength="80"></div>
+    <button class="btn-p" id="btnEnvEnc" onclick="enviarEncomienda()">📦 Publicar encomienda</button><br><br>
+    <button onclick="cerrarM('mEnc')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+
+<div class="mov" id="mPas">
+  <div class="mc">
+    <div class="mh"></div><div class="mt">🚗 Solicitar viaje</div>
+    <div class="ms">Los conductores de tu zona verán tu solicitud al instante</div>
+    <div class="fgrp"><label>Origen *</label><input type="text" id="pOrigen" class="inp" placeholder="Ej: Tauramena Centro" maxlength="50">
+      <div class="chips" style="margin-top:6px">
+        <span class="chip" onclick="document.getElementById('pOrigen').value=this.textContent">Tauramena</span>
+        <span class="chip" onclick="document.getElementById('pOrigen').value=this.textContent">Yopal</span>
+        <span class="chip" onclick="document.getElementById('pOrigen').value=this.textContent">Aguazul</span>
+        <span class="chip" onclick="document.getElementById('pOrigen').value=this.textContent">Villanueva</span>
+      </div>
+    </div>
+    <div class="fgrp"><label>Destino *</label><input type="text" id="pDestino" class="inp" placeholder="Ej: Yopal Terminal" maxlength="50">
+      <div class="chips" style="margin-top:6px">
+        <span class="chip" onclick="document.getElementById('pDestino').value=this.textContent">Yopal</span>
+        <span class="chip" onclick="document.getElementById('pDestino').value=this.textContent">Tauramena</span>
+        <span class="chip" onclick="document.getElementById('pDestino').value=this.textContent">Bogotá</span>
+        <span class="chip" onclick="document.getElementById('pDestino').value=this.textContent">Aguazul</span>
+      </div>
+    </div>
+    <div class="fgrp"><label>¿Cuándo? *</label><input type="datetime-local" id="pHora" class="inp"></div>
+    <div class="fgrp"><label>Número de personas</label>
+      <select class="inp" id="pPersonas">
+        <option value="1">1 persona</option><option value="2">2 personas</option>
+        <option value="3">3 personas</option><option value="4">4 personas</option><option value="5+">5 o más</option>
+      </select>
+    </div>
+    <div class="fgrp"><label>¿Cuánto puedes pagar? (COP)</label>
+      <input type="number" id="pPrecio" class="inp" placeholder="Ej: 25000 (opcional)" min="0">
+    </div>
+    <div class="fgrp"><label>Nota adicional</label>
+      <input type="text" id="pNota" class="inp" placeholder="Equipaje, paradas, necesidades..." maxlength="100">
+    </div>
+    <button class="btn-p" id="btnEnvPas" onclick="enviarSolicitud()">🚗 Publicar solicitud</button><br><br>
+    <button onclick="cerrarM('mPas')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
+  </div>
+</div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,doc,setDoc,getDoc,getDocs,collection,onSnapshot,updateDoc,addDoc,query,orderBy,limit,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const FC={apiKey:"AIzaSyBvT_SEwvXKrLwZfYsFu3vFU8hIWY-Pz8U",authDomain:"rutalibre-455cf.firebaseapp.com",projectId:"rutalibre-455cf",storageBucket:"rutalibre-455cf.firebasestorage.app",messagingSenderId:"352770988370",appId:"1:352770988370:web:3020bbbe006c841070828b"};
+const app=initializeApp(FC),db=getFirestore(app);
+let U=null,rolEl=null,inact=false,tipoR=null,sentR=null,ptoR=null;
+let unsubA=null,unsubCFG=null,unsubChat=null,unsubEnc=null,unsubPas=null;
+let SND={vol:7,pas:true,enc:true,chat:true};
+let CFG={wsp:'3114571322',msg:'Hola, necesito información sobre RUTA LIBRE 👋',franjaOn:false,carColor:'#ef4444',catPub:[]};
+const PUNTOS_DEF=['El Venado','Puente El Venado','Mordizco','Choricera','Valle Verde','Puente Peatonal Sonora','Los Troncos','Uñete','Pozo Ramiriquí','La Ceiba','Puente Cachaguas','Antiguo Toro','Aguazul - El Toro'];
+let puntosList=[];let deferredPWA=null;
+// Mapa de ciudades vecinas — se amplía con cada registro nuevo
+const VECINAS={
+  'tauramena':['tauramena','monterrey','villanueva','aguazul','yopal','maní','san luis de palenque'],
+  'yopal':['yopal','aguazul','tauramena','villanueva','nunchía','pore','trinidad'],
+  'aguazul':['aguazul','tauramena','villanueva','yopal','chámeza','recetor'],
+  'villanueva':['villanueva','tauramena','aguazul','monterrey','sabanalarga'],
+  'monterrey':['monterrey','villanueva','tauramena','sabanalarga'],
+  'maní':['maní','tauramena','yopal','orocué','trinidad'],
+  'trinidad':['trinidad','yopal','maní','orocué','paz de ariporo'],
+  'paz de ariporo':['paz de ariporo','yopal','trinidad','pore','hato corozal'],
+  'orocué':['orocué','maní','trinidad','yopal'],
+  'pore':['pore','yopal','paz de ariporo','trinidad'],
+  'default':['tauramena','yopal','aguazul','villanueva']
+};
+let ciudadVista=null;
+let estadoVia='libre';
+let encTab='disponibles';
+let pasTab='solicitudes';
+let chatAbierto=false;
+let ultimoReporte=0;
+let timerAlertas=null;
+
+// ── AUDIO ──
+let aC=null;
+const gA=()=>{if(!aC)aC=new(window.AudioContext||window.webkitAudioContext)();return aC;};
+const tonoR=(v=7)=>{const c=gA(),vl=v/10;[0,.4,.8].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;o.type='square';g.gain.setValueAtTime(0,c.currentTime+t);g.gain.linearRampToValueAtTime(vl*.4,c.currentTime+t+.05);g.gain.linearRampToValueAtTime(0,c.currentTime+t+.25);o.start(c.currentTime+t);o.stop(c.currentTime+t+.3);});};
+const tonoP=()=>{
+  if(!SND.pas)return;
+  const ctx=gA();
+  // 3 notas ascendentes más llamativas para pasajero
+  [[440,0,'sine'],[554,.3,'sine'],[659,.6,'triangle']].forEach(([f,t,type])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=f;o.type=type;
+    g.gain.setValueAtTime(0,ctx.currentTime+t);
+    g.gain.linearRampToValueAtTime(.4,ctx.currentTime+t+.05);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+t+.55);
+    o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.6);
+  });
+  // Vibración distintiva para pasajero
+  if(navigator.vibrate)navigator.vibrate([150,80,150,80,300]);
+};
+const tonoE=()=>{if(!SND.enc)return;const c=gA();[0,.25,.5].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=1047;o.type='sine';g.gain.setValueAtTime(.25,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.4);o.start(c.currentTime+t);o.stop(c.currentTime+t+.45);});};
+const tonoChat=()=>{if(!SND.chat)return;const c=gA();[[880,0],[1100,.2]].forEach(([f,t])=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.2,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.3);o.start(c.currentTime+t);o.stop(c.currentTime+t+.35);});};
+window.probar=t=>{if(t==='r')tonoR(SND.vol);if(t==='p'){SND.pas=true;tonoP();}if(t==='e'){SND.enc=true;tonoE();}if(t==='c'){SND.chat=true;tonoChat();}};
+window.updVol=v=>{SND.vol=parseInt(v);document.getElementById('nRet').textContent=v;saveSnd();};
+window.updTog=(k,v)=>{if(k==='p')SND.pas=v;if(k==='e')SND.enc=v;if(k==='c')SND.chat=v;saveSnd();};
+const saveSnd=()=>localStorage.setItem('rl_s',JSON.stringify(SND));
+const loadSnd=()=>{const s=localStorage.getItem('rl_s');if(s)try{SND=JSON.parse(s);const vr=document.getElementById('vRet');if(vr)vr.value=SND.vol;const nr=document.getElementById('nRet');if(nr)nr.textContent=SND.vol;['tPas','tEnc','tChat'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=SND[id==='tPas'?'pas':id==='tEnc'?'enc':'chat'];});}catch(e){}};
+
+// ── FAVICON DINÁMICO ──
+function actualizarFavicon(estado){
+  if(estado===estadoVia)return;estadoVia=estado;
+  try{
+    const cv=document.createElement('canvas');cv.width=32;cv.height=32;
+    const ctx=cv.getContext('2d');
+    ctx.fillStyle='#0a0a0f';rrect(ctx,0,0,32,32,6);ctx.fill();
+    ctx.fillStyle='#6366f1';ctx.beginPath();ctx.moveTo(18,3);ctx.lineTo(12,15);ctx.lineTo(16,15);ctx.lineTo(10,29);ctx.lineTo(22,16);ctx.lineTo(17,16);ctx.lineTo(23,3);ctx.closePath();ctx.fill();
+    const col={libre:'#22c55e',reten:'#ef4444',accidente:'#f59e0b'}[estado]||'#22c55e';
+    ctx.beginPath();ctx.arc(24,8,6,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+    ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.lineCap='round';ctx.lineJoin='round';
+    if(estado==='reten'){ctx.beginPath();ctx.moveTo(21,5);ctx.lineTo(27,11);ctx.moveTo(27,5);ctx.lineTo(21,11);ctx.stroke();}
+    else if(estado==='accidente'){ctx.beginPath();ctx.moveTo(24,5);ctx.lineTo(24,9);ctx.stroke();ctx.beginPath();ctx.arc(24,11,1,0,Math.PI*2);ctx.fillStyle='white';ctx.fill();}
+    else{ctx.beginPath();ctx.moveTo(21,8);ctx.lineTo(23,10.5);ctx.lineTo(27,5.5);ctx.stroke();}
+    const lnk=document.getElementById('faviconDin');if(lnk)lnk.href=cv.toDataURL();
+  }catch(e){}
+}
+function rrect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+
+// ── COLOR CARRITO ──
+function aplicarColor(c){const car=c||'#ef4444';['splashCar','obCar','tbarCar'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.filter=colorFilter(car);});}
+function colorFilter(hex){const m={'#ef4444':'hue-rotate(0deg)','#22c55e':'hue-rotate(120deg) saturate(1.2)','#f59e0b':'hue-rotate(40deg) saturate(1.5)','#3b82f6':'hue-rotate(220deg) saturate(1.2)','#8b5cf6':'hue-rotate(270deg) saturate(1.2)'};return m[hex]||'hue-rotate(0deg)';}
+
+// ── ONBOARDING ──
+window.elegirRol=r=>{rolEl=r;document.getElementById('rC').classList.toggle('sel',r==='conductor');document.getElementById('rP').classList.toggle('sel',r==='pasajero');document.getElementById('btnS1').disabled=false;};
+window.goOb=id=>{document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');};
+window.goOb3=()=>{const n=document.getElementById('iNom').value.trim(),t=document.getElementById('iTel').value.trim(),e=document.getElementById('e2');e.style.display='none';if(!n||n.length<2){e.textContent='❌ Ingresa tu nombre';e.style.display='block';return;}if(t.replace(/\D/g,'').length<10){e.textContent='❌ Teléfono inválido — mínimo 10 dígitos';e.style.display='block';return;}goOb('ob3');};
+window.goOb4=()=>{const c=document.getElementById('iCiu').value.trim(),e=document.getElementById('e3');e.style.display='none';if(!c||c.length<2){e.textContent='❌ Ingresa tu ciudad';e.style.display='block';return;}goOb('ob4');};
+window.sCiu=c=>document.getElementById('iCiu').value=c;
+window.registrar=async()=>{
+  const n=document.getElementById('iNom').value.trim(),t=document.getElementById('iTel').value.trim(),c=document.getElementById('iCiu').value.trim(),b=document.getElementById('btnReg');
+  b.disabled=true;b.textContent='Creando cuenta...';
+  try{
+    const uid='u_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+    const u={uid,nombre:n,telefono:t.replace(/\D/g,''),ciudad:c,rol:rolEl,creditos:10,bloqueado:false,fechaReg:new Date().toISOString()};
+    await setDoc(doc(db,'ciudades',c.toLowerCase(),'usuarios',uid),u);
+    localStorage.setItem('rl_u',JSON.stringify(u));
+    // Doble respaldo: guardar UID separado para recuperación
+    localStorage.setItem('rl_uid',u.uid);
+    localStorage.setItem('rl_ciudad',u.ciudad.toLowerCase());
+    localStorage.setItem('rl_tel',u.telefono);
+    // Cookie de respaldo (sobrevive limpieza parcial de cache)
+    document.cookie='rl_uid='+u.uid+';max-age=31536000;path=/;SameSite=Lax';
+    document.cookie='rl_ciudad='+u.ciudad.toLowerCase()+';max-age=31536000;path=/;SameSite=Lax';
+    U=u;registrarCiudadNueva(c);mostrarApp();
+  }catch(err){const e=document.getElementById('e3');e.textContent='❌ Error: '+err.message;e.style.display='block';b.disabled=false;b.textContent='✅ Entrar a RUTA LIBRE';}
+};
+
+// ── INIT ──
+
+// ── HELPERS DE SESIÓN ──
+function getCookie(name){
+  const v=document.cookie.split(';').find(r=>r.trim().startsWith(name+'='));
+  return v?v.trim().split('=')[1]:null;
+}
+function guardarSesion(u){
+  try{
+    localStorage.setItem('rl_u',JSON.stringify(u));
+    localStorage.setItem('rl_uid',u.uid);
+    localStorage.setItem('rl_ciudad',(u.ciudad||'').toLowerCase());
+    document.cookie='rl_uid='+u.uid+';max-age=31536000;path=/;SameSite=Lax';
+    document.cookie='rl_ciudad='+(u.ciudad||'').toLowerCase()+';max-age=31536000;path=/;SameSite=Lax';
+  }catch(e){}
+}
+async function init(){
+  setTimeout(async()=>{
+
+    // ── INTENTO 1: localStorage completo ──
+    const s=localStorage.getItem('rl_u');
+    if(s){
+      try{
+        U=JSON.parse(s);
+        if(!U||!U.uid||!U.nombre){throw new Error('Datos incompletos');}
+        if(U.bloqueado){localStorage.clear();toast('🚫 Cuenta suspendida','error');mostrarSplashOut();return;}
+        guardarSesion(U); // refrescar respaldos
+        mostrarApp();return;
+      }catch(e){/* continuar con siguiente intento */}
+    }
+
+    // ── INTENTO 2: recuperar desde Firebase con UID guardado ──
+    const uid=localStorage.getItem('rl_uid')||getCookie('rl_uid');
+    const ciudad=localStorage.getItem('rl_ciudad')||getCookie('rl_ciudad');
+    if(uid&&ciudad){
+      try{
+        document.querySelector('.splash-sub').textContent='Recuperando sesión...';
+        const snap=await getDoc(doc(db,'ciudades',ciudad,'usuarios',uid));
+        if(snap.exists()){
+          U=snap.data();
+          if(U.bloqueado){localStorage.clear();document.cookie='rl_uid=;max-age=0;path=/';toast('🚫 Cuenta suspendida','error');mostrarSplashOut();return;}
+          guardarSesion(U);
+          mostrarApp();return;
+        }
+      }catch(e){/* continuar */}
+    }
+
+    // ── INTENTO 3: buscar por teléfono si hay sesión parcial ──
+    // (no hay datos suficientes, mostrar recuperación)
+    const telGuardado=localStorage.getItem('rl_tel');
+    if(telGuardado&&ciudad){
+      try{
+        document.querySelector('.splash-sub').textContent='Verificando cuenta...';
+        const q2=await getDocs(collection(db,'ciudades',ciudad,'usuarios'));
+        let found=null;
+        q2.forEach(d=>{if(d.data().telefono===telGuardado)found=d.data();});
+        if(found&&!found.bloqueado){
+          U=found;
+          guardarSesion(U);
+          mostrarApp();return;
+        }
+      }catch(e){/* continuar */}
+    }
+
+    // ── Sin sesión — mostrar onboarding ──
+    mostrarSplashOut();
+
+  },1800);
+}
+function mostrarSplashOut(){document.getElementById('splash').style.opacity='0';setTimeout(()=>{document.getElementById('splash').style.display='none';document.getElementById('onboard').style.display='block';},500);}
+
+function mostrarApp(){
+  document.getElementById('splash').style.display='none';document.getElementById('onboard').style.display='none';document.getElementById('app').style.display='flex';
+  guardarSesion(U); // mantener sesión fresca
+  setTimeout(vaciarCola, 3000); // vaciar alertas pendientes offline
+  const eC=U.rol==='conductor';
+  document.querySelectorAll('.co').forEach(el=>el.style.display=eC?'':'none');
+  if(!eC){navGo('pIni','nI');document.getElementById('nV').style.display='none';document.getElementById('nChat').style.display='none';}
+  else{navGo('pVia','nV');document.getElementById('btnRet').classList.add('show');}
+  const ci=U.ciudad;
+  document.getElementById('tCity').textContent=ci;
+  document.getElementById('pSaludo').textContent=U.nombre.split(' ')[0];
+  document.getElementById('pSubtitle').textContent=(eC?'Comunidad de conductores en ':'Servicios en ')+ci;
+  document.getElementById('pNom').textContent=U.nombre;document.getElementById('pTel').textContent=U.telefono;
+  document.getElementById('pCiu').textContent=ci;document.getElementById('pRol').textContent=eC?'Conductor':'Pasajero';
+  document.getElementById('pRol2').textContent=eC?'Conductor':'Pasajero';document.getElementById('pAv').textContent=eC?'🚗':'👤';
+  document.getElementById('pCred2').textContent=(U.creditos||0)+' créditos';document.getElementById('credSaldo').textContent=U.creditos||0;
+  document.getElementById('pFecha').textContent=new Date(U.fechaReg).toLocaleDateString('es-CO');
+  if(!eC)escucharAlertasPas();loadSnd();cargarCFG();cargarPuntos();
+  if(eC){escucharAlertasCiudadActiva();escucharEncDisp();escucharSolsDisp();iniciarAutoExpiry();mostrarBtnSOS(true);escucharSolsEnVia();escucharEncEnVia();}
+  if(deferredPWA)document.getElementById('btnInstalar').style.display='block';
+  setTimeout(cargarEstadisticasPerfil,2000);
+  // Solicitar permisos de notificación (una vez)
+  if('Notification' in window && Notification.permission==='default'){
+    setTimeout(()=>{
+      Notification.requestPermission().then(p=>{
+        if(p==='granted')toast('🔔 Notificaciones activadas','success');
+      });
+    },4000);
+  }
+  // Actualizar tiempos en vivo cada 60s
+  setInterval(()=>{
+    const cards=document.querySelectorAll('.alerta-card [data-ts]');
+    cards.forEach(el=>{
+      const ts=parseInt(el.getAttribute('data-ts'));
+      const min=Math.max(0,Math.floor((Date.now()-ts)/60000));
+      el.textContent='🕐 '+(min<1?'Ahora mismo':min===1?'Hace 1 min':'Hace '+min+' min');
+    });
+  },60000);
+}
+
+// ── CFG ──
+function cargarCFG(){
+  if(unsubCFG)unsubCFG();
+  unsubCFG=onSnapshot(doc(db,'config','plataforma'),snap=>{
+    if(!snap.exists())return;const d=snap.data();CFG={...CFG,...d};
+    const f=document.getElementById('franja'),ft=document.getElementById('franjaT');
+    if(d.franjaActiva&&d.franjaTexto){f.style.display='block';ft.textContent='📢 '+d.franjaTexto+' ·· 📢 '+d.franjaTexto;}else f.style.display='none';
+    if(d.carColor)aplicarColor(d.carColor);
+    if(d.catPub&&d.catPub.length)cargarCategorias(d.catPub);
+    ['srv4','srv5'].forEach(k=>{if(d[k]&&d[k].activo)activarServicio(k,d[k]);});
+  });
+}
+function activarServicio(id,cfg){const el=document.getElementById(id);if(!el)return;el.classList.remove('off');el.querySelector('.sg-ico').textContent=cfg.icono||'🔧';el.querySelector('.sg-nom').textContent=cfg.nombre||'Servicio';el.querySelector('.sg-des').textContent=cfg.desc||'';}
+
+// ── PUBLICIDAD ──
+function cargarCategorias(cats){const row=document.getElementById('catsRow');row.innerHTML='<div class="cat-btn on" onclick="filtrarCat(null,this)">Todos</div>';cats.forEach(c=>{const b=document.createElement('div');b.className='cat-btn';b.textContent=(c.icono||'📌')+' '+c.nombre;b.onclick=function(){filtrarCat(c.nombre,this);};row.appendChild(b);});cargarAnuncios(null);}
+window.filtrarCat=async(cat,el)=>{document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');cargarAnuncios(cat);};
+async function cargarAnuncios(cat){
+  const lista=document.getElementById('pubLista');lista.innerHTML='<div class="pub-empty">Cargando...</div>';
+  try{
+    const snap=await getDocs(collection(db,'ciudades',U.ciudad.toLowerCase(),'anuncios'));
+    const al=[];snap.forEach(d=>{const data=d.data();if(data.activo&&(!cat||data.categoria===cat))al.push({id:d.id,...data});});
+    if(!al.length){lista.innerHTML='<div class="pub-empty">📭 Sin anuncios. ¡Sé el primero en anunciarte!</div>';return;}
+    lista.innerHTML=al.map(a=>`<div class="pub-card"><div class="pub-nom">${a.nombre}</div><div class="pub-desc">${a.descripcion||''}</div><div class="pub-btns">${a.whatsapp?`<button class="btn-wsp-pub" onclick="abrirWspAnuncio('${a.whatsapp}','${a.nombre}')">💬 WhatsApp</button>`:''} ${a.lat&&a.lng?`<button class="btn-gps-pub" onclick="abrirMaps(${a.lat},${a.lng})">🗺️ Cómo llegar</button>`:''}</div></div>`).join('');
+  }catch(e){lista.innerHTML='<div class="pub-empty">Sin anuncios</div>';}
+}
+window.abrirWspAnuncio=(num,nom)=>window.open(`https://wa.me/57${num.replace(/\D/g,'')}?text=${encodeURIComponent('Hola, vi tu anuncio en RUTA LIBRE sobre '+nom)}`,'_blank');
+window.abrirMaps=(lat,lng)=>window.open(`https://maps.google.com/?q=${lat},${lng}`,'_blank');
+window.abrirServicio=tipo=>{if(tipo==='transporte'){navGo('pPas','nEnc');cargarSolicitudes();}else if(tipo==='encomiendas'){navGo('pEnc','nEnc');cargarEncomiendas();}else if(tipo==='chat'&&U?.rol==='conductor'){navGo('pChat','nChat');abrirChat();}else toast('📲 Contáctanos para anunciarte','info');};
+
+// ── PUNTOS ──
+async function cargarPuntos(){
+  try{const snap=await getDocs(collection(db,'ciudades',U.ciudad.toLowerCase(),'puntos'));const pts=[];snap.forEach(d=>pts.push(d.data().nombre));puntosList=pts.length?pts:[...PUNTOS_DEF];}catch(e){puntosList=[...PUNTOS_DEF];}
+  renderPuntos({});
+  const sel=document.getElementById('selPM'),ultima=sel.lastElementChild;
+  puntosList.forEach(n=>{if(![...sel.options].find(o=>o.value===n)){const opt=document.createElement('option');opt.value=n;opt.textContent=n;sel.insertBefore(opt,ultima);}});
+}
+function renderPuntos(alMap){
+  const grid=document.getElementById('puntosGrid');grid.innerHTML='';const now=Date.now();
+  puntosList.forEach(nombre=>{
+    const al=alMap[nombre];const tieneR=al&&al.tipo==='reten';const tieneA=al&&al.tipo==='accidente';
+    const cl=tieneR?'pr':tieneA?'pa':'pv';const dot=tieneR?'r':tieneA?'a':'v';
+    const min=al?Math.floor((now-(al.timestamp?.seconds*1000||now))/60000):null;
+    const minStr=min!==null&&min>=0?` · ${min<1?'ahora':min+'min'}`:'';
+    const div=document.createElement('div');div.className=`punto-item ${cl}`;
+    div.innerHTML=`<div class="punto-dot ${dot}"></div><div><div class="punto-nombre">${nombre}</div><div class="punto-mini">${tieneR?'🔴 Retén'+minStr:tieneA?'🟡 Acc'+minStr:'🟢 Libre'}</div></div>`;
+    div.onclick=()=>toast((tieneR?'🔴 Retén en ':tieneA?'🟡 Acc en ':'🟢 Libre: ')+nombre,'info');
+    grid.appendChild(div);
+  });
+  const pt=document.getElementById('puntosTiem');if(pt)pt.textContent=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+}
+window.guardarNuevoPunto=async()=>{
+  const nom=document.getElementById('iNomPto').value.trim();if(!nom||nom.length<3){toast('⚠️ Escribe el nombre','warning');return;}
+  try{
+    await setDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'puntos',nom.toLowerCase().replace(/\s/g,'-')),{nombre:nom,ruta:document.getElementById('iRutaPto').value,creadoPor:U.uid,timestamp:serverTimestamp()});
+    puntosList.push(nom);const sel=document.getElementById('selPM'),opt=document.createElement('option');opt.value=nom;opt.textContent=nom;sel.insertBefore(opt,sel.lastElementChild);
+    cerrarM('mPunto');toast('📍 Punto "'+nom+'" agregado');
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ── ALERTAS ──
+function escucharAlertas(){
+  if(unsubA)unsubA();const ciudad=U.ciudad.toLowerCase();
+  unsubA=onSnapshot(collection(db,'ciudades',ciudad,'alertas'),snap=>{
+    const al=[];snap.forEach(d=>{if(d.data().activa)al.push({id:d.id,...d.data()});});
+    al.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    const alMap={};al.forEach(a=>{if(!alMap[a.punto])alMap[a.punto]=a;});
+    renderPuntos(alMap);renderHero(al);renderAlertas(al);
+    const hasR=al.some(a=>a.tipo==='reten'),hasA=al.some(a=>a.tipo==='accidente');
+    actualizarFavicon(hasR?'reten':hasA?'accidente':'libre');
+    // Vibración al detectar retén nuevo
+    if(hasR&&navigator.vibrate)navigator.vibrate([300,100,300,100,500]);
+  });
+}
+function escucharAlertasPas(){
+  const ciudad=U.ciudad.toLowerCase();
+  onSnapshot(collection(db,'ciudades',ciudad,'alertas'),snap=>{
+    const al=[];snap.forEach(d=>{if(d.data().activa)al.push({id:d.id,...d.data()});});
+    al.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    const div=document.getElementById('alertasPas');
+    if(!al.length){div.style.display='none';return;}
+    div.style.display='block';
+    div.innerHTML=al.slice(0,2).map(a=>{const isR=a.tipo==='reten';return `<div style="background:${isR?'rgba(239,68,68,0.08)':'rgba(245,158,11,0.08)'};border:1px solid ${isR?'rgba(239,68,68,0.3)':'rgba(245,158,11,0.3)'};border-radius:var(--rlg);padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:11px;font-weight:700;color:${isR?'var(--r)':'var(--am)'}">${isR?'🚔 RETÉN':'⚠️ ACCIDENTE'}</div><div style="font-size:14px;font-weight:700">${a.punto}</div></div><button onclick="leerVoz('${a.punto}','${a.tipo}','${a.sentido}')" style="background:none;border:none;font-size:20px;cursor:pointer">🔊</button></div>`;}).join('');
+    actualizarFavicon(al.some(a=>a.tipo==='reten')?'reten':'accidente');
+  });
+}
+function renderHero(alertas){
+  const hero=document.getElementById('vHero'),circ=document.getElementById('vCirc'),tit=document.getElementById('vTit'),sub=document.getElementById('vSub');
+  const row=document.getElementById('carritosRow'),ctxt=document.getElementById('confTxt'),btnCL=document.getElementById('btnConfLibre');
+  if(!alertas.length){
+    hero.className='via-hero ok';circ.className='circ-main v';circ.textContent='🟢';
+    tit.textContent='VÍA DESPEJADA';sub.textContent='Todo tranquilo por ahora';
+    btnCL.style.display='inline-block';
+    document.getElementById('vLibreMsg')?.remove();
+    cargarConfLibre(row,ctxt);
+    renderHeroVacio(row,ctxt);
+    return;
+  }
+  document.getElementById('vLibreMsg')?.remove();
+  btnCL.style.display='none';
+  const hasR=alertas.some(a=>a.tipo==='reten');const hasA=alertas.some(a=>a.tipo==='accidente');
+  if(hasR){hero.className='via-hero alerta';circ.className='circ-main r';circ.textContent='🔴';tit.textContent='RETÉN ACTIVO';sub.textContent=alertas.length>1?alertas.length+' novedades':alertas[0].punto;}
+  else if(hasA){hero.className='via-hero prec';circ.className='circ-main a';circ.textContent='🟡';tit.textContent='PRECAUCIÓN EN VÍA';sub.textContent=alertas[0].punto;}
+  const tc=alertas.reduce((s,a)=>s+(a.confirmaciones||0),0);row.innerHTML='';ctxt.textContent='';
+  if(tc>0){for(let i=0;i<Math.min(tc,5);i++){const s=document.createElement('span');s.className='carrito-conf';s.textContent='🚗';row.appendChild(s);}ctxt.textContent=tc+' conductor'+(tc>1?'es confirmaron':'confirmó');}
+}
+async function cargarConfLibre(row,ctxt){
+  row.innerHTML='';ctxt.textContent='';
+  try{const snap=await getDocs(collection(db,'ciudades',U.ciudad.toLowerCase(),'confLibre'));const lim=Date.now()-7200000;const confs=[];snap.forEach(d=>{if(d.data().timestamp?.seconds*1000>lim)confs.push(d.data());});if(!confs.length)return;confs.slice(0,5).forEach(()=>{const s=document.createElement('span');s.className='carrito-conf';s.textContent='🚗';row.appendChild(s);});ctxt.textContent=confs.length+' conductor'+(confs.length>1?'es confirmaron':'confirmó')+' vía libre';}catch(e){}
+}
+window.confirmarLibre=async()=>{if(inact){toast('⚠️ Actívate primero','warning');return;}try{await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'confLibre'),{conductorId:U.uid,conductorNombre:U.nombre,timestamp:serverTimestamp()});toast('🚗 ¡Vía libre confirmada! Gracias compañero');tonoR(SND.vol);celebrar();}catch(e){toast('❌ '+e.message,'error');}};
+function renderAlertas(alertas){
+  const sec=document.getElementById('alertasSec');sec.innerHTML='';
+  if(alertas.length>1)sec.insertAdjacentHTML('beforeend',`<div style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--ts);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">Novedades activas <span style="background:var(--r);color:white;border-radius:var(--rfl);padding:2px 8px;font-size:11px">${alertas.length}</span></div>`);
+  alertas.forEach(a=>sec.appendChild(mkCard(a)));
+}
+function mkCard(a){
+  const eC=U?.rol==='conductor';const min=Math.max(0,Math.floor((Date.now()-(a.timestamp?.seconds*1000||Date.now()))/60000));const tStr=min<1?'Ahora mismo':min===1?'Hace 1 min':'Hace '+min+' min';
+  const isR=a.tipo==='reten',isA=a.tipo==='accidente',cl=isR?'r':isA?'a':'b';
+  const lbl=isR?'🚔 RETÉN POLICIAL':isA?'⚠️ ACCIDENTE':'🚧 NOVEDAD EN VÍA';
+  const sm={ida:'➡️ Hacia Yopal',vuelta:'⬅️ Hacia Tauramena',ambos:'↔️ Ambos'};
+  const conf=a.confirmaciones||0;const ts=a.timestamp?.seconds?a.timestamp.seconds*1000:Date.now();const d=document.createElement('div');d.className='alerta-card '+(isR?'cr':isA?'ca':'co2');
+  const carrsHTML=conf>0?`<div class="carr-confirm">${'<span class="carrito-conf">🚗</span>'.repeat(Math.min(conf,5))}<span>${conf} conductor${conf>1?'es':''} confirmó</span></div>`:'';
+  d.innerHTML=`<div class="ac-tipo ${cl}">${lbl}</div><div class="ac-lugar ${cl}">${a.punto||'?'}</div><div class="ac-meta">${sm[a.sentido]?`<span>${sm[a.sentido]}</span>`:''}<span data-ts="${ts}">🕐 ${tStr}</span></div>${carrsHTML}${a.nota?`<div style="font-size:12px;color:var(--ts);margin-bottom:10px;padding:8px;background:var(--elev);border-radius:var(--rsm)">${a.nota}</div>`:''}${eC?`<div class="ac-btns"><button class="btn-sigue" onclick="confA('${a.id}')">🚗 Sigue activo</button><button class="btn-paso" onclick="yaP('${a.id}')">🟢 Ya pasó</button></div>`:`<button onclick="leerVoz('${a.punto}','${a.tipo}','${a.sentido}')" style="background:none;border:none;font-size:12px;color:var(--tm);cursor:pointer;font-family:'Inter',sans-serif;text-decoration:underline">🔊 Escuchar alerta</button>`}`;
+  return d;
+}
+window.leerVoz=(p,t,s)=>{if(!('speechSynthesis' in window))return;const sm={ida:'hacia Yopal',vuelta:'hacia Tauramena',ambos:'en ambos sentidos'};const m=new SpeechSynthesisUtterance(`Alerta. ${t==='reten'?'Retén policial':t==='accidente'?'Accidente':'Novedad'} en ${p}. ${sm[s]||''}.`);m.lang='es-CO';m.rate=.9;window.speechSynthesis.speak(m);};
+window.confA=async id=>{try{const r=doc(db,'ciudades',U.ciudad.toLowerCase(),'alertas',id),s=await getDoc(r);if(s.exists()){await updateDoc(r,{confirmaciones:(s.data().confirmaciones||0)+1});toast('🚗 Confirmado, gracias');tonoR(SND.vol);}}catch(e){toast('❌ '+e.message,'error');}};
+window.yaP=async id=>{try{const r=doc(db,'ciudades',U.ciudad.toLowerCase(),'alertas',id),s=await getDoc(r);if(s.exists()){const yp=(s.data().yaPasaron||0)+1;await updateDoc(r,{yaPasaron:yp,...(yp>=2?{activa:false}:{})});toast(yp>=2?'🟢 Alerta desactivada':'🟡 Registrado');}}catch(e){toast('❌ '+e.message,'error');}};
+
+// ── MODAL REPORTE ──
+window.abrirModal=()=>{if(inact){toast('⚠️ Actívate primero','warning');return;}tipoR=null;sentR=null;ptoR=null;document.getElementById('pGps').textContent='Detectando...';document.getElementById('iNota').value='';document.getElementById('iNvoP').value='';document.getElementById('nvoP').style.display='none';document.getElementById('selPM').value='';document.querySelectorAll('.tipo-b,.sent-b').forEach(b=>b.className=b.className.replace(/\s*(sr|sa|so|on)\b/g,''));abrirM('mRep');navigator.geolocation?.getCurrentPosition(pos=>{
+    gpsLat=pos.coords.latitude;gpsLng=pos.coords.longitude;
+    document.getElementById('pGps').textContent='✅ '+gpsLat.toFixed(4)+', '+gpsLng.toFixed(4);
+  },()=>{gpsLat=null;gpsLng=null;document.getElementById('pGps').textContent='Sin GPS — elige punto manual';},{timeout:5000});};
+window.sTipo=t=>{tipoR=t;document.querySelectorAll('.tipo-b').forEach(b=>b.classList.remove('sr','sa','so'));document.getElementById(t==='reten'?'tR':t==='accidente'?'tA':'tO').classList.add(t==='reten'?'sr':t==='accidente'?'sa':'so');};
+window.sSent=s=>{sentR=s;document.querySelectorAll('.sent-b').forEach(b=>b.classList.remove('on'));document.getElementById(s==='ida'?'sI':s==='vuelta'?'sV':'sA').classList.add('on');};
+window.sPtoM=()=>{const v=document.getElementById('selPM').value;if(v==='nuevo'){document.getElementById('nvoP').style.display='block';ptoR=null;}else if(v){ptoR=v;document.getElementById('pGps').textContent=v;document.getElementById('nvoP').style.display='none';}};
+window.cerrarM=id=>document.getElementById(id).classList.remove('open');
+window.abrirM=id=>document.getElementById(id).classList.add('open');
+document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+window.enviar=async()=>{
+  if(!tipoR){toast('⚠️ Elige qué encontraste','warning');return;}if(!sentR){toast('⚠️ Elige el sentido','warning');return;}
+  const ahora=Date.now();if(ahora-ultimoReporte<300000){const rest=Math.ceil((300000-(ahora-ultimoReporte))/60000);toast(`⏳ Espera ${rest} min antes de reportar de nuevo`,'warning');return;}
+  let pf=ptoR;if(!pf){const nv=document.getElementById('iNvoP').value.trim();if(nv)pf=nv;else{toast('⚠️ Elige el punto','warning');return;}}
+  const btn=document.getElementById('btnEnv');btn.disabled=true;btn.textContent='Enviando...';
+  try{await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'alertas'),{tipo:tipoR,punto:pf,sentido:sentR,nota:document.getElementById('iNota').value.trim(),activa:true,confirmaciones:0,yaPasaron:0,conductorId:U.uid,conductorNombre:U.nombre,lat:gpsLat,lng:gpsLng,timestamp:serverTimestamp(),ciudad:U.ciudad.toLowerCase()});ultimoReporte=Date.now();cerrarM('mRep');tonoR(SND.vol);toast('🚨 Alerta enviada a todos');celebrar();}
+  catch(e){toast('❌ '+e.message,'error');}
+  btn.disabled=false;btn.textContent='🚨 Enviar alerta a todos';
+};
+
+// ── ENCOMIENDAS ──
+window.switchEncTab=t=>{encTab=t;document.getElementById('etDisp').classList.toggle('on',t==='disponibles');document.getElementById('etMias').classList.toggle('on',t==='mias');cargarEncomiendas();};
+window.cargarEncomiendas=()=>{
+  const lista=document.getElementById('encLista');lista.innerHTML='<div class="pub-empty">Cargando...</div>';
+  if(unsubEnc)unsubEnc();
+  unsubEnc=onSnapshot(collection(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas'),snap=>{
+    let enc=[];snap.forEach(d=>{if(d.data().activa)enc.push({id:d.id,...d.data()});});
+    enc.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    if(encTab==='mias')enc=enc.filter(e=>e.remitenteId===U.uid);
+    else if(U.rol==='conductor')enc=enc.filter(e=>e.estado==='esperando'||e.conductorId===U.uid);
+    else enc=enc.filter(e=>e.remitenteId===U.uid);
+    if(!enc.length){lista.innerHTML='<div class="pub-empty">📦 Sin encomiendas '+(encTab==='mias'?'tuyas':'disponibles')+'</div>';return;}
+    const estadoMap={esperando:'esp',en_camino:'cam',entregado:'ent',cancelado:'can'};
+    const estadoLbl={esperando:'⏳ Esperando',en_camino:'🚗 En camino',entregado:'✅ Entregado',cancelado:'❌ Cancelado'};
+    lista.innerHTML=enc.map(e=>{
+      const esMia=e.remitenteId===U.uid,esMiEnc=e.conductorId===U.uid;
+      const btns=U.rol==='conductor'&&e.estado==='esperando'&&!esMia
+        ?`<button class="btn-accion btn-tomar" onclick="tomarEnc('${e.id}')">📦 Tomar</button><button class="btn-accion btn-wsp-accion" onclick="wspDirecto('${e.remitenteTel}')">💬 Remitente</button>`
+        :esMiEnc&&e.estado==='en_camino'
+        ?`<button class="btn-accion btn-entregar" onclick="marcarEntregado('${e.id}')">✅ Entregado</button><button class="btn-accion btn-wsp-accion" onclick="wspDirecto('${e.destinatarioTel}')">💬 Destinatario</button>`
+        :esMia&&e.estado==='esperando'
+        ?`<button class="btn-accion btn-cancel" onclick="cancelarEnc('${e.id}')">❌ Cancelar</button>`:'';
+      return `<div class="enc-card"><div class="enc-estado ${estadoMap[e.estado]||'esp'}">${estadoLbl[e.estado]||'Pendiente'}</div><div class="enc-title">📦 ${e.descripcion}</div><div class="enc-meta">Para: ${e.destinatarioNombre} · ${e.destino}${e.valor?` · $${parseInt(e.valor).toLocaleString()}`:''}</div>${e.nota?`<div style="font-size:11px;color:var(--tm);margin-bottom:8px">${e.nota}</div>`:''}<div class="enc-btns">${btns}</div></div>`;
+    }).join('');
+  });
+};
+function escucharEncDisp(){
+  let prevEnc=-1;
+  onSnapshot(collection(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas'),snap=>{
+    let cnt=0;snap.forEach(d=>{if(d.data().activa&&d.data().estado==='esperando')cnt++;});
+    const b=document.getElementById('encBadge');if(b){b.textContent=cnt;b.style.display=cnt>0?'flex':'none';}
+    if(prevEnc>=0&&cnt>prevEnc)tonoE();
+    prevEnc=cnt;
+  });
+}
+window.enviarEncomienda=async()=>{
+  const desc=document.getElementById('eDesc').value.trim(),dNom=document.getElementById('eDestNom').value.trim(),dTel=document.getElementById('eDestTel').value.trim(),dCiu=document.getElementById('eDestCiu').value;
+  if(!desc||!dNom||!dTel||!dCiu){toast('⚠️ Completa los campos obligatorios','warning');return;}
+  const btn=document.getElementById('btnEnvEnc');btn.disabled=true;btn.textContent='Publicando...';
+  try{
+    await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas'),{descripcion:desc,destinatarioNombre:dNom,destinatarioTel:dTel.replace(/\D/g,''),destino:dCiu,valor:document.getElementById('eValor').value||0,nota:document.getElementById('eNota').value.trim(),remitenteId:U.uid,remitenteNombre:U.nombre,remitenteTel:U.telefono,estado:'esperando',activa:true,conductorId:null,timestamp:serverTimestamp()});
+    cerrarM('mEnc');toast('📦 Encomienda publicada');['eDesc','eDestNom','eDestTel','eNota','eValor'].forEach(id=>document.getElementById(id).value='');document.getElementById('eDestCiu').value='';
+  }catch(e){toast('❌ '+e.message,'error');}
+  btn.disabled=false;btn.textContent='📦 Publicar encomienda';
+};
+window.tomarEnc=async id=>{
+  if((U.creditos||0)<1){toast('💰 Sin créditos. Recarga por WhatsApp.','warning');return;}
+  try{
+    await updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas',id),{estado:'en_camino',conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono});
+    const nc=(U.creditos||0)-1;U.creditos=nc;
+    await updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'usuarios',U.uid),{creditos:nc});
+    document.getElementById('credSaldo').textContent=nc;document.getElementById('pCred2').textContent=nc+' créditos';
+    localStorage.setItem('rl_u',JSON.stringify(U));localStorage.setItem('rl_uid',U.uid);localStorage.setItem('rl_ciudad',U.ciudad.toLowerCase());toast('📦 Encomienda tomada — 1 crédito descontado');
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+window.marcarEntregado=async id=>{try{await updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas',id),{estado:'entregado',activa:false});toast('✅ Entrega confirmada');}catch(e){toast('❌ '+e.message,'error');}};
+window.cancelarEnc=async id=>{if(!confirm('¿Cancelar encomienda?'))return;try{await updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas',id),{estado:'cancelado',activa:false});toast('❌ Encomienda cancelada');}catch(e){toast('❌ '+e.message,'error');}};
+
+// ── SOLICITUDES PASAJEROS ──
+window.filtrarRuta=(filtro,el)=>{
+  document.querySelectorAll('#pasFiltroPills .cat-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  // Recargar con filtro
+  cargarSolicitudesConFiltro(filtro);
+};
+let rutaFiltro=null;
+window.cargarSolicitudesConFiltro=(filtro)=>{rutaFiltro=filtro;cargarSolicitudes();};
+window.switchPasTab=t=>{pasTab=t;document.getElementById('ptSols').classList.toggle('on',t==='solicitudes');document.getElementById('ptMias').classList.toggle('on',t==='mias');cargarSolicitudes();};
+window.cargarSolicitudes=()=>{
+  const lista=document.getElementById('pasLista');lista.innerHTML='<div class="pub-empty">Cargando...</div>';
+  if(unsubPas)unsubPas();
+  unsubPas=onSnapshot(collection(db,'ciudades',U.ciudad.toLowerCase(),'solicitudes'),snap=>{
+    let sols=[];snap.forEach(d=>{if(d.data().activa)sols.push({id:d.id,...d.data()});});
+    sols.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    if(pasTab==='mias')sols=sols.filter(s=>s.pasajeroId===U.uid);
+    else if(U.rol==='conductor')sols=sols.filter(s=>s.estado==='esperando');
+    else sols=sols.filter(s=>s.pasajeroId===U.uid);
+    // Aplicar filtro de ruta si existe
+    if(rutaFiltro){
+      const filtros=rutaFiltro.split('-');
+      sols=sols.filter(s=>{
+        const o=(s.origen||'').toLowerCase(),d=(s.destino||'').toLowerCase();
+        return filtros.some(f=>o.includes(f)||d.includes(f));
+      });
+    }
+    if(!sols.length){lista.innerHTML='<div class="pub-empty">🚗 Sin solicitudes '+(pasTab==='mias'?'tuyas':'disponibles')+'</div>';return;}
+    lista.innerHTML=sols.map(s=>{
+      const esMia=s.pasajeroId===U.uid;
+      const hora=s.hora?new Date(s.hora).toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Flexible';
+      const btns=U.rol==='conductor'&&s.estado==='esperando'&&!esMia
+        ?`<button class="btn-aceptar" onclick="aceptarViaje('${s.id}','${s.pasajeroTel}')">✅ Aceptar</button>`
+        :esMia&&s.estado==='esperando'
+        ?`<button class="btn-accion btn-cancel" onclick="cancelarSol('${s.id}')">❌ Cancelar</button>`
+        :`<span style="font-size:12px;color:var(--v)">✅ Aceptada</span>`;
+      const tsDiff=s.timestamp?.seconds?Math.floor((Date.now()-s.timestamp.seconds*1000)/60000):0;
+      const publicada=tsDiff<1?'Ahora mismo':tsDiff<60?`Hace ${tsDiff}min`:`Hace ${Math.floor(tsDiff/60)}h`;
+      const estadoTag=s.estado==='aceptada'?`<span style="background:rgba(34,197,94,0.15);color:var(--v);border-radius:var(--rfl);padding:2px 8px;font-size:10px;font-weight:700">✅ Aceptada</span>`
+        :s.estado==='cancelada'?`<span style="background:rgba(239,68,68,0.15);color:var(--r);border-radius:var(--rfl);padding:2px 8px;font-size:10px;font-weight:700">❌ Cancelada</span>`
+        :`<span style="background:rgba(245,158,11,0.15);color:var(--am);border-radius:var(--rfl);padding:2px 8px;font-size:10px;font-weight:700">⏳ Esperando</span>`;
+      return `<div class="sol-card" style="${s.estado==='aceptada'?'border-color:rgba(34,197,94,0.3)':''}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div class="sol-ruta">📍 ${s.origen} → ${s.destino}</div>
+          ${estadoTag}
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+          <span style="font-size:12px;color:var(--ts)">👤 ${s.pasajeroNombre}</span>
+          <span style="font-size:12px;color:var(--ts)">👥 ${s.personas} persona${s.personas>1?'s':''}</span>
+          <span style="font-size:12px;color:var(--ts)">🕐 ${hora}</span>
+          ${s.precio?`<span style="font-size:12px;color:var(--v);font-weight:600">💵 $${parseInt(s.precio).toLocaleString()}</span>`:''}
+          <span style="font-size:11px;color:var(--tm)">· ${publicada}</span>
+        </div>
+        ${s.nota?`<div style="font-size:12px;color:var(--ts);background:var(--elev);border-radius:var(--rsm);padding:6px 10px;margin-bottom:8px">📝 ${s.nota}</div>`:''}
+        ${s.conductorNombre&&s.estado==='aceptada'?`<div style="font-size:12px;color:var(--v);margin-bottom:8px">🚗 Conductor: ${s.conductorNombre}</div>`:''}
+        <div class="sol-btns">${btns}</div>
+      </div>`;
+    }).join('');
+  });
+};
+function escucharSolsDisp(){
+  let prevCntSol=-1;
+  onSnapshot(collection(db,'ciudades',U.ciudad.toLowerCase(),'solicitudes'),snap=>{
+    let cnt=0;snap.forEach(d=>{if(d.data().activa&&d.data().estado==='esperando')cnt++;});
+    const b=document.getElementById('pasBadge');
+    if(b){b.textContent=cnt;b.style.display=cnt>0?'flex':'none';}
+    if(prevCntSol>=0&&cnt>prevCntSol)tonoP(); // solo si aumentaron
+    prevCntSol=cnt;
+  });
+}
+window.enviarSolicitud=async()=>{
+  const origen=document.getElementById('pOrigen').value.trim(),destino=document.getElementById('pDestino').value.trim();
+  if(!origen||!destino){toast('⚠️ Completa origen y destino','warning');return;}
+  const btn=document.getElementById('btnEnvPas');btn.disabled=true;btn.textContent='Publicando...';
+  try{
+    await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'solicitudes'),{
+      origen,destino,
+      hora:document.getElementById('pHora').value,
+      personas:document.getElementById('pPersonas').value,
+      precio:document.getElementById('pPrecio')?.value||null,
+      nota:document.getElementById('pNota').value.trim(),
+      pasajeroId:U.uid,pasajeroNombre:U.nombre,pasajeroTel:U.telefono,
+      ciudadOrigen:U.ciudad.toLowerCase(),
+      estado:'esperando',activa:true,conductorId:null,
+      timestamp:serverTimestamp()
+    });
+    cerrarM('mPas');toast('🚗 Solicitud publicada');['pOrigen','pDestino','pHora','pNota'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){toast('❌ '+e.message,'error');}
+  btn.disabled=false;btn.textContent='🚗 Publicar solicitud';
+};
+window.aceptarViaje=async(id,tel)=>{
+  try{await updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'solicitudes',id),{estado:'aceptada',conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono});toast('✅ Viaje aceptado');setTimeout(()=>window.open(`https://wa.me/57${tel}?text=${encodeURIComponent('Hola, soy '+U.nombre+' de RUTA LIBRE. Vi tu solicitud y puedo llevarte. ¿Seguimos?')}`,'_blank'),500);}
+  catch(e){toast('❌ '+e.message,'error');}
+};
+window.cancelarSol=async id=>{if(!confirm('¿Cancelar solicitud?'))return;try{await updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'solicitudes',id),{estado:'cancelada',activa:false});toast('❌ Solicitud cancelada');}catch(e){toast('❌ '+e.message,'error');}};
+
+// ── CHAT ──
+window.abrirChat=()=>{
+  if(U.rol!=='conductor'){toast('💬 Chat solo para conductores','warning');return;}
+  document.getElementById('chatCiudadLabel').textContent='Canal '+U.ciudad+' · Solo conductores';
+  document.getElementById('chatInputArea').classList.add('show');chatAbierto=true;
+  if(unsubChat)return;
+  const q2=query(collection(db,'ciudades',U.ciudad.toLowerCase(),'chat'),orderBy('timestamp','asc'),limit(50));
+  let primero=true;
+  unsubChat=onSnapshot(q2,snap=>{
+    const msgs=document.getElementById('chatMsgs');
+    if(primero){msgs.innerHTML='';primero=false;}
+    snap.docChanges().forEach(change=>{
+      if(change.type==='added'){
+        const data=change.doc.data();
+        if(data.eliminado)return;
+        const mio=data.uid===U.uid;
+        const b=document.createElement('div');b.className='msg-bubble '+(mio?'mine':'other');
+        b.innerHTML=`${!mio?`<span style="font-size:10px;font-weight:700;color:var(--acc);display:block;margin-bottom:2px">${data.nombre}</span>`:''}${data.texto}<span class="msg-meta">${data.timestamp?.seconds?new Date(data.timestamp.seconds*1000).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}):''}</span>`;
+        msgs.appendChild(b);msgs.scrollTop=msgs.scrollHeight;
+        if(!mio&&chatAbierto)tonoChat();
+      }
+    });
+  });
+};
+window.enviarChat=async()=>{const inp=document.getElementById('chatInp'),txt=inp.value.trim();if(!txt)return;inp.value='';try{await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'chat'),{uid:U.uid,nombre:U.nombre,texto:txt,timestamp:serverTimestamp()});}catch(e){toast('❌ Error al enviar','error');}};
+window.chatEnter=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarChat();}};
+
+// ── INACTIVO ──
+window.toggleInact=()=>{
+  inact=!inact;const b=document.getElementById('btnInact'),e=document.getElementById('bgest'),r=document.getElementById('btnRet');
+  if(inact){b.textContent='Activarme';b.classList.add('off');e.className='bgest off';e.textContent='⚫ Inactivo';r.classList.remove('show');if(unsubA)unsubA();toast('😴 Modo inactivo');}
+  else{b.textContent='Inactivo';b.classList.remove('off');e.className='bgest on';e.textContent='🟢 Activo';r.classList.add('show');escucharAlertasCiudadActiva();toast('✅ Estás activo');}
+  if(U)updateDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'usuarios',U.uid),{inactivo:inact}).catch(()=>{});
+};
+
+// ── NAV ──
+window.navGo=(id,nid)=>{
+  document.querySelectorAll('.pant').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(nid)document.getElementById(nid).classList.add('on');
+  const r=document.getElementById('btnRet');if(r)r.style.display=id==='pVia'&&U?.rol==='conductor'?'flex':'none';
+  const ci=document.getElementById('chatInputArea');if(ci)ci.classList.toggle('show',id==='pChat');
+  const wf=document.getElementById('wspFl');if(wf)wf.style.display=id==='pChat'?'none':'flex';
+  chatAbierto=id==='pChat';
+  // Botón regresar a La Vía — visible en pIni para conductores
+  const bkv=document.getElementById('btnBackVia');
+  if(bkv)bkv.classList.toggle('show',id==='pIni'&&U?.rol==='conductor');
+  // Auto-cargar
+  if(id==='pPerf')cargarEstadisticasPerfil();
+  if(id==='pHist')cargarHistorial();
+};
+
+// ── UTILS ──
+window.abrirWsp=()=>{const n=(CFG.wsp||'3114571322').replace(/\D/g,'');window.open(`https://wa.me/57${n}?text=${encodeURIComponent(CFG.msg||'Hola, necesito información sobre RUTA LIBRE 👋')}`,'_blank');};
+window.wspDirecto=tel=>window.open(`https://wa.me/57${tel.replace(/\D/g,'')}`,'_blank');
+window.salir=()=>{
+  if(!confirm('¿Cerrar sesión?'))return;
+  [unsubA,unsubCFG,unsubChat,unsubEnc,unsubPas].forEach(u=>{try{if(u)u();}catch(e){}});
+  localStorage.clear();
+  // Limpiar cookies de sesión
+  document.cookie='rl_uid=;max-age=0;path=/;SameSite=Lax';
+  document.cookie='rl_ciudad=;max-age=0;path=/;SameSite=Lax';
+  window.location.reload();
+};
+window.toast=(m,t='info')=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const cols={success:'#22c55e',error:'#ef4444',warning:'#f59e0b',info:'#6366f1'};const el=document.createElement('div');el.className='toast';el.style.borderLeftColor=cols[t]||cols.info;el.textContent=m;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);};
+
+// ── PWA ──
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPWA=e;const b=document.getElementById('btnInstalar');if(b)b.style.display='block';});
+window.instalarPWA=async()=>{if(!deferredPWA)return;deferredPWA.prompt();const{outcome}=await deferredPWA.userChoice;if(outcome==='accepted'){document.getElementById('btnInstalar').style.display='none';toast('✅ App instalada','success');}deferredPWA=null;};
+
+// ── SW ──
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(reg=>{reg.addEventListener('updatefound',()=>{reg.installing?.addEventListener('statechange',function(){if(this.state==='installed'&&navigator.serviceWorker.controller)toast('🔄 Nueva versión disponible — recarga','info');});});}).catch(e=>console.log('SW error:',e));});}
+
+
+
+// ── SISTEMA DE CIUDADES DINÁMICAS ──
+
+// Obtener ciudades vecinas del usuario actual
+function getCiudadesVistas(){
+  const base=(U?.ciudad||'tauramena').toLowerCase();
+  const cv=ciudadVista?.toLowerCase()||base;
+  return VECINAS[cv]||VECINAS[base]||VECINAS['default'];
+}
+
+// Escuchar alertas de la ciudad activa (propia o explorada)
+function escucharAlertasCiudadActiva(){
+  const ciudades=getCiudadesVistas();
+  actualizarChipsVecinas(ciudades);
+  // Suscribirse a alertas de la ciudad principal visible
+  const principal=ciudadVista?.toLowerCase()||U.ciudad.toLowerCase();
+  actualizarLabelCiudad(principal);
+  if(unsubA)unsubA();
+  unsubA=onSnapshot(collection(db,'ciudades',principal,'alertas'),snap=>{
+    const al=[];snap.forEach(d=>{if(d.data().activa)al.push({id:d.id,ciudad:principal,...d.data()});});
+    al.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    const alMap={};al.forEach(a=>{if(!alMap[a.punto])alMap[a.punto]=a;});
+    renderPuntos(alMap);renderHero(al);renderAlertas(al);
+    const hasR=al.some(a=>a.tipo==='reten'),hasA=al.some(a=>a.tipo==='accidente');
+    actualizarFavicon(hasR?'reten':hasA?'accidente':'libre');
+    if(hasR&&navigator.vibrate)navigator.vibrate([300,100,300,100,500]);
+  });
+}
+
+function actualizarLabelCiudad(ciudad){
+  const lbl=document.getElementById('ciudadActivaLabel');
+  const btnR=document.getElementById('btnResetCiudad');
+  const esPropia=ciudad===U?.ciudad?.toLowerCase();
+  if(lbl)lbl.textContent=esPropia?('📡 '+U.ciudad+' y alrededores'):('🔍 Explorando: '+ciudad.charAt(0).toUpperCase()+ciudad.slice(1));
+  if(btnR)btnR.style.display=esPropia?'none':'block';
+}
+
+function actualizarChipsVecinas(ciudades){
+  const row=document.getElementById('chipsVecinasRow');if(!row)return;
+  const activa=(ciudadVista||U?.ciudad||'').toLowerCase();
+  row.innerHTML=ciudades.map(c=>{
+    const label=c.charAt(0).toUpperCase()+c.slice(1);
+    const esActiva=c===activa||(!ciudadVista&&c===U?.ciudad?.toLowerCase());
+    return `<span onclick="explorarChip('${c}')" style="background:${esActiva?'var(--acc-g)':'var(--elev)'};border:1px solid ${esActiva?'var(--acc)':'var(--bn)'};border-radius:var(--rfl);padding:5px 12px;font-size:12px;font-weight:${esActiva?'700':'500'};color:${esActiva?'var(--acc)':'var(--ts)'};cursor:pointer;white-space:nowrap">${label}</span>`;
+  }).join('');
+}
+
+window.explorarChip=ciudad=>{
+  ciudadVista=ciudad;
+  escucharAlertasCiudadActiva();
+  toast('📍 Viendo alertas de '+ciudad.charAt(0).toUpperCase()+ciudad.slice(1),'info');
+};
+
+window.resetCiudadVista=()=>{
+  ciudadVista=null;
+  escucharAlertasCiudadActiva();
+  toast('📍 De vuelta a tu zona');
+};
+
+window.abrirBuscadorCiudad=()=>{
+  document.getElementById('iBuscaCiudad').value='';
+  document.getElementById('sugerenciasCiudad').innerHTML='';
+  abrirM('mBuscaCiudad');
+  setTimeout(()=>document.getElementById('iBuscaCiudad').focus(),300);
+};
+
+window.sugerirCiudades=async(txt)=>{
+  const div=document.getElementById('sugerenciasCiudad');
+  if(!txt||txt.length<2){div.innerHTML='';return;}
+  // Buscar en Firestore ciudades que se han registrado
+  try{
+    // Sugerencias locales primero (todas las keys de VECINAS)
+    const todas=Object.keys(VECINAS).filter(c=>c.includes(txt.toLowerCase())&&c!=='default');
+    div.innerHTML=todas.slice(0,6).map(c=>`
+      <div onclick="seleccionarCiudadBusqueda('${c}')"
+        style="background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:10px 14px;cursor:pointer;font-size:13px;transition:all 0.15s"
+        onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bn)'">
+        📍 ${c.charAt(0).toUpperCase()+c.slice(1)}
+      </div>`).join('') || '<div style="font-size:12px;color:var(--tm);padding:8px">No encontrado — escríbela completa y búscala igual</div>';
+  }catch(e){div.innerHTML='';}
+};
+
+window.seleccionarCiudadBusqueda=ciudad=>{
+  document.getElementById('iBuscaCiudad').value=ciudad;
+  document.getElementById('sugerenciasCiudad').innerHTML='';
+};
+
+window.explorarCiudad=()=>{
+  const ciudad=document.getElementById('iBuscaCiudad').value.trim().toLowerCase();
+  if(!ciudad||ciudad.length<2){toast('⚠️ Escribe el nombre de la ciudad','warning');return;}
+  ciudadVista=ciudad;
+  cerrarM('mBuscaCiudad');
+  escucharAlertasCiudadActiva();
+  toast('🔍 Explorando alertas de '+ciudad.charAt(0).toUpperCase()+ciudad.slice(1),'info');
+};
+
+// Registrar ciudad nueva en Firestore para que aparezca en sugerencias futuras
+async function registrarCiudadNueva(ciudad){
+  try{
+    const key=ciudad.toLowerCase();
+    if(!VECINAS[key]){
+      // Agregar a vecinas con ciudades base cercanas
+      VECINAS[key]=[key,...(VECINAS['default'])];
+    }
+    await setDoc(doc(db,'config','ciudades',key),{nombre:ciudad,activa:true,timestamp:serverTimestamp()},{merge:true});
+  }catch(e){}
+}
+
+
+// ── MINI-PANELS EN PANTALLA VÍA ──
+window.toggleViaPanel=(bodyId,arrId)=>{
+  const body=document.getElementById(bodyId);
+  const arr=document.getElementById(arrId);
+  if(!body)return;
+  const open=body.classList.toggle('open');
+  if(arr)arr.textContent=open?'▲':'▼';
+};
+
+window.irPantallaCompartida=()=>{
+  navGo('pIni','nI');
+  const btn=document.getElementById('btnBackVia');
+  if(btn)btn.classList.add('show');
+};
+
+// Escuchar y renderizar solicitudes de pasajeros en pVia
+function escucharSolsEnVia(){
+  if(U.rol!=='conductor')return;
+  const ciudad=U.ciudad.toLowerCase();
+  let prevSol=-1;
+  onSnapshot(collection(db,'ciudades',ciudad,'solicitudes'),snap=>{
+    const sols=[];
+    snap.forEach(d=>{const data=d.data();if(data.activa&&data.estado==='esperando')sols.push({id:d.id,...data});});
+    sols.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    // Badge
+    const badge=document.getElementById('viaPasBadge');
+    if(badge){badge.textContent=sols.length;badge.style.background=sols.length>0?'var(--am)':'var(--tm)';}
+    // Sonido solo en nuevas
+    if(prevSol>=0&&sols.length>prevSol)tonoP();
+    prevSol=sols.length;
+    // Render
+    const lista=document.getElementById('viaPasLista');if(!lista)return;
+    if(!sols.length){lista.innerHTML='<div class="via-empty-panel">Sin solicitudes pendientes</div>';return;}
+    lista.innerHTML=sols.map(s=>{
+      const hora=s.hora?new Date(s.hora).toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Flexible';
+      const min=s.timestamp?.seconds?Math.floor((Date.now()-s.timestamp.seconds*1000)/60000):0;
+      const publicada=min<1?'Ahora':min<60?min+'min':Math.floor(min/60)+'h';
+      return `<div class="via-sol-card">
+        <div class="via-sol-info">
+          <div class="ruta">📍 ${s.origen} → ${s.destino}</div>
+          <div class="meta">👤 ${s.pasajeroNombre} · ${s.personas} persona${s.personas>1?'s':''} · 🕐 ${hora}</div>
+          ${s.precio?`<div class="precio">💵 $${parseInt(s.precio).toLocaleString()}</div>`:''}
+          ${s.nota?`<div class="meta" style="font-style:italic">${s.nota}</div>`:''}
+          <div class="meta" style="color:var(--tm)">Publicado hace ${publicada}</div>
+        </div>
+        <button class="btn-tomar-via" onclick="aceptarViajeRapido('${s.id}','${s.pasajeroTel}','${s.pasajeroNombre}','${s.origen}','${s.destino}')">✅ Tomar</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+// Escuchar encomiendas en pVia
+function escucharEncEnVia(){
+  if(U.rol!=='conductor')return;
+  const ciudad=U.ciudad.toLowerCase();
+  let prevEnc=-1;
+  onSnapshot(collection(db,'ciudades',ciudad,'encomiendas'),snap=>{
+    const encs=[];
+    snap.forEach(d=>{const data=d.data();if(data.activa&&data.estado==='esperando')encs.push({id:d.id,...data});});
+    encs.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+    // Badge
+    const badge=document.getElementById('viaEncBadge');
+    if(badge){badge.textContent=encs.length;badge.style.background=encs.length>0?'var(--r)':'var(--tm)';}
+    // Sonido solo en nuevas
+    if(prevEnc>=0&&encs.length>prevEnc)tonoE();
+    prevEnc=encs.length;
+    // Render
+    const lista=document.getElementById('viaEncLista');if(!lista)return;
+    if(!encs.length){lista.innerHTML='<div class="via-empty-panel">Sin encomiendas pendientes</div>';return;}
+    lista.innerHTML=encs.map(e=>{
+      return `<div class="via-sol-card">
+        <div class="via-sol-info">
+          <div class="ruta">📦 ${e.descripcion}</div>
+          <div class="meta">Destino: ${e.destino} · De: ${e.remitenteNombre}</div>
+          ${e.valor?`<div class="precio">💵 $${parseInt(e.valor).toLocaleString()} COP</div>`:''}
+          ${e.nota?`<div class="meta" style="font-style:italic">${e.nota}</div>`:''}
+        </div>
+        <button class="btn-tomar-via enc" onclick="tomarEncRapido('${e.id}','${e.remitenteTel}','${e.descripcion}')">📦 Tomar</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+// Aceptar viaje rápido desde pVia
+window.aceptarViajeRapido=async(id,tel,nombre,origen,destino)=>{
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    await updateDoc(doc(db,'ciudades',ciudad,'solicitudes',id),{
+      estado:'aceptada',conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono
+    });
+    toast('✅ Viaje tomado — notificando al pasajero');
+    // Vibración de confirmación
+    if(navigator.vibrate)navigator.vibrate([100,50,100]);
+    // WhatsApp al pasajero con info del conductor
+    const msg=`🚗 RUTA LIBRE — Tu viaje fue aceptado!\n\nConductor: ${U.nombre}\nTel: ${U.telefono}\nRuta: ${origen} → ${destino}\n\n¿Listos para coordinar el punto de recogida?`;
+    setTimeout(()=>window.open(`https://wa.me/57${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'),800);
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+
+// Tomar encomienda rápido desde pVia
+window.tomarEncRapido=async(id,telRemitente,desc)=>{
+  if((U.creditos||0)<1){toast('💰 Sin créditos. Recarga por WhatsApp.','warning');return;}
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    await updateDoc(doc(db,'ciudades',ciudad,'encomiendas',id),{
+      estado:'en_camino',conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono
+    });
+    const nc=(U.creditos||0)-1;U.creditos=nc;
+    await updateDoc(doc(db,'ciudades',ciudad,'usuarios',U.uid),{creditos:nc});
+    guardarSesion(U);
+    document.getElementById('credSaldo').textContent=nc;
+    toast('📦 Encomienda tomada — 1 crédito descontado');
+    if(navigator.vibrate)navigator.vibrate([100,50,100]);
+    // WhatsApp al remitente
+    const msg=`📦 RUTA LIBRE — Tu encomienda fue tomada!\nConductor: ${U.nombre} · Tel: ${U.telefono}\nCoordina la entrega con él.`;
+    setTimeout(()=>window.open(`https://wa.me/57${telRemitente.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'),800);
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+
+// Alerta de llegada (WhatsApp al pasajero)
+window.alertarLlegada=async(solicitudId)=>{
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    const snap=await getDoc(doc(db,'ciudades',ciudad,'solicitudes',solicitudId));
+    if(!snap.exists())return;
+    const s=snap.data();
+    const msg=`🚗 RUTA LIBRE — ¡Tu conductor está llegando!\n\n${U.nombre} está cerca de tu punto de recogida.\nTen listo tu equipaje 👋`;
+    window.open(`https://wa.me/57${s.pasajeroTel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+
+// ── AUTO EXPIRAR ALERTAS VIEJAS ──
+function iniciarAutoExpiry(){
+  if(timerAlertas)clearInterval(timerAlertas);
+  timerAlertas=setInterval(async()=>{
+    if(!U||inact)return;
+    const ciudad=U.ciudad.toLowerCase();
+    const cfg=await getDoc(doc(db,'config','plataforma')).catch(()=>null);
+    const minMax=(cfg?.data()?.tiempoDesactivar)||120;
+    const lim=Date.now()-(minMax*60000);
+    try{
+      const snap=await getDocs(collection(db,'ciudades',ciudad,'alertas'));
+      snap.forEach(async d=>{
+        const data=d.data();
+        if(data.activa&&data.timestamp?.seconds*1000<lim){
+          await updateDoc(doc(db,'ciudades',ciudad,'alertas',d.id),{activa:false});
+          console.log('[AutoExpiry] Alerta expirada:',d.id);
+        }
+      });
+    }catch(e){}
+  },300000); // cada 5 min
+}
+
+// ── CELEBRACIÓN AL CONFIRMAR VÍA LIBRE ──
+function celebrar(){
+  const emojis=['🚗','✅','🟢','👍','🎉'];
+  for(let i=0;i<8;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.style.cssText=`position:fixed;font-size:28px;pointer-events:none;z-index:9999;
+        left:${10+Math.random()*80}vw;top:${20+Math.random()*50}vh;
+        animation:fadeUp 1.2s ease forwards;opacity:1`;
+      el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),1300);
+    },i*120);
+  }
+}
+
+// ── PANTALLA VACÍA ATRACTIVA (sin alertas) ──
+function renderHeroVacio(row,ctxt){
+  const hero=document.getElementById('vHero');
+  hero.insertAdjacentHTML('beforeend',`
+    <div id="vLibreMsg" style="margin-top:8px;padding:12px 16px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:var(--rlg);font-size:12px;color:var(--v)">
+      🛣️ Ruta despejada — Sin reportes activos<br>
+      <span style="color:var(--tm)">¿Ves algo en la vía? Toca Reportar</span>
+    </div>`);
+}
+
+
+// ════════════════════════════════════
+// V3 — SOS / EMERGENCIA
+// ════════════════════════════════════
+window.activarSOS=()=>{
+  if(navigator.vibrate)navigator.vibrate([500,200,500,200,500]);
+  abrirM('mSOS');
+};
+window.llamarEmergencias=()=>{
+  cerrarM('mSOS');
+  window.location.href='tel:123';
+};
+window.enviarSOS=async tipo=>{
+  cerrarM('mSOS');
+  if(navigator.vibrate)navigator.vibrate([300,100,300]);
+  let lat=null,lng=null;
+  try{
+    await new Promise(res=>navigator.geolocation?.getCurrentPosition(p=>{lat=p.coords.latitude;lng=p.coords.longitude;res();},()=>res(),{timeout:4000}));
+  }catch(e){}
+  const labels={medica:'🏥 Emergencia médica',accidente_grave:'🚗 Accidente grave',robo:'🔫 Robo / Asalto',vehiculo:'🔧 Vehículo varado'};
+  try{
+    await addDoc(collection(db,'ciudades',(ciudadVista||U.ciudad).toLowerCase(),'alertas'),{
+      tipo:'sos',subTipo:tipo,punto:'SOS — '+U.nombre,sentido:'ambos',
+      nota:labels[tipo]||'Emergencia',activa:true,esSOS:true,
+      conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono,
+      lat,lng,confirmaciones:0,yaPasaron:0,timestamp:serverTimestamp(),ciudad:U.ciudad.toLowerCase()
+    });
+    toast('🆘 SOS enviado — la comunidad fue alertada','error');
+    tonoR(10);
+    // Abrir WhatsApp del admin con ubicación
+    const wspNum=(CFG.wsp||'3114571322').replace(/\D/g,'');
+    const msg=`🆘 EMERGENCIA — ${labels[tipo]}\nConductor: ${U.nombre}\nTel: ${U.telefono}\nCiudad: ${U.ciudad}${lat?`\nUbicación: https://maps.google.com/?q=${lat},${lng}`:''}`;
+    setTimeout(()=>window.open(`https://wa.me/57${wspNum}?text=${encodeURIComponent(msg)}`,'_blank'),1500);
+  }catch(e){toast('❌ Error al enviar SOS','error');}
+};
+
+// ════════════════════════════════════
+// V3 — CONDICIONES ESPECIALES DE VÍA
+// ════════════════════════════════════
+let condicionSel=null;
+let gpsLat=null;let gpsLng=null;
+window.abrirCondiciones=()=>{
+  condicionSel=null;
+  document.querySelectorAll('.cond-btn').forEach(b=>b.classList.remove('sel-c'));
+  const sel=document.getElementById('selCondPunto');
+  sel.innerHTML='<option value="">Selecciona el punto...</option>';
+  puntosList.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+  document.getElementById('iNotaCond').value='';
+  abrirM('mCond');
+};
+window.sCondicion=id=>{
+  condicionSel=id;
+  document.querySelectorAll('.cond-btn').forEach(b=>b.classList.remove('sel-c'));
+  const map={derrumbe:'cd1',ganado:'cd2',neblina:'cd3',inundacion:'cd4',bache:'cd5',obra:'cd6'};
+  document.getElementById(map[id])?.classList.add('sel-c');
+};
+window.enviarCondicion=async()=>{
+  if(!condicionSel){toast('⚠️ Elige la condición','warning');return;}
+  const punto=document.getElementById('selCondPunto').value;
+  if(!punto){toast('⚠️ Elige el punto','warning');return;}
+  const btn=document.getElementById('btnEnvCond');btn.disabled=true;
+  const labels={derrumbe:'⛰️ Derrumbe',ganado:'🐄 Ganado en vía',neblina:'🌫️ Neblina',inundacion:'🌊 Inundación',bache:'🕳️ Bache peligroso',obra:'🚧 Obra en vía'};
+  try{
+    await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'alertas'),{
+      tipo:'condicion',subTipo:condicionSel,
+      punto,sentido:'ambos',
+      nota:(labels[condicionSel]||condicionSel)+' — '+document.getElementById('iNotaCond').value,
+      activa:true,confirmaciones:0,yaPasaron:0,
+      conductorId:U.uid,conductorNombre:U.nombre,
+      timestamp:serverTimestamp(),ciudad:U.ciudad.toLowerCase()
+    });
+    cerrarM('mCond');toast('⚠️ Condición reportada a todos');
+  }catch(e){toast('❌ '+e.message,'error');}
+  btn.disabled=false;
+};
+
+// ════════════════════════════════════
+// V3 — RATING / CALIFICACIÓN
+// ════════════════════════════════════
+let ratingActual=0;let ratingData={viajeId:null,conductorId:null,conductorNombre:null};
+function renderStarsRating(){
+  const cont=document.getElementById('ratingStars');if(!cont)return;
+  cont.innerHTML='';
+  const labels=['','Muy malo','Regular','Bueno','Muy bueno','Excelente'];
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span');s.className='star'+(i<=ratingActual?' on':'');
+    s.textContent='⭐';s.onclick=()=>{ratingActual=i;renderStarsRating();document.getElementById('ratingLabel').textContent=labels[i];};
+    cont.appendChild(s);
+  }
+}
+window.abrirRating=(viajeId,conductorId,conductorNombre)=>{
+  ratingActual=0;ratingData={viajeId,conductorId,conductorNombre};
+  document.getElementById('ratingSubtitle').textContent='¿Cómo estuvo el viaje con '+conductorNombre+'?';
+  document.getElementById('ratingLabel').textContent='Toca una estrella';
+  document.getElementById('iComentario').value='';
+  renderStarsRating();
+  abrirM('mRating');
+};
+window.enviarRating=async()=>{
+  if(!ratingActual){toast('⚠️ Elige una calificación','warning');return;}
+  const btn=document.getElementById('btnEnvRating');btn.disabled=true;
+  try{
+    await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'ratings'),{
+      conductorId:ratingData.conductorId,conductorNombre:ratingData.conductorNombre,
+      pasajeroId:U.uid,pasajeroNombre:U.nombre,
+      estrellas:ratingActual,comentario:document.getElementById('iComentario').value.trim(),
+      viajeId:ratingData.viajeId,timestamp:serverTimestamp()
+    });
+    // Actualizar promedio en perfil del conductor (for..of para await correcto)
+    try{
+      const condRef=doc(db,'ciudades',U.ciudad.toLowerCase(),'usuarios',ratingData.conductorId);
+      const condSnap=await getDoc(condRef);
+      if(condSnap.exists()){
+        const actual=condSnap.data().estrellas||5;
+        const total=condSnap.data().totalRatings||0;
+        const nuevo=Math.round(((actual*total)+ratingActual)/(total+1)*10)/10;
+        await updateDoc(condRef,{estrellas:nuevo,totalRatings:total+1});
+      }
+    }catch(e){console.log('Rating update error:',e);}
+    cerrarM('mRating');toast('⭐ Calificación enviada. ¡Gracias!','success');
+  }catch(e){toast('❌ '+e.message,'error');}
+  btn.disabled=false;
+};
+
+// Mostrar estrellas en perfil
+function renderStarsPerfil(estrellas,total){
+  const cont=document.getElementById('starsRow'),lbl=document.getElementById('starsLabel');
+  if(!cont||!lbl)return;
+  const e=Math.round(estrellas||5);
+  cont.innerHTML='';
+  for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star'+(i<=e?' on':'');s.textContent='⭐';cont.appendChild(s);}
+  lbl.textContent=(estrellas||5).toFixed(1)+' estrellas'+(total?' ('+total+' calificaciones)':'');
+}
+
+// ════════════════════════════════════
+// V3 — HISTORIAL
+// ════════════════════════════════════
+let histTab='alertas';
+window.switchHistTab=t=>{
+  histTab=t;
+  ['hTabAl','hTabVi','hTabEnc'].forEach(id=>document.getElementById(id)?.classList.remove('on'));
+  document.getElementById(t==='alertas'?'hTabAl':t==='viajes'?'hTabVi':'hTabEnc')?.classList.add('on');
+  cargarHistorial();
+};
+window.cargarHistorial=async()=>{
+  const lista=document.getElementById('histLista');if(!lista)return;
+  lista.innerHTML='<div class="pub-empty">Cargando...</div>';
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    let items=[];
+    if(histTab==='alertas'){
+      const snap=await getDocs(collection(db,'ciudades',ciudad,'alertas'));
+      snap.forEach(d=>{const data=d.data();if(data.conductorId===U.uid)items.push({id:d.id,...data,_tipo:'alerta'});});
+      items.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+      if(!items.length){lista.innerHTML='<div class="pub-empty">📭 Aún no has reportado alertas</div>';return;}
+      lista.innerHTML=items.slice(0,20).map(a=>{
+        const ico=a.tipo==='reten'?'🚔':a.tipo==='accidente'?'⚠️':a.tipo==='sos'?'🆘':a.tipo==='condicion'?'⛰️':'🚧';
+        const fecha=a.timestamp?.seconds?new Date(a.timestamp.seconds*1000).toLocaleDateString('es-CO'):'—';
+        const estado=a.activa?'<span style="color:var(--r);font-size:10px;font-weight:700">ACTIVA</span>':'<span style="color:var(--tm);font-size:10px">Finalizada</span>';
+        return `<div class="hist-item"><div class="hist-ico">${ico}</div><div class="hist-body"><div class="hist-tit">${a.punto||'Sin punto'}</div><div class="hist-meta">${fecha} · ${estado}</div></div></div>`;
+      }).join('');
+    } else if(histTab==='viajes'){
+      const snap=await getDocs(collection(db,'ciudades',ciudad,'solicitudes'));
+      snap.forEach(d=>{const data=d.data();if(data.pasajeroId===U.uid||data.conductorId===U.uid)items.push({id:d.id,...data,_tipo:'viaje'});});
+      items.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+      if(!items.length){lista.innerHTML='<div class="pub-empty">🚗 Aún no tienes viajes</div>';return;}
+      lista.innerHTML=items.slice(0,20).map(s=>{
+        const fecha=s.timestamp?.seconds?new Date(s.timestamp.seconds*1000).toLocaleDateString('es-CO'):'—';
+        const estadoCol={esperando:'var(--am)',aceptada:'var(--v)',cancelada:'var(--r)',cancelado:'var(--r)'};
+        const puedeCal=U.rol==='pasajero'&&s.estado==='aceptada'&&s.conductorId;
+        return `<div class="hist-item">
+          <div class="hist-ico">🚗</div>
+          <div class="hist-body">
+            <div class="hist-tit">📍 ${s.origen||'—'} → ${s.destino||'—'}</div>
+            <div class="hist-meta">${fecha} · <span style="color:${estadoCol[s.estado]||'var(--ts)'};font-weight:600">${s.estado||'—'}</span></div>
+            ${U.rol==='conductor'&&s.conductorId===U.uid&&s.estado==='aceptada'?
+              '<button onclick="alertarLlegada(\'' + s.id + '\')" style="margin-top:6px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:var(--rfl);padding:4px 12px;font-size:11px;font-weight:700;color:var(--v);cursor:pointer;font-family:Inter,sans-serif">📍 Avisar llegada</button>':''}
+            ${puedeCal?`<button onclick="abrirRating('${s.id}','${s.conductorId}','${s.conductorNombre||'conductor'}')" style="margin-top:6px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:var(--rfl);padding:4px 12px;font-size:11px;font-weight:700;color:var(--am);cursor:pointer;font-family:'Inter',sans-serif">⭐ Calificar</button>`:''}`
+          </div>
+        </div>`;
+      }).join('');
+    } else { // envios
+      const snap=await getDocs(collection(db,'ciudades',ciudad,'encomiendas'));
+      snap.forEach(d=>{const data=d.data();if(data.remitenteId===U.uid||data.conductorId===U.uid)items.push({id:d.id,...data,_tipo:'enc'});});
+      items.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+      if(!items.length){lista.innerHTML='<div class="pub-empty">📦 Aún no tienes envíos</div>';return;}
+      lista.innerHTML=items.slice(0,20).map(e=>{
+        const fecha=e.timestamp?.seconds?new Date(e.timestamp.seconds*1000).toLocaleDateString('es-CO'):'—';
+        const estadoCol={esperando:'var(--am)',en_camino:'var(--az)',entregado:'var(--v)',cancelado:'var(--r)'};
+        return `<div class="hist-item"><div class="hist-ico">📦</div><div class="hist-body"><div class="hist-tit">${e.descripcion||'Encomienda'}</div><div class="hist-meta">→ ${e.destino||'—'} · ${fecha} · <span style="color:${estadoCol[e.estado]||'var(--ts)'};font-weight:600">${e.estado||'—'}</span></div></div></div>`;
+      }).join('');
+    }
+  }catch(err){lista.innerHTML='<div class="pub-empty">Error al cargar</div>';console.log(err);}
+};
+
+// ════════════════════════════════════
+// V3 — ESTADÍSTICAS EN PERFIL
+// ════════════════════════════════════
+async function cargarEstadisticasPerfil(){
+  if(!U)return;
+  const ciudad=U.ciudad.toLowerCase();
+  try{
+    // Alertas reportadas
+    const alSnap=await getDocs(collection(db,'ciudades',ciudad,'alertas'));
+    let alCount=0;alSnap.forEach(d=>{if(d.data().conductorId===U.uid)alCount++;});
+    document.getElementById('statAlertas').textContent=alCount;
+    // Viajes
+    const vSnap=await getDocs(collection(db,'ciudades',ciudad,'solicitudes'));
+    let vCount=0;vSnap.forEach(d=>{const data=d.data();if((data.conductorId===U.uid||data.pasajeroId===U.uid)&&data.estado==='aceptada')vCount++;});
+    document.getElementById('statViajes').textContent=vCount;
+    // Encomiendas
+    const eSnap=await getDocs(collection(db,'ciudades',ciudad,'encomiendas'));
+    let eCount=0;eSnap.forEach(d=>{const data=d.data();if((data.conductorId===U.uid||data.remitenteId===U.uid)&&data.estado==='entregado')eCount++;});
+    document.getElementById('statEnc').textContent=eCount;
+    // Estrellas
+    if(U.rol==='conductor')renderStarsPerfil(U.estrellas,U.totalRatings);
+  }catch(e){}
+}
+
+// ════════════════════════════════════
+// V3 — SOS en botón visible
+// ════════════════════════════════════
+function mostrarBtnSOS(visible){
+  const btn=document.getElementById('btnSOS');
+  if(btn)btn.classList.toggle('show',visible);
+}
+
+// Mostrar SOS solo cuando el conductor está en pantalla vía
+const _navGoOrig=window.navGo;
+window.navGo=(id,nid)=>{
+  _navGoOrig(id,nid);
+  mostrarBtnSOS(id==='pVia'&&U?.rol==='conductor'&&!inact);
+  if(id==='pPerf')cargarEstadisticasPerfil();
+  if(id==='pHist')cargarHistorial();
+};
+
+
+// ── COLA OFFLINE DE ALERTAS ──
+let colaOffline = JSON.parse(localStorage.getItem('rl_cola')||'[]');
+let estaOnline = navigator.onLine;
+
+function guardarEnCola(alerta){
+  colaOffline.push({...alerta, _pendiente:true, _ts:Date.now()});
+  localStorage.setItem('rl_cola', JSON.stringify(colaOffline));
+  toast('📵 Sin señal — alerta guardada, se enviará al recuperar conexión','warning');
+  try{navigator.serviceWorker?.ready.then(r=>{if(r.sync)r.sync.register('sync-alertas');});}catch(e){}
+}
+
+async function vaciarCola(){
+  if(!colaOffline.length)return;
+  const ciudad=U?.ciudad?.toLowerCase();if(!ciudad)return;
+  const pendientes=[...colaOffline];colaOffline=[];localStorage.removeItem('rl_cola');
+  let enviados=0;
+  for(const al of pendientes){
+    try{
+      const {_pendiente,_ts,...datos}=al;
+      await addDoc(collection(db,'ciudades',ciudad,'alertas'),{...datos,timestamp:serverTimestamp()});
+      enviados++;
+    }catch(e){colaOffline.push(al);}
+  }
+  if(enviados>0){
+    localStorage.setItem('rl_cola',JSON.stringify(colaOffline));
+    toast('📶 Conexión restaurada — '+enviados+' alerta'+(enviados>1?'s enviadas':' enviada'),'success');
+    tonoR(SND.vol);
+  }
+}
+
+// Escuchar recuperación de señal
+window.addEventListener('online',()=>{
+  estaOnline=true;
+  toast('📶 Conexión restaurada','success');
+  vaciarCola(); // vaciar cola pendiente
+  if(U&&U.rol==='conductor'&&!inact)escucharAlertasCiudadActiva();
+});
+window.addEventListener('offline',()=>{
+  estaOnline=false;
+  toast('📵 Sin conexión — las alertas se guardarán y enviarán al recuperar señal','warning');
+});
+
+// Recibir mensaje del SW cuando sincroniza
+navigator.serviceWorker?.addEventListener('message',e=>{
+  if(e.data?.type==='SYNC_PENDIENTES')vaciarCola();
+});
+
+// (online/offline ya manejado arriba)
+
+
+window.addEventListener('load',init);
+</script>
+</body>
+</html>

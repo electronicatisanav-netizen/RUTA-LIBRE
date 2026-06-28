@@ -1,0 +1,75 @@
+{
+  "name": "RUTA LIBRE",
+  "short_name": "RUTA LIBRE",
+  "description": "Community transport app — Real-time road alerts, freight and passenger services",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "orientation": "portrait-primary",
+  "lang": "es-CO",
+  "dir": "ltr",
+  "categories": [
+    "transportation",
+    "utilities",
+    "social"
+  ],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Reportar novedad",
+      "short_name": "Reportar",
+      "description": "Reportar retén o accidente en la vía",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "./icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Encomiendas",
+      "short_name": "Envíos",
+      "description": "Ver encomiendas disponibles",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "./icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
