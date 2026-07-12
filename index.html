@@ -251,31 +251,252 @@
     @keyframes pa{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.5)}50%{box-shadow:0 0 0 14px rgba(245,158,11,0)}}
     @keyframes pcr{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.15)}50%{box-shadow:0 0 10px rgba(239,68,68,0.25)}}
     @keyframes pulso-dot{0%,100%{opacity:1}50%{opacity:0.5}}
-    /* ── VÍA V3: mini-panels solicitudes y encomiendas ── */
-    .via-panel{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);margin:0 16px 10px;overflow:hidden}
-    .via-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none}
-    .via-panel-tit{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
-    .via-panel-badge{background:var(--r);color:white;border-radius:var(--rfl);font-size:10px;font-weight:700;padding:1px 7px;min-width:18px;text-align:center}
-    .via-panel-badge.am{background:var(--am)}
-    .via-panel-body{display:none;border-top:1px solid var(--bs);max-height:320px;overflow-y:auto}
-    .via-panel-body.open{display:block}
-    .via-sol-card{padding:12px 14px;border-bottom:1px solid var(--bs);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-    .via-sol-card:last-child{border-bottom:none}
-    .via-sol-info .ruta{font-family:'Sora',sans-serif;font-size:13px;font-weight:700}
-    .via-sol-info .meta{font-size:11px;color:var(--ts);margin-top:2px}
-    .via-sol-info .precio{font-size:11px;color:var(--v);font-weight:600;margin-top:2px}
-    .btn-tomar-via{background:linear-gradient(135deg,var(--acc),#8b5cf6);color:white;border:none;border-radius:var(--rmd);padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;transition:all 0.15s}
-    .btn-tomar-via:hover{transform:scale(1.04)}
-    .btn-tomar-via.enc{background:linear-gradient(135deg,var(--am),#d97706)}
-    .via-empty-panel{padding:16px;text-align:center;font-size:12px;color:var(--tm)}
-    /* Botón ir a pantalla compartida */
-    .btn-shared-screen{display:flex;align-items:center;justify-content:space-between;margin:0 16px 12px;background:var(--surf);border:1px solid var(--bn);border-radius:var(--rlg);padding:11px 16px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
-    .btn-shared-screen:hover{border-color:var(--acc)}
-    .btn-shared-screen span{font-size:13px;font-weight:600;color:var(--ts)}
-    .btn-shared-screen .arr{color:var(--acc);font-size:16px}
-    /* Botón regresar a pantalla conductor */
-    .btn-back-via{display:none;align-items:center;gap:8px;margin:12px 16px;background:var(--acc-g);border:1px solid rgba(99,102,241,0.3);border-radius:var(--rlg);padding:10px 16px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--acc)}
-    .btn-back-via.show{display:flex}
+    /* ══ DASHBOARD CONDUCTOR v4 ══ */
+    .cond-dash{padding:0 16px 16px}
+    .cond-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;padding:5px;background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg)}
+    .cond-tab{background:transparent;border:none;border-radius:var(--rmd);padding:11px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--ts);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
+    .cond-tab.on{background:var(--elev);color:var(--tp);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+    .cond-tab .tab-cnt{position:absolute;top:4px;right:4px;background:var(--r);color:white;border-radius:var(--rfl);font-size:9px;font-weight:800;padding:1px 5px;min-width:16px;text-align:center;display:none}
+    .cond-tab .tab-cnt.show{display:block}
+    .cond-tab .tab-cnt.am{background:var(--am)}
+
+    /* Cards de solicitudes conductor */
+    
+    .req-card.pas-card{border-left:3px solid var(--acc)}
+    .req-card.enc-card{border-left:3px solid var(--am)}
+    .req-card-hdr{padding:12px 14px 0}
+    .req-ruta{font-family:'Sora',sans-serif;font-size:15px;font-weight:800;margin-bottom:4px}
+    .req-ruta.pas{color:var(--acc)}
+    .req-ruta.enc{color:var(--am)}
+    .req-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+    .req-pill{background:var(--elev);border-radius:var(--rfl);padding:3px 10px;font-size:11px;color:var(--ts);font-weight:500}
+    .req-pill.precio{background:rgba(34,197,94,0.12);color:var(--v);font-weight:700}
+    .req-pill.hora{background:rgba(99,102,241,0.12);color:var(--acc)}
+    .req-nota{font-size:12px;color:var(--ts);padding:0 14px;margin-bottom:8px;font-style:italic}
+    .req-comprar{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:var(--rmd);padding:8px 12px;margin:0 14px 8px;font-size:12px;color:var(--am);line-height:1.5}
+    .req-comprar strong{display:block;font-size:11px;font-weight:700;margin-bottom:2px}
+    .req-actions{display:flex;gap:0;border-top:1px solid var(--bs)}
+    /* req-btn/empty styles defined below */
+
+    /* Notificación flotante nueva solicitud */
+    .noti-float{position:fixed;top:64px;left:12px;right:12px;background:var(--surf);border:1.5px solid var(--acc);border-radius:var(--rlg);padding:12px 16px;z-index:500;animation:slideDown 0.4s cubic-bezier(0.34,1.1,0.64,1);display:none;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+    .noti-float.show{display:flex}
+    .noti-float-ico{font-size:28px;flex-shrink:0}
+    .noti-float-txt{flex:1}
+    .noti-float-txt strong{display:block;font-family:'Sora',sans-serif;font-size:13px;font-weight:700}
+    .noti-float-txt span{font-size:12px;color:var(--ts)}
+    .noti-float-btn{background:var(--acc);color:white;border:none;border-radius:var(--rfl);padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── DASHBOARD CONDUCTOR V4 ── */
+    .cond-dash{padding:0 16px 16px}
+    .cond-dash-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    .cond-kpi{background:var(--surf);border:1px solid var(--bs);border-radius:var(--rlg);padding:14px;text-align:center;position:relative;overflow:hidden;cursor:pointer;transition:all 0.2s}
+    .cond-kpi:hover{border-color:var(--acc);transform:scale(1.02)}
+    .cond-kpi-ico{font-size:28px;display:block;margin-bottom:4px}
+    .cond-kpi-num{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;line-height:1}
+    .cond-kpi-lbl{font-size:10px;color:var(--ts);margin-top:3px;font-weight:500}
+    .cond-kpi-badge{position:absolute;top:8px;right:8px;background:var(--r);color:white;border-radius:var(--rfl);font-size:9px;font-weight:800;padding:2px 6px;min-width:16px;text-align:center;animation:pulso-dot 1.5s infinite}
+    .cond-kpi.kpi-pas{border-color:rgba(245,158,11,0.3)}
+    .cond-kpi.kpi-enc{border-color:rgba(99,102,241,0.3)}
+    .cond-kpi.kpi-libre{border-color:rgba(34,197,94,0.3)}
+    .cond-kpi.kpi-cr{border-color:rgba(239,68,68,0.3)}
+    /* ── PANEL SOLICITUDES EXPANDIDO ── */
+    .sol-panel{background:var(--surf);border-radius:var(--rxl);margin:0 16px 12px;overflow:hidden;border:1px solid var(--bs);display:none}
+    .sol-panel.visible{display:block;animation:fadeUp 0.25s ease}
+    .sol-panel-hdr{padding:14px 16px;border-bottom:1px solid var(--bs);display:flex;align-items:center;justify-content:space-between}
+    .sol-panel-tit{font-family:'Sora',sans-serif;font-size:14px;font-weight:700}
+    .sol-panel-close{background:none;border:none;color:var(--tm);font-size:18px;cursor:pointer;padding:4px}
+    .sol-item{padding:14px 16px;border-bottom:1px solid var(--bs);animation:fadeUp 0.2s ease}
+    .sol-item:last-child{border-bottom:none}
+    .sol-item-ruta{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px}
+    .sol-item-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+    .sol-item-meta span{font-size:12px;color:var(--ts);display:flex;align-items:center;gap:3px}
+    .sol-item-precio{font-size:13px;font-weight:700;color:var(--v);margin-bottom:8px}
+    .sol-item-nota{font-size:12px;color:var(--ts);font-style:italic;margin-bottom:10px;background:var(--elev);padding:6px 10px;border-radius:var(--rsm)}
+    .sol-item-btns{display:flex;gap:8px}
+    .btn-aceptar-big{flex:1;padding:12px;background:linear-gradient(135deg,var(--acc),#8b5cf6);color:white;border:none;border-radius:var(--rlg);font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-aceptar-big:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.4)}
+    .btn-aceptar-big.enc{background:linear-gradient(135deg,var(--am),#d97706)}
+    .btn-contactar{padding:12px 16px;background:var(--wsp);color:white;border:none;border-radius:var(--rlg);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+    .sol-empty{padding:24px;text-align:center;color:var(--tm);font-size:13px}
+    /* ── CONFIRMACION ANIMADA ── */
+    .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+    .confirm-overlay.show{display:flex;animation:fadeUp 0.3s ease}
+    .confirm-ico{font-size:72px;animation:bounce-car 0.5s ease}
+    .confirm-tit{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:white;text-align:center}
+    .confirm-sub{font-size:14px;color:var(--ts);text-align:center;max-width:260px}
+    .confirm-close{margin-top:8px;background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:10px 28px;color:var(--ts);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+    /* ── INSTALL BANNER ── */
+
+    /* ── DASHBOARD CONDUCTOR INTERACTIVO ── */
+    .cond-dash{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.08));border:1px solid rgba(99,102,241,0.2);border-radius:var(--rxl);margin:14px 16px 10px;padding:18px 16px}
+    .cond-dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .cond-dash-nombre{font-family:'Sora',sans-serif;font-size:16px;font-weight:800;color:var(--tp)}
+    .cond-dash-ciudad{font-size:11px;color:var(--ts);margin-top:2px}
+    .cond-dash-cred{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:var(--rfl);padding:5px 14px;text-align:center}
+    .cond-dash-cred-num{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--acc);display:block}
+    .cond-dash-cred-lbl{font-size:10px;color:var(--tm)}
+    .cond-dash-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .cond-stat{background:rgba(0,0,0,0.2);border-radius:var(--rmd);padding:10px;text-align:center}
+    .cond-stat-num{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;display:block}
+    .cond-stat-lbl{font-size:10px;color:var(--tm);margin-top:1px}
+    /* ── PANELES SOLICITUDES/ENCOMIENDAS ── */
+    .via-panel-wrap{margin:0 16px 10px}
+    .via-panel-nuevo{background:var(--surf);border:1.5px solid var(--bs);border-radius:var(--rlg);overflow:hidden;margin-bottom:8px;transition:border-color 0.2s}
+    .via-panel-nuevo.tiene{border-color:rgba(99,102,241,0.35)}
+    .via-panel-nuevo.tiene-enc{border-color:rgba(245,158,11,0.35)}
+    .via-ph{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .via-ph-izq{display:flex;align-items:center;gap:10px}
+    .via-ph-ico{font-size:22px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--rmd);background:rgba(99,102,241,0.1)}
+    .via-ph-ico.enc{background:rgba(245,158,11,0.1)}
+    .via-ph-txt h4{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;margin-bottom:1px}
+    .via-ph-txt p{font-size:11px;color:var(--ts)}
+    .via-ph-der{display:flex;align-items:center;gap:8px}
+    .via-cnt{background:var(--r);color:white;border-radius:var(--rfl);font-size:11px;font-weight:800;padding:2px 8px;min-width:22px;text-align:center}
+    .via-cnt.am{background:var(--am)}
+    .via-cnt.oculto{display:none}
+    .via-arr{color:var(--tm);font-size:12px;transition:transform 0.25s}
+    .via-arr.open{transform:rotate(180deg)}
+    .via-body{display:none;border-top:1px solid var(--bs)}
+    .via-body.open{display:block}
+    /* Card de solicitud en pVia */
+    .sol-via-card{padding:14px;border-bottom:1px solid var(--bs)}
+    .sol-via-card:last-child{border-bottom:none}
+    .sol-via-ruta{font-family:'Sora',sans-serif;font-size:14px;font-weight:800;margin-bottom:5px;color:var(--tp)}
+    .sol-via-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .sol-via-meta span{font-size:11px;color:var(--ts);background:var(--elev);border-radius:var(--rsm);padding:3px 8px}
+    .sol-via-meta .precio{color:var(--v);font-weight:700}
+    .sol-via-nota{font-size:11px;color:var(--tm);font-style:italic;margin-bottom:10px;padding:6px 10px;background:rgba(0,0,0,0.15);border-radius:var(--rsm)}
+    .sol-via-btns{display:flex;gap:8px}
+    .btn-via-aceptar{flex:1;padding:11px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:var(--rmd);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 3px 12px rgba(99,102,241,0.35)}
+    .btn-via-aceptar:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(99,102,241,0.45)}
+    .btn-via-aceptar.enc{background:linear-gradient(135deg,var(--am),#d97706);box-shadow:0 3px 12px rgba(245,158,11,0.35)}
+    .btn-via-wsp{padding:11px 14px;background:var(--wsp);color:white;border:none;border-radius:var(--rmd);font-size:13px;font-weight:700;cursor:pointer}
+    .via-empty{padding:18px;text-align:center;color:var(--tm);font-size:12px}
+    /* Modal confirmación animada */
+    .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s}
+    .confirm-overlay.show{opacity:1;pointer-events:all}
+    .confirm-box{background:var(--surf);border:1px solid var(--bn);border-radius:var(--rxl);padding:32px 28px;text-align:center;transform:scale(0.85);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);max-width:300px;width:90%}
+    .confirm-overlay.show .confirm-box{transform:scale(1)}
+    .confirm-ico{font-size:52px;display:block;margin-bottom:12px;animation:bounce-car 0.5s ease}
+    .confirm-tit{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px}
+    .confirm-sub{font-size:13px;color:var(--ts)}
+    /* Banner instalación */
+
+    /* ── INSTALL BANNER ── */
+    .install-banner{position:fixed;bottom:70px;left:12px;right:12px;background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(99,102,241,0.4);border-radius:var(--rlg);padding:12px 14px;display:none;align-items:center;gap:10px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:fadeUp 0.3s ease}
+    .install-banner.show{display:flex}
+    .install-banner-txt{flex:1;font-size:13px;font-weight:600;color:var(--tp)}
+    .install-banner-txt span{display:block;font-size:11px;color:var(--ts);font-weight:400;margin-top:2px}
+    .install-banner-btn{background:var(--acc);color:white;border:none;border-radius:var(--rmd);padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0}
+    .install-banner-x{background:none;border:none;color:var(--tm);font-size:16px;cursor:pointer;padding:4px;flex-shrink:0}
+
+
+    /* ── DRAWER LATERAL solicitudes y encomiendas ── */
+    .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:150;backdrop-filter:blur(4px)}
+    .drawer-overlay.open{display:block}
+    .drawer{position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-radius:var(--rxl) var(--rxl) 0 0;border-top:1px solid var(--bn);z-index:160;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.34,1.1,0.64,1);max-height:82vh;display:flex;flex-direction:column}
+    .drawer.open{transform:translateY(0)}
+    .drawer-handle{width:40px;height:4px;background:var(--bn);border-radius:2px;margin:14px auto 0}
+    .drawer-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0}
+    .drawer-tit{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+    .drawer-badge{background:var(--r);color:white;border-radius:var(--rfl);font-size:11px;font-weight:700;padding:2px 8px;min-width:20px;text-align:center}
+    .drawer-badge.am{background:var(--am)}
+    .drawer-close{background:var(--elev);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ts);font-size:16px}
+    .drawer-body{overflow-y:auto;padding:0 16px 100px;flex:1}
+    .drawer-empty{text-align:center;padding:40px 20px;color:var(--tm)}
+    .drawer-empty .ico{font-size:40px;display:block;margin-bottom:8px}
+
+    /* ── REQUEST CARD (solicitud en drawer) ── */
+    
+    .req-route{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px}
+    .req-meta{font-size:12px;color:var(--ts);margin-bottom:4px;display:flex;gap:10px;flex-wrap:wrap}
+    .req-precio{font-size:13px;color:var(--v);font-weight:700;margin-bottom:10px}
+    .req-nota{font-size:12px;color:var(--ts);font-style:italic;background:var(--surf);border-radius:var(--rsm);padding:6px 10px;margin-bottom:10px}
+    .req-tiempo{font-size:11px;color:var(--tm)}
+    .req-btns{display:flex;gap:8px}
+    .btn-req-tomar{flex:1;padding:11px;background:linear-gradient(135deg,var(--acc),#8b5cf6);color:white;border:none;border-radius:var(--rmd);font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s}
+    .btn-req-tomar:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(99,102,241,0.4)}
+    .btn-req-tomar.enc{background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:none}
+    .btn-req-tomar.enc:hover{box-shadow:0 4px 14px rgba(245,158,11,0.4)}
+    .btn-req-wsp{padding:11px 14px;background:var(--wsp);color:white;border:none;border-radius:var(--rmd);font-size:18px;cursor:pointer;flex-shrink:0;transition:all 0.15s}
+
+    /* ── BOTONES FLOATING CONDUCTOR ── */
+    .conductor-actions{position:fixed;bottom:76px;left:16px;right:16px;display:none;gap:8px;z-index:48}
+    .conductor-actions.show{display:flex}
+    .btn-ca{flex:1;padding:13px 10px;border:none;border-radius:var(--rlg);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.2s;position:relative}
+    .btn-ca-pas{background:linear-gradient(135deg,#7c3aed,#6366f1);color:white;box-shadow:0 4px 16px rgba(99,102,241,0.4)}
+    .btn-ca-enc{background:linear-gradient(135deg,#d97706,#f59e0b);color:white;box-shadow:0 4px 16px rgba(245,158,11,0.3)}
+    .btn-ca:hover{transform:translateY(-2px)}
+    .btn-ca .cb{position:absolute;top:-6px;right:-4px;background:var(--r);color:white;border-radius:var(--rfl);font-size:10px;font-weight:800;padding:1px 6px;min-width:18px;text-align:center;border:2px solid var(--surf)}
+
+    /* ── CONFIRMACIÓN ANIMADA ── */
+    .confirm-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:var(--surf);border:1.5px solid rgba(34,197,94,0.4);border-radius:var(--rxl);padding:28px 32px;text-align:center;z-index:999;transition:transform 0.3s cubic-bezier(0.34,1.4,0.64,1);box-shadow:0 20px 60px rgba(0,0,0,0.6);min-width:260px}
+    .confirm-toast.show{transform:translate(-50%,-50%) scale(1)}
+    .confirm-toast .ct-ico{font-size:48px;display:block;margin-bottom:8px}
+    .confirm-toast .ct-tit{font-family:'Sora',sans-serif;font-size:18px;font-weight:800;margin-bottom:4px}
+    .confirm-toast .ct-sub{font-size:13px;color:var(--ts)}
+
+    /* ── DASHBOARD CONDUCTOR NUEVO ── */
+    .cond-dash{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 16px 0}
+    .cond-dash-btn{background:var(--surf);border:2px solid var(--bs);border-radius:var(--rlg);padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+    .cond-dash-btn:active{transform:scale(0.97)}
+    .cond-dash-btn.pas{border-color:rgba(245,158,11,0.4)}
+    .cond-dash-btn.pas:hover,.cond-dash-btn.pas.activo{border-color:var(--am);background:rgba(245,158,11,0.08)}
+    .cond-dash-btn.enc{border-color:rgba(99,102,241,0.4)}
+    .cond-dash-btn.enc:hover,.cond-dash-btn.enc.activo{border-color:var(--acc);background:rgba(99,102,241,0.08)}
+    .cond-dash-ico{font-size:28px}
+    .cond-dash-lbl{font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--ts)}
+    .cond-dash-cnt{position:absolute;top:8px;right:8px;background:var(--r);color:white;border-radius:var(--rfl);font-size:10px;font-weight:800;padding:2px 7px;min-width:20px;text-align:center;transition:all 0.3s}
+    .cond-dash-cnt.am{background:var(--am)}
+    .cond-dash-cnt.acc{background:var(--acc)}
+    .cond-dash-cnt.hide{display:none}
+
+    /* ── PANEL LATERAL SOLICITUDES/ENCOMIENDAS ── */
+    .via-drawer{position:fixed;inset:0;z-index:150;display:flex;pointer-events:none}
+    .via-drawer.open{pointer-events:all}
+    .via-drawer-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.6);opacity:0;transition:opacity 0.3s;backdrop-filter:blur(4px)}
+    .via-drawer.open .via-drawer-overlay{opacity:1}
+    .via-drawer-panel{position:absolute;bottom:0;left:0;right:0;background:var(--surf);border-radius:var(--rxl) var(--rxl) 0 0;max-height:85vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.34,1.1,0.64,1)}
+    .via-drawer.open .via-drawer-panel{transform:translateY(0)}
+    .via-drawer-handle{width:40px;height:4px;background:var(--bn);border-radius:2px;margin:12px auto 0}
+    .via-drawer-hdr{padding:12px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bs)}
+    .via-drawer-tit{font-family:'Sora',sans-serif;font-size:16px;font-weight:700}
+    .via-drawer-close{background:var(--elev);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ts);font-size:16px}
+    .via-drawer-body{flex:1;overflow-y:auto;padding:10px 16px 80px}
+
+    /* ── CARDS SOLICITUD/ENCOMIENDA INTERACTIVAS ── */
+    .req-card{background:var(--bg);border:1.5px solid var(--bn);border-radius:var(--rlg);padding:14px;margin-bottom:10px;transition:all 0.2s}
+    .req-card:hover{border-color:var(--acc);transform:translateY(-1px)}
+    .req-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+    .req-card-ruta{font-family:'Sora',sans-serif;font-size:15px;font-weight:800;color:var(--tp)}
+    .req-card-time{font-size:10px;color:var(--tm);background:var(--elev);border-radius:var(--rfl);padding:2px 8px}
+    .req-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .req-chip{background:var(--elev);border-radius:var(--rfl);padding:3px 10px;font-size:11px;color:var(--ts)}
+    .req-chip.verde{background:rgba(34,197,94,0.12);color:var(--v)}
+    .req-chip.azul{background:rgba(99,102,241,0.12);color:var(--acc)}
+    .req-card-nota{font-size:12px;color:var(--ts);font-style:italic;background:var(--elev);border-radius:var(--rsm);padding:6px 10px;margin-bottom:10px}
+    .req-card-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .btn-req-aceptar{background:linear-gradient(135deg,var(--v),#16a34a);color:white;border:none;border-radius:var(--rmd);padding:11px;font-family:'Sora',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s}
+    .btn-req-aceptar:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(34,197,94,0.4)}
+    .btn-req-aceptar.enc{background:linear-gradient(135deg,var(--acc),#8b5cf6)}
+    .btn-req-info{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:11px;font-family:'Inter',sans-serif;font-weight:600;font-size:12px;color:var(--ts);cursor:pointer}
+    .req-empty{text-align:center;padding:40px 20px;color:var(--tm)}
+    .req-empty .ico{font-size:48px;display:block;margin-bottom:10px}
+    .req-empty p{font-size:13px;line-height:1.6}
+
+    /* ── CONFIRMACIÓN ANIMADA ── */
+    @keyframes confirmPop{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+    .confirm-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surf);border:2px solid var(--v);border-radius:var(--rxl);padding:28px 32px;text-align:center;z-index:9999;animation:confirmPop 0.4s ease;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+    .confirm-toast .ico{font-size:52px;display:block;margin-bottom:10px}
+    .confirm-toast .tit{font-family:'Sora',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px}
+    .confirm-toast .sub{font-size:12px;color:var(--ts)}
+
+    /* ── INSTALL BUTTON FIXED ── */
+
+
+
 
     /* ── V3 SOS ── */
     .btn-sos{position:fixed;bottom:144px;right:16px;background:linear-gradient(135deg,#dc2626,#991b1b);color:white;border:none;border-radius:50%;width:54px;height:54px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:51;box-shadow:0 4px 20px rgba(239,68,68,0.6);font-size:22px;animation:prSOS 2s infinite;flex-direction:column;gap:0}
@@ -396,7 +617,9 @@
     <div style="overflow-x:auto;padding:8px 16px 4px;scrollbar-width:none" id="chipsVecinas">
       <div style="display:flex;gap:6px;width:max-content" id="chipsVecinasRow"></div>
     </div>
-    <div class="via-hero ok" id="vHero">
+
+
+        <div class="via-hero ok" id="vHero">
       <div class="circ-main v" id="vCirc">🟢</div>
       <div class="via-tit" id="vTit">VÍA DESPEJADA</div>
       <div class="via-sub" id="vSub">Sin novedades reportadas</div>
@@ -411,35 +634,68 @@
       <button class="btn-add-punto co" onclick="abrirM('mPunto')">+ Agregar punto</button>
       <button class="btn-add-punto co" onclick="abrirCondiciones()"  style="border-color:rgba(245,158,11,0.4);color:var(--am);margin-top:6px">⚠️ Reportar condición de vía</button>
     </div>
-    <!-- MINI-PANEL SOLICITUDES DE PASAJEROS -->
-    <div class="via-panel co" id="viaPanelPas">
-      <div class="via-panel-hdr" onclick="toggleViaPanel('viaPanelPasBod','viaPasArr')">
-        <div class="via-panel-tit">👤 Solicitudes de pasajeros
-          <span class="via-panel-badge am" id="viaPasBadge">0</span>
+
+    <!-- DASHBOARD CONDUCTOR — info + stats -->
+    <div class="cond-dash co" id="dashConductor">
+      <div class="cond-dash-top">
+        <div>
+          <div class="cond-dash-nombre" id="dashNombre">—</div>
+          <div class="cond-dash-ciudad" id="dashCiudad">—</div>
+          <div style="display:flex;gap:4px;margin-top:4px" id="dashStars"></div>
         </div>
-        <span style="color:var(--tm);font-size:12px" id="viaPasArr">▼</span>
+        <div class="cond-dash-cred">
+          <span class="cond-dash-cred-num" id="dashCred">0</span>
+          <span class="cond-dash-cred-lbl">créditos</span>
+        </div>
       </div>
-      <div class="via-panel-body" id="viaPanelPasBod">
-        <div id="viaPasLista"><div class="via-empty-panel">Sin solicitudes pendientes</div></div>
+      <div class="cond-dash-stats">
+        <div class="cond-stat"><span class="cond-stat-num" style="color:var(--r)" id="dStatAl">0</span><span class="cond-stat-lbl">Alertas hoy</span></div>
+        <div class="cond-stat"><span class="cond-stat-num" style="color:var(--v)" id="dStatVi">0</span><span class="cond-stat-lbl">Viajes</span></div>
+        <div class="cond-stat"><span class="cond-stat-num" style="color:var(--am)" id="dStatEn">0</span><span class="cond-stat-lbl">Envíos</span></div>
       </div>
     </div>
 
-    <!-- MINI-PANEL ENCOMIENDAS -->
-    <div class="via-panel co" id="viaPanelEnc">
-      <div class="via-panel-hdr" onclick="toggleViaPanel('viaPanelEncBod','viaEncArr')">
-        <div class="via-panel-tit">📦 Encomiendas disponibles
-          <span class="via-panel-badge" id="viaEncBadge">0</span>
+    <!-- DASHBOARD CONDUCTOR: TABS + PANELES -->
+    <div class="cond-dash co">
+      <div class="cond-tabs">
+        <button class="cond-tab on" id="tabPas" onclick="switchCondTab('pas')">
+          👤 Pasajeros
+          <span class="tab-cnt am" id="cntPas">0</span>
+        </button>
+        <button class="cond-tab" id="tabEnc" onclick="switchCondTab('enc')">
+          📦 Encomiendas
+          <span class="tab-cnt" id="cntEnc">0</span>
+        </button>
+      </div>
+
+      <!-- Lista pasajeros -->
+      <div id="condPanelPas">
+        <div id="listaPasVia">
+          <div class="req-empty"><span class="req-empty-ico">👤</span><p>Sin solicitudes pendientes<br><small>Cuando un pasajero publique un viaje aparece aquí</small></p></div>
         </div>
-        <span style="color:var(--tm);font-size:12px" id="viaEncArr">▼</span>
       </div>
-      <div class="via-panel-body" id="viaPanelEncBod">
-        <div id="viaEncLista"><div class="via-empty-panel">Sin encomiendas pendientes</div></div>
+
+      <!-- Lista encomiendas -->
+      <div id="condPanelEnc" style="display:none">
+        <div id="listaEncVia">
+          <div class="req-empty"><span class="req-empty-ico">📦</span><p>Sin encomiendas pendientes<br><small>Cuando alguien publique un envío aparece aquí</small></p></div>
+        </div>
       </div>
+    </div>
+
+    <!-- NOTIFICACIÓN FLOTANTE NUEVA SOLICITUD -->
+    <div class="noti-float" id="notiFloat">
+      <span class="noti-float-ico" id="notiIco">👤</span>
+      <div class="noti-float-txt">
+        <strong id="notiTit">Nueva solicitud</strong>
+        <span id="notiSub">Toca para ver</span>
+      </div>
+      <button class="noti-float-btn" onclick="verNotiFloat()">Ver</button>
     </div>
 
     <!-- BOTÓN IR A PANTALLA COMPARTIDA -->
     <button class="btn-shared-screen co" onclick="irPantallaCompartida()">
-      <span>🏠 Inicio, anuncios y servicios</span>
+      <span>🏠 Inicio · Anuncios · Servicios</span>
       <span class="arr">→</span>
     </button>
 
@@ -456,6 +712,10 @@
       <div class="p2-title">👋 Hola, <span id="pSaludo">—</span></div>
       <div class="p2-sub" id="pSubtitle">Servicios de tu comunidad</div>
       <div id="alertasPas" style="display:none;margin-bottom:16px"></div>
+
+    <!-- Estado viaje/encomienda activa del pasajero -->
+    <div id="miEstadoActivo" style="display:none;margin-bottom:14px"></div>
+
       <div class="pub-cats"><div class="cats-row" id="catsRow"><div class="cat-btn on" onclick="filtrarCat(null,this)">Todos</div></div></div>
       <div class="pub-lista" id="pubLista"><div class="pub-empty">Cargando...</div></div>
       <div class="p2-title" style="margin-bottom:10px">🛠️ Servicios</div>
@@ -605,6 +865,58 @@
     <button class="nb co" id="nHist" onclick="navGo('pHist','nHist');cargarHistorial()"><span class="nb-ico">📋</span><span class="nb-txt">Historial</span></button>
     <button class="nb" id="nPerf" onclick="navGo('pPerf','nPerf')"><span class="nb-ico">👤</span><span class="nb-txt">Perfil</span></button>
   </nav>
+
+<!-- BOTONES ACCIÓN CONDUCTOR (pasajeros + encomiendas) -->
+<div class="conductor-actions co" id="conductorActions">
+  <button class="btn-ca btn-ca-pas" onclick="abrirDrawer('pas')">
+    <span>👤 Pasajeros</span>
+    <span class="cb" id="cbPas">0</span>
+  </button>
+  <button class="btn-ca btn-ca-enc" onclick="abrirDrawer('enc')">
+    <span>📦 Encomiendas</span>
+    <span class="cb" id="cbEnc">0</span>
+  </button>
+</div>
+
+<!-- DRAWER SOLICITUDES DE PASAJEROS -->
+<div class="drawer-overlay" id="overlayPas" onclick="cerrarDrawer('pas')"></div>
+<div class="drawer" id="drawerPas">
+  <div class="drawer-handle"></div>
+  <div class="drawer-hdr">
+    <div class="drawer-tit">
+      👤 Solicitudes de viaje
+      <span class="drawer-badge am" id="drawerPasBadge">0</span>
+    </div>
+    <button class="drawer-close" onclick="cerrarDrawer('pas')">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerPasBody">
+    <div class="drawer-empty"><span class="ico">👤</span><p>Sin solicitudes pendientes</p></div>
+  </div>
+</div>
+
+<!-- DRAWER ENCOMIENDAS -->
+<div class="drawer-overlay" id="overlayEnc" onclick="cerrarDrawer('enc')"></div>
+<div class="drawer" id="drawerEnc">
+  <div class="drawer-handle"></div>
+  <div class="drawer-hdr">
+    <div class="drawer-tit">
+      📦 Encomiendas disponibles
+      <span class="drawer-badge" id="drawerEncBadge">0</span>
+    </div>
+    <button class="drawer-close" onclick="cerrarDrawer('enc')">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerEncBody">
+    <div class="drawer-empty"><span class="ico">📦</span><p>Sin encomiendas pendientes</p></div>
+  </div>
+</div>
+
+<!-- CONFIRMACIÓN ANIMADA -->
+<div class="confirm-toast" id="confirmToast">
+  <span class="ct-ico" id="ctIco">✅</span>
+  <div class="ct-tit" id="ctTit">¡Listo!</div>
+  <div class="ct-sub" id="ctSub"></div>
+</div>
+
   <button class="btn-ret co" id="btnRet" onclick="abrirModal()">🚨 Reportar novedad</button>
   <button class="btn-sos co" id="btnSOS" onclick="activarSOS()">🆘<span>SOS</span></button>
   <button class="wsp-fl" id="wspFl" onclick="abrirWsp()"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.535 5.856L0 24l6.335-1.502A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.733.885.918-3.638-.234-.374A9.768 9.768 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg></button>
@@ -622,6 +934,39 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+<!-- BANNER INSTALAR -->
+<div class="install-banner" id="installBanner">
+  <div class="install-banner-txt">
+    📲 Instalar RUTA LIBRE
+    <span>Funciona sin internet — Agregar a inicio</span>
+  </div>
+  <button class="install-banner-btn" onclick="instalarPWA()">Instalar</button>
+  <button class="install-banner-x" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
+</div>
+
+
+<!-- OVERLAY DE CONFIRMACIÓN ANIMADA -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <span class="confirm-ico" id="confirmIco">✅</span>
+    <div class="confirm-tit" id="confirmTit">¡Listo!</div>
+    <div class="confirm-sub" id="confirmSub"></div>
+  </div>
+</div>
+
+<!-- OVERLAY CONFIRMACIÓN -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-ico" id="confirmIco">✅</div>
+  <div class="confirm-tit" id="confirmTit">¡Listo!</div>
+  <div class="confirm-sub" id="confirmSub"></div>
+  <button class="confirm-close" onclick="cerrarConfirm()">OK</button>
+</div>
+
 <!-- MODALES -->
 <div class="mov" id="mRep">
   <div class="mc">
@@ -745,7 +1090,12 @@
       <select class="inp" id="eDestCiu"><option value="">Seleccionar destino</option><option value="Yopal">Yopal</option><option value="Tauramena">Tauramena</option><option value="Aguazul">Aguazul</option><option value="Villanueva">Villanueva</option><option value="Maní">Maní</option><option value="Bogotá">Bogotá</option><option value="otro">Otro</option></select>
     </div>
     <div class="fgrp"><label>Valor acordado (COP)</label><input type="number" id="eValor" class="inp" placeholder="Ej: 15000" min="0"></div>
-    <div class="fgrp"><label>Nota adicional</label><input type="text" id="eNota" class="inp" placeholder="Tamaño, instrucciones..." maxlength="80"></div>
+    <div class="fgrp"><label>Nota adicional</label><input type="text" id="eNota" class="inp" placeholder="Tamaño, instrucciones, peso..." maxlength="100"></div>
+    <div class="fgrp">
+      <label>Lista de compras (opcional)</label>
+      <textarea id="eListaCompras" class="inp" placeholder="Ej: 1 kg arroz, 2 lt aceite, pan tajado... (para encomiendas de mercado desde Yopal)" rows="3" maxlength="300" style="resize:none;line-height:1.5"></textarea>
+      <div style="font-size:11px;color:var(--tm);margin-top:4px">El conductor verá esta lista para hacer las compras</div>
+    </div>
     <button class="btn-p" id="btnEnvEnc" onclick="enviarEncomienda()">📦 Publicar encomienda</button><br><br>
     <button onclick="cerrarM('mEnc')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
   </div>
@@ -753,9 +1103,11 @@
 
 <div class="mov" id="mPas">
   <div class="mc">
-    <div class="mh"></div><div class="mt">🚗 Solicitar viaje</div>
+    <div class="mh"></div>
+    <div class="mt">🚗 Solicitar viaje</div>
     <div class="ms">Los conductores de tu zona verán tu solicitud al instante</div>
-    <div class="fgrp"><label>Origen *</label><input type="text" id="pOrigen" class="inp" placeholder="Ej: Tauramena Centro" maxlength="50">
+    <div class="fgrp"><label>Origen *</label>
+      <input type="text" id="pOrigen" class="inp" placeholder="Ej: Tauramena Centro" maxlength="60">
       <div class="chips" style="margin-top:6px">
         <span class="chip" onclick="document.getElementById('pOrigen').value=this.textContent">Tauramena</span>
         <span class="chip" onclick="document.getElementById('pOrigen').value=this.textContent">Yopal</span>
@@ -763,7 +1115,11 @@
         <span class="chip" onclick="document.getElementById('pOrigen').value=this.textContent">Villanueva</span>
       </div>
     </div>
-    <div class="fgrp"><label>Destino *</label><input type="text" id="pDestino" class="inp" placeholder="Ej: Yopal Terminal" maxlength="50">
+    <div class="fgrp"><label>📍 Punto exacto de recogida</label>
+      <input type="text" id="pPuntoRecogida" class="inp" placeholder="Ej: Parque principal, frente al banco, gasolinera..." maxlength="80">
+    </div>
+    <div class="fgrp"><label>Destino *</label>
+      <input type="text" id="pDestino" class="inp" placeholder="Ej: Yopal Terminal" maxlength="60">
       <div class="chips" style="margin-top:6px">
         <span class="chip" onclick="document.getElementById('pDestino').value=this.textContent">Yopal</span>
         <span class="chip" onclick="document.getElementById('pDestino').value=this.textContent">Tauramena</span>
@@ -771,18 +1127,23 @@
         <span class="chip" onclick="document.getElementById('pDestino').value=this.textContent">Aguazul</span>
       </div>
     </div>
-    <div class="fgrp"><label>¿Cuándo? *</label><input type="datetime-local" id="pHora" class="inp"></div>
-    <div class="fgrp"><label>Número de personas</label>
-      <select class="inp" id="pPersonas">
-        <option value="1">1 persona</option><option value="2">2 personas</option>
-        <option value="3">3 personas</option><option value="4">4 personas</option><option value="5+">5 o más</option>
-      </select>
+    <div class="fgrp"><label>¿Cuándo? *</label>
+      <input type="datetime-local" id="pHora" class="inp">
     </div>
-    <div class="fgrp"><label>¿Cuánto puedes pagar? (COP)</label>
-      <input type="number" id="pPrecio" class="inp" placeholder="Ej: 25000 (opcional)" min="0">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fgrp"><label>Personas</label>
+        <select class="inp" id="pPersonas">
+          <option value="1">1 persona</option><option value="2">2 personas</option>
+          <option value="3">3 personas</option><option value="4">4 personas</option>
+          <option value="5+">5 o más</option>
+        </select>
+      </div>
+      <div class="fgrp"><label>Pago aprox (COP)</label>
+        <input type="number" id="pPrecio" class="inp" placeholder="25000" min="0">
+      </div>
     </div>
-    <div class="fgrp"><label>Nota adicional</label>
-      <input type="text" id="pNota" class="inp" placeholder="Equipaje, paradas, necesidades..." maxlength="100">
+    <div class="fgrp"><label>Nota para el conductor</label>
+      <input type="text" id="pNota" class="inp" placeholder="Equipaje, silla bebé, paradas en ruta..." maxlength="120">
     </div>
     <button class="btn-p" id="btnEnvPas" onclick="enviarSolicitud()">🚗 Publicar solicitud</button><br><br>
     <button onclick="cerrarM('mPas')" style="background:none;border:none;color:var(--tm);font-size:13px;cursor:pointer;width:100%;text-align:center;font-family:'Inter',sans-serif">Cancelar</button>
@@ -986,7 +1347,7 @@ function mostrarApp(){
   document.getElementById('pCred2').textContent=(U.creditos||0)+' créditos';document.getElementById('credSaldo').textContent=U.creditos||0;
   document.getElementById('pFecha').textContent=new Date(U.fechaReg).toLocaleDateString('es-CO');
   if(!eC)escucharAlertasPas();loadSnd();cargarCFG();cargarPuntos();
-  if(eC){escucharAlertasCiudadActiva();escucharEncDisp();escucharSolsDisp();iniciarAutoExpiry();mostrarBtnSOS(true);escucharSolsEnVia();escucharEncEnVia();}
+  if(eC){escucharAlertasCiudadActiva();escucharEncDisp();escucharSolsDisp();iniciarAutoExpiry();mostrarBtnSOS(true);escucharSolsEnVia();escucharEncEnVia();const ca=document.getElementById('conductorActions');if(ca)ca.classList.add('show');}
   if(deferredPWA)document.getElementById('btnInstalar').style.display='block';
   setTimeout(cargarEstadisticasPerfil,2000);
   // Solicitar permisos de notificación (una vez)
@@ -1199,8 +1560,8 @@ window.enviarEncomienda=async()=>{
   if(!desc||!dNom||!dTel||!dCiu){toast('⚠️ Completa los campos obligatorios','warning');return;}
   const btn=document.getElementById('btnEnvEnc');btn.disabled=true;btn.textContent='Publicando...';
   try{
-    await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas'),{descripcion:desc,destinatarioNombre:dNom,destinatarioTel:dTel.replace(/\D/g,''),destino:dCiu,valor:document.getElementById('eValor').value||0,nota:document.getElementById('eNota').value.trim(),remitenteId:U.uid,remitenteNombre:U.nombre,remitenteTel:U.telefono,estado:'esperando',activa:true,conductorId:null,timestamp:serverTimestamp()});
-    cerrarM('mEnc');toast('📦 Encomienda publicada');['eDesc','eDestNom','eDestTel','eNota','eValor'].forEach(id=>document.getElementById(id).value='');document.getElementById('eDestCiu').value='';
+    await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas'),{descripcion:desc,destinatarioNombre:dNom,destinatarioTel:dTel.replace(/\D/g,''),destino:dCiu,valor:document.getElementById('eValor').value||0,nota:document.getElementById('eNota').value.trim(),listaCompras:document.getElementById('eListaCompras')?.value?.trim()||null,remitenteId:U.uid,remitenteNombre:U.nombre,remitenteTel:U.telefono,estado:'esperando',activa:true,conductorId:null,timestamp:serverTimestamp()});
+    cerrarM('mEnc');toast('📦 Encomienda publicada');['eDesc','eDestNom','eDestTel','eNota','eValor','eListaCompras'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('eDestCiu').value='';
   }catch(e){toast('❌ '+e.message,'error');}
   btn.disabled=false;btn.textContent='📦 Publicar encomienda';
 };
@@ -1294,6 +1655,7 @@ window.enviarSolicitud=async()=>{
   try{
     await addDoc(collection(db,'ciudades',U.ciudad.toLowerCase(),'solicitudes'),{
       origen,destino,
+      puntoRecogida:document.getElementById('pPuntoRecogida')?.value.trim()||'',
       hora:document.getElementById('pHora').value,
       personas:document.getElementById('pPersonas').value,
       precio:document.getElementById('pPrecio')?.value||null,
@@ -1303,7 +1665,7 @@ window.enviarSolicitud=async()=>{
       estado:'esperando',activa:true,conductorId:null,
       timestamp:serverTimestamp()
     });
-    cerrarM('mPas');toast('🚗 Solicitud publicada');['pOrigen','pDestino','pHora','pNota'].forEach(id=>document.getElementById(id).value='');
+    cerrarM('mPas');toast('🚗 Solicitud publicada');['pOrigen','pDestino','pHora','pNota','pPrecio','pPuntoRecogida'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   }catch(e){toast('❌ '+e.message,'error');}
   btn.disabled=false;btn.textContent='🚗 Publicar solicitud';
 };
@@ -1381,8 +1743,7 @@ window.salir=()=>{
 window.toast=(m,t='info')=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const cols={success:'#22c55e',error:'#ef4444',warning:'#f59e0b',info:'#6366f1'};const el=document.createElement('div');el.className='toast';el.style.borderLeftColor=cols[t]||cols.info;el.textContent=m;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);};
 
 // ── PWA ──
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPWA=e;const b=document.getElementById('btnInstalar');if(b)b.style.display='block';});
-window.instalarPWA=async()=>{if(!deferredPWA)return;deferredPWA.prompt();const{outcome}=await deferredPWA.userChoice;if(outcome==='accepted'){document.getElementById('btnInstalar').style.display='none';toast('✅ App instalada','success');}deferredPWA=null;};
+
 
 // ── SW ──
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(reg=>{reg.addEventListener('updatefound',()=>{reg.installing?.addEventListener('statechange',function(){if(this.state==='installed'&&navigator.serviceWorker.controller)toast('🔄 Nueva versión disponible — recarga','info');});});}).catch(e=>console.log('SW error:',e));});}
@@ -1497,22 +1858,422 @@ async function registrarCiudadNueva(ciudad){
 }
 
 
-// ── MINI-PANELS EN PANTALLA VÍA ──
-window.toggleViaPanel=(bodyId,arrId)=>{
-  const body=document.getElementById(bodyId);
-  const arr=document.getElementById(arrId);
-  if(!body)return;
-  const open=body.classList.toggle('open');
-  if(arr)arr.textContent=open?'▲':'▼';
+window.irPantallaCompartida=()=>{ navGo('pIni','nI'); };
+window.toggleViaPanel=()=>{}; // legacy — no usado
+
+
+
+
+
+
+
+
+
+
+
+// ════════════════════════════════════
+// DRAWERS — PASAJEROS Y ENCOMIENDAS
+// ════════════════════════════════════
+
+window.abrirDrawer = tipo => {
+  const id = tipo==='pas' ? 'drawerPas' : 'drawerEnc';
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if(tipo==='pas') renderDrawerPas();
+  else renderDrawerEnc();
 };
 
-window.irPantallaCompartida=()=>{
-  navGo('pIni','nI');
-  const btn=document.getElementById('btnBackVia');
-  if(btn)btn.classList.add('show');
+window.cerrarDrawer = tipo => {
+  const id = tipo==='pas' ? 'drawerPas' : 'drawerEnc';
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
 };
 
-// Escuchar y renderizar solicitudes de pasajeros en pVia
+// Cerrar con swipe hacia abajo
+['drawerPas','drawerEnc'].forEach(id=>{
+  let startY=0;
+  const panel = document.querySelector(`#${id} .via-drawer-panel`);
+  if(!panel)return;
+  panel.addEventListener('touchstart',e=>{startY=e.touches[0].clientY;},{passive:true});
+  panel.addEventListener('touchend',e=>{
+    if(e.changedTouches[0].clientY - startY > 80)
+      cerrarDrawer(id==='drawerPas'?'pas':'enc');
+  },{passive:true});
+});
+
+// ── RENDER SOLICITUDES PASAJEROS ──
+function renderDrawerPas(){
+  const body=document.getElementById('drawerPasBody');
+  const ciudad=U?.ciudad?.toLowerCase();
+  if(!ciudad||!_solsCache.length){
+    body.innerHTML='<div class="req-empty"><span class="ico">👤</span><p>Sin solicitudes de pasajeros en este momento.<br>Cuando alguien publique un viaje aparecerá aquí.</p></div>';
+    return;
+  }
+  body.innerHTML = _solsCache.map(s => {
+    const hora=s.hora?new Date(s.hora).toLocaleString('es-CO',{weekday:'short',hour:'2-digit',minute:'2-digit'}):'Flexible';
+    const min=s.timestamp?.seconds?Math.floor((Date.now()-s.timestamp.seconds*1000)/60000):0;
+    const pub=min<1?'Ahora mismo':min<60?'hace '+min+'min':'hace '+Math.floor(min/60)+'h';
+    const precio=s.precio?`<span class="req-chip verde">💵 $${parseInt(s.precio).toLocaleString()}</span>`:'';
+    return `<div class="req-card">
+      <div class="req-card-top">
+        <div class="req-card-ruta">📍 ${s.origen} → ${s.destino}</div>
+        <span class="req-card-time">${pub}</span>
+      </div>
+      <div class="req-card-meta">
+        <span class="req-chip">👤 ${s.pasajeroNombre}</span>
+        <span class="req-chip">👥 ${s.personas} persona${s.personas>1?'s':''}</span>
+        <span class="req-chip azul">🕐 ${hora}</span>
+        ${precio}
+      </div>
+      ${s.puntoRecogida?`<div class="req-card-nota" style="color:var(--v);background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.2)">📍 <strong>Recogida:</strong> ${s.puntoRecogida}</div>`:''}
+      ${s.nota?`<div class="req-card-nota">📝 "${s.nota}"</div>`:''}
+      <div class="req-card-btns">
+        <button class="btn-req-info" onclick="wspDirecto('${s.pasajeroTel}')">💬 Preguntar</button>
+        <button class="btn-req-aceptar" onclick="aceptarViajeDrawer('${s.id}','${s.pasajeroTel}','${s.pasajeroNombre}','${(s.origen||'').replace(/'/g,'')}','${(s.destino||'').replace(/'/g,'')}')">✅ Tomar viaje</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER ENCOMIENDAS ──
+function renderDrawerEnc(){
+  const body=document.getElementById('drawerEncBody');
+  if(!_encsCache.length){
+    body.innerHTML='<div class="req-empty"><span class="ico">📦</span><p>Sin encomiendas disponibles.<br>Cuando alguien publique un envío aparecerá aquí.</p></div>';
+    return;
+  }
+  body.innerHTML = _encsCache.map(e => {
+    return `<div class="req-card">
+      <div class="req-card-top">
+        <div class="req-card-ruta">📦 ${e.descripcion}</div>
+        <span class="req-card-time">${e.destino}</span>
+      </div>
+      <div class="req-card-meta">
+        <span class="req-chip">👤 ${e.remitenteNombre}</span>
+        <span class="req-chip">📍 → ${e.destino}</span>
+        ${e.valor?`<span class="req-chip verde">💵 $${parseInt(e.valor).toLocaleString()}</span>`:''}
+      </div>
+      ${e.nota?`<div class="req-card-nota">📝 "${e.nota}"</div>`:''}
+      ${e.listaCompras?`<div class="req-card-nota" style="background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.25);color:var(--tp)">🛒 <strong>Lista de compras:</strong><br>${e.listaCompras.replace(/\n/g,'<br>')}</div>`:''}
+      <div class="req-card-btns">
+        <button class="btn-req-info" onclick="wspDirecto('${e.remitenteTel}')">💬 Preguntar</button>
+        <button class="btn-req-aceptar enc" onclick="tomarEncDrawer('${e.id}','${e.remitenteTel}','${(e.descripcion||'').replace(/'/g,'')}','${e.remitenteNombre}')">📦 Tomar envío</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Caches para no re-consultar Firebase en cada apertura
+let _solsCache = [];
+let _encsCache = [];
+
+// ── ACEPTAR VIAJE DESDE DRAWER ──
+window.aceptarViajeDrawer = async (id, tel, nombre, origen, destino, puntoRecogida='') => {
+  const ciudad = U.ciudad.toLowerCase();
+  try{
+    await updateDoc(doc(db,'ciudades',ciudad,'solicitudes',id),{
+      estado:'aceptada', conductorId:U.uid, conductorNombre:U.nombre, conductorTel:U.telefono
+    });
+    cerrarDrawer('pas');
+    // Animación confirmación
+    mostrarConfirmacion('✅', '¡Viaje tomado!', 'Notificando a '+nombre+'...');
+    if(navigator.vibrate) navigator.vibrate([100,50,200]);
+    // WhatsApp al pasajero con todos los datos
+    const msg = `🚗 *RUTA LIBRE* — ¡Tu viaje fue aceptado!
+
+`+
+      `*Conductor:* ${U.nombre}
+`+
+      `*Tel:* ${U.telefono}
+`+
+      `*Ruta:* ${origen} → ${destino}
+
+`+
+      `Te contactaré para coordinar el punto de recogida 👋`;
+    setTimeout(()=>window.open(`https://wa.me/57${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'), 1200);
+  }catch(e){ toast('❌ '+e.message,'error'); }
+};
+
+// ── TOMAR ENCOMIENDA DESDE DRAWER ──
+window.tomarEncDrawer = async (id, telRemitente, desc, nombreRemitente) => {
+  if((U.creditos||0)<1){ toast('💰 Sin créditos — recarga por WhatsApp','warning'); return; }
+  const ciudad = U.ciudad.toLowerCase();
+  try{
+    await updateDoc(doc(db,'ciudades',ciudad,'encomiendas',id),{
+      estado:'en_camino', conductorId:U.uid, conductorNombre:U.nombre, conductorTel:U.telefono
+    });
+    const nc = (U.creditos||0)-1; U.creditos=nc;
+    await updateDoc(doc(db,'ciudades',ciudad,'usuarios',U.uid),{creditos:nc});
+    guardarSesion(U);
+    document.getElementById('credSaldo').textContent=nc;
+    cerrarDrawer('enc');
+    mostrarConfirmacion('📦','¡Encomienda tomada!','Contactando a '+nombreRemitente+'...');
+    if(navigator.vibrate) navigator.vibrate([100,50,200]);
+    // WhatsApp al remitente
+    const msg = `📦 *RUTA LIBRE* — ¡Tu encomienda fue tomada!
+
+`+
+      `*Conductor:* ${U.nombre}
+`+
+      `*Tel:* ${U.telefono}
+`+
+      `*Descripción:* ${desc}
+
+`+
+      `Coordina la entrega por este medio 👋`;
+    setTimeout(()=>window.open(`https://wa.me/57${telRemitente.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'), 1200);
+  }catch(e){ toast('❌ '+e.message,'error'); }
+};
+
+// ── ANIMACIÓN DE CONFIRMACIÓN ──
+
+
+// ── ESCUCHAR Y ACTUALIZAR CACHES + BADGES ──
+
+
+
+
+
+
+
+// ── DRAWERS CONDUCTOR ──
+window.abrirDrawer = tipo => {
+  const dr = document.getElementById(tipo==='pas'?'drawerPas':'drawerEnc');
+  const ov = document.getElementById(tipo==='pas'?'overlayPas':'overlayEnc');
+  if(dr) dr.classList.add('open');
+  if(ov) ov.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+window.cerrarDrawer = tipo => {
+  const dr = document.getElementById(tipo==='pas'?'drawerPas':'drawerEnc');
+  const ov = document.getElementById(tipo==='pas'?'overlayPas':'overlayEnc');
+  if(dr) dr.classList.remove('open');
+  if(ov) ov.classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+// ── CONFIRMACIÓN ANIMADA ──
+function mostrarConfirmacion(ico, tit, sub) {
+  const t = document.getElementById('confirmToast');
+  if(!t) return;
+  document.getElementById('ctIco').textContent = ico;
+  document.getElementById('ctTit').textContent = tit;
+  document.getElementById('ctSub').textContent = sub;
+  t.classList.add('show');
+  if(navigator.vibrate) navigator.vibrate([100,50,200]);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── ESCUCHAR SOLICITUDES EN DRAWER ──
+
+
+// ── ESCUCHAR ENCOMIENDAS EN DRAWER ──
+
+
+// ── TOMAR VIAJE DESDE DRAWER ──
+window.tomarViajeDrawer = async (id, tel, nombre, origen, destino) => {
+  const ciudad = U.ciudad.toLowerCase();
+  try {
+    await updateDoc(doc(db,'ciudades',ciudad,'solicitudes',id), {
+      estado:'aceptada', conductorId:U.uid, conductorNombre:U.nombre, conductorTel:U.telefono
+    });
+    cerrarDrawer('pas');
+    mostrarConfirmacion('✅','¡Viaje tomado!','Notificando a '+nombre+'...');
+    // WhatsApp al pasajero con info completa del conductor
+    const msg = '🚗 *RUTA LIBRE* — ¡Tu viaje fue aceptado!\n\n' +
+      '👤 Conductor: *'+U.nombre+'*\n' +
+      '📞 Tel: '+U.telefono+'\n' +
+      '🗺 Ruta: '+origen+' → '+destino+'\n\n' +
+      '¿Dónde te recojo exactamente? Escríbeme 👋';
+    setTimeout(() => window.open('https://wa.me/57'+tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msg),'_blank'), 1200);
+  } catch(e) { toast('❌ '+e.message,'error'); }
+};
+
+// ── TOMAR ENCOMIENDA DESDE DRAWER ──
+window.tomarEncDrawer = async (id, telRemitente, nombreRemitente, desc) => {
+  if((U.creditos||0)<1) { toast('💰 Sin créditos. Recarga por WhatsApp.','warning'); return; }
+  const ciudad = U.ciudad.toLowerCase();
+  try {
+    await updateDoc(doc(db,'ciudades',ciudad,'encomiendas',id), {
+      estado:'en_camino', conductorId:U.uid, conductorNombre:U.nombre, conductorTel:U.telefono
+    });
+    const nc = (U.creditos||0)-1; U.creditos=nc;
+    await updateDoc(doc(db,'ciudades',ciudad,'usuarios',U.uid), {creditos:nc});
+    guardarSesion(U);
+    document.getElementById('credSaldo').textContent = nc;
+    document.getElementById('pCred2').textContent = nc+' créditos';
+    cerrarDrawer('enc');
+    mostrarConfirmacion('📦','¡Encomienda tomada!','Contactando a '+nombreRemitente+'...');
+    // WhatsApp al remitente
+    const msg = '📦 *RUTA LIBRE* — ¡Tu encomienda fue tomada!\n\n' +
+      '🚗 Conductor: *'+U.nombre+'*\n' +
+      '📞 Tel: '+U.telefono+'\n' +
+      '📦 Descripción: '+desc+'\n\n' +
+      '¿Cuándo y dónde te la recojo? 👋';
+    setTimeout(() => window.open('https://wa.me/57'+telRemitente.replace(/\D/g,'')+'?text='+encodeURIComponent(msg),'_blank'), 1200);
+  } catch(e) { toast('❌ '+e.message,'error'); }
+};
+
+// ── AVISAR LLEGADA AL PASAJERO ──
+window.alertarLlegada = async solicitudId => {
+  const ciudad = U.ciudad.toLowerCase();
+  try {
+    const snap = await getDoc(doc(db,'ciudades',ciudad,'solicitudes',solicitudId));
+    if(!snap.exists()) return;
+    const s = snap.data();
+    const msg = '🚗 *RUTA LIBRE* — ¡Tu conductor está llegando!\n\n' +
+      '*'+U.nombre+'* está cerca de tu punto de recogida.\n' +
+      'Ten listo tu equipaje 👋\n\n' +
+      '¿Necesitas algo de camino? Escríbeme.';
+    window.open('https://wa.me/57'+s.pasajeroTel.replace(/\D/g,'')+'?text='+encodeURIComponent(msg),'_blank');
+    toast('📍 Pasajero notificado','success');
+  } catch(e) { toast('❌ '+e.message,'error'); }
+};
+
+// ── INSTALAR PWA — mejorado ──
+window.instalarPWA = async () => {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if(isStandalone){ toast('✅ Ya está instalada como app','success'); return; }
+  // Android Chrome con prompt nativo
+  if(deferredPWA) {
+    try {
+      await deferredPWA.prompt();
+      const {outcome} = await deferredPWA.userChoice;
+      if(outcome === 'accepted') {
+        document.getElementById('installBanner')?.classList.remove('show');
+        document.getElementById('btnInstalar').style.display = 'none';
+        toast('✅ ¡RUTA LIBRE instalada! Busca el ícono 🚗','success');
+      }
+    } catch(e) {}
+    deferredPWA = null;
+    return;
+  }
+  // iOS — instrucciones Safari
+  if(isIOS){ abrirModalInstalar('ios'); return; }
+  // Android sin prompt nativo
+  if(isAndroid){ abrirModalInstalar('android'); return; }
+  window.open('./instalar.html','_blank');
+};
+window.abrirModalInstalar=(tipo)=>{
+  const msgs={
+    ios:'<strong>iPhone / iPad:</strong><br><br>1. Abre esta página en <strong>Safari</strong> (no Chrome)<br>2. Toca el botón compartir <strong>⬆️</strong><br>3. Selecciona <strong>"Agregar a pantalla de inicio"</strong><br>4. Toca <strong>Agregar</strong>',
+    android:'<strong>Android:</strong><br><br>1. Toca los 3 puntos <strong>⋮</strong> del navegador<br>2. Selecciona <strong>"Instalar app"</strong> o <strong>"Agregar a pantalla de inicio"</strong><br>3. Confirma la instalación'
+  };
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9999;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)';
+  d.innerHTML=`<div style="background:var(--surf);border:1px solid var(--bn);border-radius:var(--rxl) var(--rxl) 0 0;padding:28px 24px 50px;width:100%;max-width:480px;animation:slideUp 0.3s ease">
+    <div style="width:40px;height:4px;background:var(--bn);border-radius:2px;margin:0 auto 20px"></div>
+    <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px">📲 Instalar RUTA LIBRE</div>
+    <div style="font-size:14px;color:var(--ts);line-height:2.2">${msgs[tipo]||msgs.android}</div>
+    <button onclick="this.closest('[style*=inset]').remove()" style="margin-top:24px;width:100%;padding:15px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:var(--rmd);font-family:'Sora',sans-serif;font-weight:700;font-size:15px;cursor:pointer">Entendido ✓</button>
+  </div>`;
+  d.onclick=e=>{if(e.target===d)d.remove();};
+  document.body.appendChild(d);
+};
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPWA = e;
+  const banner = document.getElementById('installBanner');
+  if(banner) banner.classList.add('show');
+  const btn = document.getElementById('btnInstalar');
+  if(btn) btn.style.display = 'block';
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner')?.classList.remove('show');
+  mostrarConfirmacion('🎉','¡RUTA LIBRE instalada!','Ya tienes el ícono en tu pantalla');
+  deferredPWA = null;
+});
+
+
+// ════════════════════════════════
+// DASHBOARD CONDUCTOR — v4
+// ════════════════════════════════
+let condTab='pas';
+let notiTimeout=null;
+
+window.switchCondTab=(tab)=>{
+  condTab=tab;
+  document.getElementById('tabPas').classList.toggle('on',tab==='pas');
+  document.getElementById('tabEnc').classList.toggle('on',tab==='enc');
+  document.getElementById('condPanelPas').style.display=tab==='pas'?'block':'none';
+  document.getElementById('condPanelEnc').style.display=tab==='enc'?'block':'none';
+};
+
+// Mostrar notificación flotante
+function mostrarNotiFloat(ico,tit,sub){
+  const n=document.getElementById('notiFloat');
+  if(!n)return;
+  document.getElementById('notiIco').textContent=ico;
+  document.getElementById('notiTit').textContent=tit;
+  document.getElementById('notiSub').textContent=sub;
+  n.classList.add('show');
+  if(notiTimeout)clearTimeout(notiTimeout);
+  notiTimeout=setTimeout(()=>n.classList.remove('show'),6000);
+}
+window.verNotiFloat=()=>{
+  document.getElementById('notiFloat')?.classList.remove('show');
+  // Activar tab correspondiente
+  const esPas=document.getElementById('notiIco').textContent==='👤';
+  switchCondTab(esPas?'pas':'enc');
+  // Scroll a los paneles
+  document.querySelector('.cond-dash')?.scrollIntoView({behavior:'smooth'});
+};
+
+// Render tarjeta de PASAJERO para conductor
+function renderCardPas(s){
+  const hora=s.hora?new Date(s.hora).toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Flexible';
+  const min=s.timestamp?.seconds?Math.floor((Date.now()-s.timestamp.seconds*1000)/60000):0;
+  const publicada=min<1?'Ahora mismo':min<60?'Hace '+min+'min':'Hace '+Math.floor(min/60)+'h';
+  const tieneComprar=s.nota&&(s.nota.toLowerCase().includes('comprar')||s.nota.toLowerCase().includes('traer')||s.nota.toLowerCase().includes('traiga')||s.nota.toLowerCase().includes('necesito que'));
+  return `<div class="req-card pas-card">
+    <div class="req-card-hdr">
+      <div class="req-ruta pas">📍 ${s.origen||'—'} → ${s.destino||'—'}</div>
+      <div class="req-pills">
+        <span class="req-pill">👤 ${s.pasajeroNombre}</span>
+        <span class="req-pill">👥 ${s.personas} persona${s.personas>1?'s':''}</span>
+        <span class="req-pill hora">🕐 ${hora}</span>
+        ${s.precio?`<span class="req-pill precio">💵 $${parseInt(s.precio).toLocaleString()}</span>`:''}
+        <span class="req-pill" style="color:var(--tm)">${publicada}</span>
+      </div>
+      ${s.nota&&!tieneComprar?`<div class="req-nota">📝 ${s.nota}</div>`:''}
+      ${tieneComprar?`<div class="req-comprar"><strong>🛒 El pasajero necesita que compres algo:</strong>${s.nota}</div>`:''}
+    </div>
+    <div class="req-actions">
+      <button class="req-btn tomar" onclick="aceptarViajeRapido('${s.id}','${s.pasajeroTel}','${s.pasajeroNombre}','${s.origen}','${s.destino}')">✅ Tomar viaje</button>
+      <button class="req-btn wsp" onclick="wspDirecto('${s.pasajeroTel}')">💬 Escribir</button>
+    </div>
+  </div>`;
+}
+
+// Render tarjeta de ENCOMIENDA para conductor
+function renderCardEnc(e){
+  const min=e.timestamp?.seconds?Math.floor((Date.now()-e.timestamp.seconds*1000)/60000):0;
+  const publicada=min<1?'Ahora mismo':min<60?'Hace '+min+'min':'Hace '+Math.floor(min/60)+'h';
+  const tieneComprar=e.descripcion&&(e.descripcion.toLowerCase().includes('comprar')||e.descripcion.toLowerCase().includes('traer'));
+  return `<div class="req-card enc-card">
+    <div class="req-card-hdr">
+      <div class="req-ruta enc">📦 ${e.descripcion||'Encomienda'}</div>
+      <div class="req-pills">
+        <span class="req-pill">📍 → ${e.destino}</span>
+        <span class="req-pill">De: ${e.remitenteNombre}</span>
+        ${e.valor?`<span class="req-pill precio">💵 $${parseInt(e.valor).toLocaleString()}</span>`:''}
+        <span class="req-pill" style="color:var(--tm)">${publicada}</span>
+      </div>
+      ${e.nota?`<div class="req-nota">📝 ${e.nota}</div>`:''}
+      ${tieneComprar?`<div class="req-comprar"><strong>🛒 Debes comprar este producto en Yopal:</strong>${e.descripcion}</div>`:''}
+    </div>
+    <div class="req-actions">
+      <button class="req-btn tomar enc" onclick="tomarEncRapido('${e.id}','${e.remitenteTel}','${e.descripcion}')">📦 Tomar envío</button>
+      <button class="req-btn wsp" onclick="wspDirecto('${e.remitenteTel}')">💬 Escribir</button>
+    </div>
+  </div>`;
+}
+
+// Escuchar solicitudes en pVia (reemplaza escucharSolsEnVia)
 function escucharSolsEnVia(){
   if(U.rol!=='conductor')return;
   const ciudad=U.ciudad.toLowerCase();
@@ -1522,33 +2283,22 @@ function escucharSolsEnVia(){
     snap.forEach(d=>{const data=d.data();if(data.activa&&data.estado==='esperando')sols.push({id:d.id,...data});});
     sols.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
     // Badge
-    const badge=document.getElementById('viaPasBadge');
-    if(badge){badge.textContent=sols.length;badge.style.background=sols.length>0?'var(--am)':'var(--tm)';}
-    // Sonido solo en nuevas
-    if(prevSol>=0&&sols.length>prevSol)tonoP();
+    const cnt=document.getElementById('cntPas');
+    if(cnt){cnt.textContent=sols.length;cnt.classList.toggle('show',sols.length>0);cnt.classList.add('am');}
+    // Sonido + notificación solo en nuevas
+    if(prevSol>=0&&sols.length>prevSol){
+      tonoP();
+      mostrarNotiFloat('👤','Nueva solicitud de viaje',sols[0]?.origen+' → '+sols[0]?.destino);
+    }
     prevSol=sols.length;
     // Render
-    const lista=document.getElementById('viaPasLista');if(!lista)return;
-    if(!sols.length){lista.innerHTML='<div class="via-empty-panel">Sin solicitudes pendientes</div>';return;}
-    lista.innerHTML=sols.map(s=>{
-      const hora=s.hora?new Date(s.hora).toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Flexible';
-      const min=s.timestamp?.seconds?Math.floor((Date.now()-s.timestamp.seconds*1000)/60000):0;
-      const publicada=min<1?'Ahora':min<60?min+'min':Math.floor(min/60)+'h';
-      return `<div class="via-sol-card">
-        <div class="via-sol-info">
-          <div class="ruta">📍 ${s.origen} → ${s.destino}</div>
-          <div class="meta">👤 ${s.pasajeroNombre} · ${s.personas} persona${s.personas>1?'s':''} · 🕐 ${hora}</div>
-          ${s.precio?`<div class="precio">💵 $${parseInt(s.precio).toLocaleString()}</div>`:''}
-          ${s.nota?`<div class="meta" style="font-style:italic">${s.nota}</div>`:''}
-          <div class="meta" style="color:var(--tm)">Publicado hace ${publicada}</div>
-        </div>
-        <button class="btn-tomar-via" onclick="aceptarViajeRapido('${s.id}','${s.pasajeroTel}','${s.pasajeroNombre}','${s.origen}','${s.destino}')">✅ Tomar</button>
-      </div>`;
-    }).join('');
+    const lista=document.getElementById('listaPasVia');if(!lista)return;
+    if(!sols.length){lista.innerHTML='<div class="req-empty"><span class="req-empty-ico">👤</span><p>Sin solicitudes pendientes<br><small>Cuando un pasajero publique aparece aquí</small></p></div>';return;}
+    lista.innerHTML=sols.map(renderCardPas).join('');
   });
 }
 
-// Escuchar encomiendas en pVia
+// Escuchar encomiendas en pVia (reemplaza escucharEncEnVia)
 function escucharEncEnVia(){
   if(U.rol!=='conductor')return;
   const ciudad=U.ciudad.toLowerCase();
@@ -1558,48 +2308,46 @@ function escucharEncEnVia(){
     snap.forEach(d=>{const data=d.data();if(data.activa&&data.estado==='esperando')encs.push({id:d.id,...data});});
     encs.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
     // Badge
-    const badge=document.getElementById('viaEncBadge');
-    if(badge){badge.textContent=encs.length;badge.style.background=encs.length>0?'var(--r)':'var(--tm)';}
-    // Sonido solo en nuevas
-    if(prevEnc>=0&&encs.length>prevEnc)tonoE();
+    const cnt=document.getElementById('cntEnc');
+    if(cnt){cnt.textContent=encs.length;cnt.classList.toggle('show',encs.length>0);}
+    // Sonido + notificación solo en nuevas
+    if(prevEnc>=0&&encs.length>prevEnc){
+      tonoE();
+      mostrarNotiFloat('📦','Nueva encomienda disponible',encs[0]?.descripcion+' → '+encs[0]?.destino);
+    }
     prevEnc=encs.length;
     // Render
-    const lista=document.getElementById('viaEncLista');if(!lista)return;
-    if(!encs.length){lista.innerHTML='<div class="via-empty-panel">Sin encomiendas pendientes</div>';return;}
-    lista.innerHTML=encs.map(e=>{
-      return `<div class="via-sol-card">
-        <div class="via-sol-info">
-          <div class="ruta">📦 ${e.descripcion}</div>
-          <div class="meta">Destino: ${e.destino} · De: ${e.remitenteNombre}</div>
-          ${e.valor?`<div class="precio">💵 $${parseInt(e.valor).toLocaleString()} COP</div>`:''}
-          ${e.nota?`<div class="meta" style="font-style:italic">${e.nota}</div>`:''}
-        </div>
-        <button class="btn-tomar-via enc" onclick="tomarEncRapido('${e.id}','${e.remitenteTel}','${e.descripcion}')">📦 Tomar</button>
-      </div>`;
-    }).join('');
+    const lista=document.getElementById('listaEncVia');if(!lista)return;
+    if(!encs.length){lista.innerHTML='<div class="req-empty"><span class="req-empty-ico">📦</span><p>Sin encomiendas pendientes<br><small>Cuando alguien publique un envío aparece aquí</small></p></div>';return;}
+    lista.innerHTML=encs.map(renderCardEnc).join('');
   });
 }
 
-// Aceptar viaje rápido desde pVia
+// Aceptar viaje — con overlay de confirmación y WhatsApp
 window.aceptarViajeRapido=async(id,tel,nombre,origen,destino)=>{
   const ciudad=U.ciudad.toLowerCase();
+  const btn=event?.target;if(btn){btn.disabled=true;btn.textContent='Procesando...';}
   try{
     await updateDoc(doc(db,'ciudades',ciudad,'solicitudes',id),{
       estado:'aceptada',conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono
     });
-    toast('✅ Viaje tomado — notificando al pasajero');
-    // Vibración de confirmación
-    if(navigator.vibrate)navigator.vibrate([100,50,100]);
-    // WhatsApp al pasajero con info del conductor
-    const msg=`🚗 RUTA LIBRE — Tu viaje fue aceptado!\n\nConductor: ${U.nombre}\nTel: ${U.telefono}\nRuta: ${origen} → ${destino}\n\n¿Listos para coordinar el punto de recogida?`;
-    setTimeout(()=>window.open(`https://wa.me/57${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'),800);
-  }catch(e){toast('❌ '+e.message,'error');}
+    mostrarConfirmacion('🚗','¡Viaje tomado!','Notificando a '+nombre+'...');
+    if(navigator.vibrate)navigator.vibrate([100,50,200]);
+    // WhatsApp con info completa del conductor
+    const msg=`🚗 *RUTA LIBRE* — ¡Tu viaje fue aceptado!\n\n`+
+      `✅ Conductor: *${U.nombre}*\n`+
+      `📞 Tel: ${U.telefono}\n`+
+      `📍 Ruta: ${origen} → ${destino}\n\n`+
+      `Escríbeme para coordinar dónde recogerte 👋`;
+    setTimeout(()=>window.open(`https://wa.me/57${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'),1200);
+  }catch(e){toast('❌ '+e.message,'error');if(btn){btn.disabled=false;btn.textContent='✅ Tomar viaje';}}
 };
 
-// Tomar encomienda rápido desde pVia
+// Tomar encomienda — con crédito y WhatsApp
 window.tomarEncRapido=async(id,telRemitente,desc)=>{
-  if((U.creditos||0)<1){toast('💰 Sin créditos. Recarga por WhatsApp.','warning');return;}
+  if((U.creditos||0)<1){toast('💰 Sin créditos — recarga por WhatsApp','warning');return;}
   const ciudad=U.ciudad.toLowerCase();
+  const btn=event?.target;if(btn){btn.disabled=true;btn.textContent='Procesando...';}
   try{
     await updateDoc(doc(db,'ciudades',ciudad,'encomiendas',id),{
       estado:'en_camino',conductorId:U.uid,conductorNombre:U.nombre,conductorTel:U.telefono
@@ -1608,25 +2356,114 @@ window.tomarEncRapido=async(id,telRemitente,desc)=>{
     await updateDoc(doc(db,'ciudades',ciudad,'usuarios',U.uid),{creditos:nc});
     guardarSesion(U);
     document.getElementById('credSaldo').textContent=nc;
-    toast('📦 Encomienda tomada — 1 crédito descontado');
-    if(navigator.vibrate)navigator.vibrate([100,50,100]);
-    // WhatsApp al remitente
-    const msg=`📦 RUTA LIBRE — Tu encomienda fue tomada!\nConductor: ${U.nombre} · Tel: ${U.telefono}\nCoordina la entrega con él.`;
-    setTimeout(()=>window.open(`https://wa.me/57${telRemitente.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'),800);
-  }catch(e){toast('❌ '+e.message,'error');}
+    document.getElementById('pCred2').textContent=nc+' créditos';
+    mostrarConfirmacion('📦','¡Encomienda tomada!','1 crédito descontado');
+    if(navigator.vibrate)navigator.vibrate([100,50,200]);
+    const msg=`📦 *RUTA LIBRE* — ¡Tu encomienda fue tomada!\n\n`+
+      `✅ Conductor: *${U.nombre}*\n`+
+      `📞 Tel: ${U.telefono}\n`+
+      `📦 Paquete: ${desc}\n\n`+
+      `Me pondré en contacto para coordinar la entrega 📍`;
+    setTimeout(()=>window.open(`https://wa.me/57${telRemitente.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank'),1200);
+  }catch(e){toast('❌ '+e.message,'error');if(btn){btn.disabled=false;btn.textContent='📦 Tomar envío';}}
 };
 
-// Alerta de llegada (WhatsApp al pasajero)
+// Avisar llegada al pasajero
 window.alertarLlegada=async(solicitudId)=>{
   const ciudad=U.ciudad.toLowerCase();
   try{
     const snap=await getDoc(doc(db,'ciudades',ciudad,'solicitudes',solicitudId));
     if(!snap.exists())return;
     const s=snap.data();
-    const msg=`🚗 RUTA LIBRE — ¡Tu conductor está llegando!\n\n${U.nombre} está cerca de tu punto de recogida.\nTen listo tu equipaje 👋`;
+    const msg=`🚗 *RUTA LIBRE* — ¡Tu conductor está llegando!\n\n`+
+      `📍 ${U.nombre} está cerca de tu punto de recogida.\n`+
+      `Ten listo tu equipaje — ya casi llego 👋`;
     window.open(`https://wa.me/57${s.pasajeroTel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+    toast('📍 Aviso de llegada enviado','success');
   }catch(e){toast('❌ '+e.message,'error');}
 };
+
+
+// ── PASAJERO: escuchar cuando su viaje es aceptado ──
+
+function actualizarEstadoPasajero(sols, encs){
+  const div = document.getElementById('miEstadoActivo');
+  if(!div) return;
+  const miSol = sols.find(s=>s.pasajeroId===U.uid&&s.activa&&s.estado!=='cancelada');
+  const miEnc = encs.find(e=>e.remitenteId===U.uid&&e.activa&&e.estado!=='cancelado');
+  let html = '';
+  if(miSol){
+    const estados={esperando:'⏳ Esperando conductor...',aceptada:'🚗 Conductor en camino'};
+    const col = miSol.estado==='aceptada'?'var(--v)':'var(--am)';
+    html += `<div style="background:${miSol.estado==='aceptada'?'rgba(34,197,94,0.08)':'rgba(245,158,11,0.08)'};border:1px solid ${miSol.estado==='aceptada'?'rgba(34,197,94,0.3)':'rgba(245,158,11,0.3)'};border-radius:var(--rlg);padding:14px;margin-bottom:8px">
+      <div style="font-size:11px;font-weight:700;color:${col};margin-bottom:4px">MI VIAJE</div>
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700">📍 ${miSol.origen} → ${miSol.destino}</div>
+      <div style="font-size:12px;color:var(--ts);margin-top:4px">${estados[miSol.estado]||miSol.estado}</div>
+      ${miSol.conductorNombre?`<div style="font-size:12px;color:var(--v);margin-top:6px;font-weight:600">🚗 ${miSol.conductorNombre}</div>`:''}
+      ${miSol.conductorTel?`<button onclick="wspDirecto('${miSol.conductorTel}')" style="margin-top:8px;background:var(--wsp);color:white;border:none;border-radius:var(--rfl);padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">💬 Contactar conductor</button>`:''}
+    </div>`;
+  }
+  if(miEnc){
+    const col = miEnc.estado==='en_camino'?'var(--az)':'var(--am)';
+    const lbl = {esperando:'⏳ Buscando conductor',en_camino:'🚗 En camino a '+miEnc.destino,entregado:'✅ Entregada'}[miEnc.estado]||miEnc.estado;
+    html += `<div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);border-radius:var(--rlg);padding:14px">
+      <div style="font-size:11px;font-weight:700;color:${col};margin-bottom:4px">MI ENCOMIENDA</div>
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700">📦 ${miEnc.descripcion}</div>
+      <div style="font-size:12px;color:var(--ts);margin-top:4px">${lbl}</div>
+      ${miEnc.conductorNombre?`<div style="font-size:12px;color:var(--az);margin-top:6px;font-weight:600">🚗 ${miEnc.conductorNombre}</div>`:''}
+      ${miEnc.conductorTel?`<button onclick="wspDirecto('${miEnc.conductorTel}')" style="margin-top:8px;background:var(--wsp);color:white;border:none;border-radius:var(--rfl);padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">💬 Contactar conductor</button>`:''}
+    </div>`;
+  }
+  div.style.display = html ? 'block' : 'none';
+  div.innerHTML = html;
+}
+
+function escucharMisSolicitudes(){
+  if(U.rol!=='pasajero')return;
+  const ciudad=U.ciudad.toLowerCase();
+  onSnapshot(collection(db,'ciudades',ciudad,'solicitudes'),snap=>{
+    snap.docChanges().forEach(change=>{
+      if(change.type==='modified'){
+        const data=change.doc.data();
+        // Si es mía y fue aceptada — notificar
+        if(data.pasajeroId===U.uid && data.estado==='aceptada' && data.conductorNombre){
+          mostrarConfirmacion('🚗','¡Viaje aceptado!',
+            'El conductor '+data.conductorNombre+' viene por ti');
+          if(navigator.vibrate)navigator.vibrate([200,100,200,100,400]);
+          tonoP();
+        }
+        // Si mi encomienda fue tomada
+        if(data.remitenteId===U.uid && data.estado==='en_camino' && data.conductorNombre){
+          mostrarConfirmacion('📦','¡Encomienda tomada!',
+            data.conductorNombre+' llevará tu encomienda');
+          tonoE();
+        }
+      }
+    });
+  });
+}
+
+function escucharMisEncomiendas(){
+  if(U.rol==='conductor')return; // conductor ya tiene escucha propia
+  const ciudad=U.ciudad.toLowerCase();
+  onSnapshot(collection(db,'ciudades',ciudad,'encomiendas'),snap=>{
+    snap.docChanges().forEach(change=>{
+      if(change.type==='modified'){
+        const data=change.doc.data();
+        if(data.remitenteId===U.uid && data.estado==='en_camino' && data.conductorNombre){
+          mostrarConfirmacion('📦','¡Encomienda en camino!',
+            data.conductorNombre+' lleva tu envío a '+data.destino);
+          if(navigator.vibrate)navigator.vibrate([150,80,300]);
+          tonoE();
+        }
+        if(data.remitenteId===U.uid && data.estado==='entregado'){
+          mostrarConfirmacion('✅','¡Encomienda entregada!',
+            'Tu envío llegó a '+data.destino);
+        }
+      }
+    });
+  });
+}
 
 // ── AUTO EXPIRAR ALERTAS VIEJAS ──
 function iniciarAutoExpiry(){
@@ -1908,6 +2745,8 @@ const _navGoOrig=window.navGo;
 window.navGo=(id,nid)=>{
   _navGoOrig(id,nid);
   mostrarBtnSOS(id==='pVia'&&U?.rol==='conductor'&&!inact);
+  const ca=document.getElementById('conductorActions');
+  if(ca)ca.classList.toggle('show',id==='pVia'&&U?.rol==='conductor'&&!inact);
   if(id==='pPerf')cargarEstadisticasPerfil();
   if(id==='pHist')cargarHistorial();
 };
