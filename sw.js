@@ -1,7 +1,7 @@
-// RUTA LIBRE — Service Worker v4.0
+// RUTA LIBRE — Service Worker v5.0
 // Optimizado: offline-first, cola de alertas, sincronización automática
 
-const CACHE_NAME = 'rutalibre-v4';
+const CACHE_NAME = 'rutalibre-v5';
 const BASE = self.location.pathname.replace('/sw.js', '');
 
 const ASSETS = [
@@ -139,4 +139,4 @@ self.addEventListener('message', e => {
   }
 });
 
-console.log('[SW] RUTA LIBRE v4.0 — Optimizado offline');
+console.log('[SW] RUTA LIBRE v5.0 — Optimizado offline');
