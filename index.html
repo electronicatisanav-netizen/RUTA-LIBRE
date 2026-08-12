@@ -260,8 +260,17 @@
     .cond-tab{background:transparent;border:none;border-radius:var(--rmd);padding:11px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--ts);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
     .cond-tab.on{background:var(--elev);color:var(--tp);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
     .cond-tab .tab-cnt{position:absolute;top:4px;right:4px;background:var(--r);color:white;border-radius:var(--rfl);font-size:9px;font-weight:800;padding:1px 5px;min-width:16px;text-align:center;display:none}
-    .cond-tab .tab-cnt.show{display:block}
+    .cond-tab .tab-cnt.show{display:block;animation:pr 1.4s infinite}
     .cond-tab .tab-cnt.am{background:var(--am)}
+    .nb-badge.show2{animation:pr 1.4s infinite}
+    /* ══ Botón rápido de retén con GPS ══ */
+    .btn-reten-rapido{width:calc(100% - 32px);margin:14px 16px 0;background:linear-gradient(135deg,#ef4444,#b91c1c);border:none;border-radius:var(--rlg);padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 8px 28px rgba(239,68,68,0.4);animation:pr 2.2s infinite;font-family:'Inter',sans-serif;text-align:left}
+    .btn-reten-rapido .brr-ico{font-size:30px;flex-shrink:0}
+    .btn-reten-rapido .brr-tit{color:white;font-family:'Sora',sans-serif;font-size:16px;font-weight:800;line-height:1.2}
+    .btn-reten-rapido .brr-sub{color:rgba(255,255,255,0.85);font-size:11.5px;margin-top:2px}
+    .gps-chip{display:inline-flex;align-items:center;gap:5px;background:var(--elev);border:1px solid var(--bs);border-radius:var(--rfl);padding:4px 10px;font-size:11px;color:var(--ts);margin-top:8px}
+    .gps-chip.ok{border-color:rgba(34,197,94,0.4);color:var(--v)}
+    .gps-chip .dotp{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulso-dot 1.2s infinite}
 
     /* Cards de solicitudes conductor */
     
@@ -611,6 +620,16 @@
       <button class="btn-conf-libre co" id="btnConfLibre" onclick="confirmarLibre()">🚗 Confirmar vía libre</button>
     </div>
     <div class="alertas-sec" id="alertasSec"></div>
+
+    <!-- BOTÓN RÁPIDO: reportar retén con GPS automático (1 toque + sentido) -->
+    <button class="btn-reten-rapido co" id="btnRetenRapido" onclick="reportarRetenRapido()">
+      <span class="brr-ico">🚔</span>
+      <div>
+        <div class="brr-tit">Reportar retén aquí</div>
+        <div class="brr-sub">Usa tu ubicación para detectar el punto solo — toca y confirma el sentido</div>
+      </div>
+    </button>
+
     <div class="puntos-sec co">
       <div class="puntos-tit"><span>📍 Puntos de la vía</span><span id="puntosTiem" style="font-size:10px;font-weight:400"></span></div>
       <div class="puntos-grid" id="puntosGrid"></div>
@@ -1394,11 +1413,38 @@ window.abrirMaps=(lat,lng)=>window.open(`https://maps.google.com/?q=${lat},${lng
 window.abrirServicio=tipo=>{if(tipo==='transporte'){navGo('pPas','nEnc');cargarSolicitudes();}else if(tipo==='encomiendas'){navGo('pEnc','nEnc');cargarEncomiendas();}else if(tipo==='chat'&&U?.rol==='conductor'){navGo('pChat','nChat');abrirChat();}else toast('📲 Contáctanos para anunciarte','info');};
 
 // ── PUNTOS ──
+let puntosCoords={}; // {nombre: {lat, lng}} — se llena con los puntos que sí tienen GPS guardado
 async function cargarPuntos(){
-  try{const snap=await getDocs(collection(db,'ciudades',U.ciudad.toLowerCase(),'puntos'));const pts=[];snap.forEach(d=>pts.push(d.data().nombre));puntosList=pts.length?pts:[...PUNTOS_DEF];}catch(e){puntosList=[...PUNTOS_DEF];}
+  puntosCoords={};
+  try{
+    const snap=await getDocs(collection(db,'ciudades',U.ciudad.toLowerCase(),'puntos'));
+    const pts=[];
+    snap.forEach(d=>{const data=d.data();pts.push(data.nombre);if(typeof data.lat==='number'&&typeof data.lng==='number')puntosCoords[data.nombre]={lat:data.lat,lng:data.lng};});
+    puntosList=pts.length?pts:[...PUNTOS_DEF];
+  }catch(e){puntosList=[...PUNTOS_DEF];}
   renderPuntos({});
   const sel=document.getElementById('selPM'),ultima=sel.lastElementChild;
   puntosList.forEach(n=>{if(![...sel.options].find(o=>o.value===n)){const opt=document.createElement('option');opt.value=n;opt.textContent=n;sel.insertBefore(opt,ultima);}});
+}
+// Distancia en metros entre dos coordenadas GPS (fórmula de Haversine)
+function distanciaMetros(lat1,lng1,lat2,lng2){
+  const R=6371000,toRad=g=>g*Math.PI/180;
+  const dLat=toRad(lat2-lat1),dLng=toRad(lng2-lng1);
+  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+// Busca, entre los puntos con GPS guardado, el más cercano a una posición dada.
+// Solo lo da por bueno si está a menos de 1.5 km — si no, es mejor que el
+// conductor elija manualmente en vez de asignarle un punto equivocado.
+function puntoMasCercano(lat,lng){
+  let mejor=null,mejorDist=Infinity;
+  for(const nombre in puntosCoords){
+    const c=puntosCoords[nombre];
+    const d=distanciaMetros(lat,lng,c.lat,c.lng);
+    if(d<mejorDist){mejorDist=d;mejor=nombre;}
+  }
+  if(mejor&&mejorDist<=1500)return{nombre:mejor,distancia:Math.round(mejorDist)};
+  return null;
 }
 function renderPuntos(alMap){
   const grid=document.getElementById('puntosGrid');grid.innerHTML='';const now=Date.now();
@@ -1417,9 +1463,17 @@ function renderPuntos(alMap){
 window.guardarNuevoPunto=async()=>{
   const nom=document.getElementById('iNomPto').value.trim();if(!nom||nom.length<3){toast('⚠️ Escribe el nombre','warning');return;}
   try{
-    await setDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'puntos',nom.toLowerCase().replace(/\s/g,'-')),{nombre:nom,ruta:document.getElementById('iRutaPto').value,creadoPor:U.uid,timestamp:serverTimestamp()});
+    // Guardamos el GPS actual junto con el punto (si el navegador lo permite),
+    // así este punto queda disponible para la detección automática la próxima vez.
+    const coords=await new Promise(res=>{
+      if(!navigator.geolocation)return res(null);
+      navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lng:p.coords.longitude}),()=>res(null),{timeout:5000});
+    });
+    const datosGuardar={nombre:nom,ruta:document.getElementById('iRutaPto').value,creadoPor:U.uid,timestamp:serverTimestamp()};
+    if(coords){datosGuardar.lat=coords.lat;datosGuardar.lng=coords.lng;puntosCoords[nom]=coords;}
+    await setDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'puntos',nom.toLowerCase().replace(/\s/g,'-')),datosGuardar);
     puntosList.push(nom);const sel=document.getElementById('selPM'),opt=document.createElement('option');opt.value=nom;opt.textContent=nom;sel.insertBefore(opt,sel.lastElementChild);
-    cerrarM('mPunto');toast('📍 Punto "'+nom+'" agregado');
+    cerrarM('mPunto');toast(coords?'📍 Punto "'+nom+'" agregado con ubicación GPS':'📍 Punto "'+nom+'" agregado (sin GPS)');
   }catch(e){toast('❌ '+e.message,'error');}
 };
 
@@ -1497,10 +1551,28 @@ window.confA=async id=>{try{const r=doc(db,'ciudades',U.ciudad.toLowerCase(),'al
 window.yaP=async id=>{try{const r=doc(db,'ciudades',U.ciudad.toLowerCase(),'alertas',id),s=await getDoc(r);if(s.exists()){const yp=(s.data().yaPasaron||0)+1;await updateDoc(r,{yaPasaron:yp,...(yp>=2?{activa:false}:{})});toast(yp>=2?'🟢 Alerta desactivada':'🟡 Registrado');}}catch(e){toast('❌ '+e.message,'error');}};
 
 // ── MODAL REPORTE ──
-window.abrirModal=()=>{if(inact){toast('⚠️ Actívate primero','warning');return;}tipoR=null;sentR=null;ptoR=null;document.getElementById('pGps').textContent='Detectando...';document.getElementById('iNota').value='';document.getElementById('iNvoP').value='';document.getElementById('nvoP').style.display='none';document.getElementById('iDestP').value='';document.getElementById('destP').style.display='none';document.getElementById('selPM').value='';document.querySelectorAll('.tipo-b,.sent-b').forEach(b=>b.className=b.className.replace(/\s*(sr|sa|so|sp|on)\b/g,''));abrirM('mRep');navigator.geolocation?.getCurrentPosition(pos=>{
+window.abrirModal=(rapido)=>{if(inact){toast('⚠️ Actívate primero','warning');return;}tipoR=null;sentR=null;ptoR=null;document.getElementById('pGps').textContent='📡 Detectando ubicación...';document.getElementById('iNota').value='';document.getElementById('iNvoP').value='';document.getElementById('nvoP').style.display='none';document.getElementById('iDestP').value='';document.getElementById('destP').style.display='none';document.getElementById('selPM').value='';document.querySelectorAll('.tipo-b,.sent-b').forEach(b=>b.className=b.className.replace(/\s*(sr|sa|so|sp|on)\b/g,''));abrirM('mRep');navigator.geolocation?.getCurrentPosition(pos=>{
     gpsLat=pos.coords.latitude;gpsLng=pos.coords.longitude;
-    document.getElementById('pGps').textContent='✅ '+gpsLat.toFixed(4)+', '+gpsLng.toFixed(4);
-  },()=>{gpsLat=null;gpsLng=null;document.getElementById('pGps').textContent='Sin GPS — elige punto manual';},{timeout:5000});};
+    // Buscamos si esta posición cae cerca de un punto ya conocido de la vía.
+    // Si sí, lo dejamos preseleccionado — el conductor ya no tiene que buscarlo
+    // en la lista manualmente, solo confirmar el sentido y enviar.
+    const cercano=puntoMasCercano(gpsLat,gpsLng);
+    if(cercano){
+      ptoR=cercano.nombre;
+      const sel=document.getElementById('selPM');if(sel)sel.value=cercano.nombre;
+      document.getElementById('pGps').textContent='✅ '+cercano.nombre+' (~'+cercano.distancia+' m)';
+    }else{
+      document.getElementById('pGps').textContent='📍 '+gpsLat.toFixed(4)+', '+gpsLng.toFixed(4)+' — elige el punto en la lista';
+    }
+    if(rapido==='reten'){sTipo('reten');} // pre-selecciona tipo si vino del botón rápido
+  },()=>{gpsLat=null;gpsLng=null;document.getElementById('pGps').textContent='Sin GPS — elige punto manual';if(rapido==='reten')sTipo('reten');},{timeout:6000});};
+// Botón "Reportar retén aquí" del dashboard: un toque, GPS automático,
+// tipo ya preseleccionado — al conductor solo le falta tocar el sentido y Enviar.
+window.reportarRetenRapido=()=>{
+  if(inact){toast('⚠️ Actívate primero para reportar','warning');return;}
+  abrirModal('reten');
+  toast('📡 Detectando tu ubicación...','info');
+};
 window.sTipo=t=>{tipoR=t;document.querySelectorAll('.tipo-b').forEach(b=>b.classList.remove('sr','sa','so','sp'));const bid=t==='reten'?'tR':t==='accidente'?'tA':t==='patrulla'?'tP':'tO';const bcl=t==='reten'?'sr':t==='accidente'?'sa':t==='patrulla'?'sp':'so';document.getElementById(bid).classList.add(bcl);document.getElementById('destP').style.display=t==='patrulla'?'block':'none';};
 window.sSent=s=>{sentR=s;document.querySelectorAll('.sent-b').forEach(b=>b.classList.remove('on'));document.getElementById(s==='ida'?'sI':s==='vuelta'?'sV':'sA').classList.add('on');};
 window.sPtoM=()=>{const v=document.getElementById('selPM').value;if(v==='nuevo'){document.getElementById('nvoP').style.display='block';ptoR=null;}else if(v){ptoR=v;document.getElementById('pGps').textContent=v;document.getElementById('nvoP').style.display='none';}};
@@ -1548,7 +1620,7 @@ function escucharEncDisp(){
   let prevEnc=-1;
   onSnapshot(collection(db,'ciudades',U.ciudad.toLowerCase(),'encomiendas'),snap=>{
     let cnt=0;snap.forEach(d=>{if(d.data().activa&&d.data().estado==='esperando')cnt++;});
-    const b=document.getElementById('encBadge');if(b){b.textContent=cnt;b.style.display=cnt>0?'flex':'none';}
+    const b=document.getElementById('encBadge');if(b){b.textContent=cnt;b.style.display=cnt>0?'flex':'none';b.classList.toggle('show2',cnt>0);}
     if(prevEnc>=0&&cnt>prevEnc)tonoE();
     prevEnc=cnt;
   });
@@ -1641,7 +1713,7 @@ function escucharSolsDisp(){
   onSnapshot(collection(db,'ciudades',U.ciudad.toLowerCase(),'solicitudes'),snap=>{
     let cnt=0;snap.forEach(d=>{if(d.data().activa&&d.data().estado==='esperando')cnt++;});
     const b=document.getElementById('pasBadge');
-    if(b){b.textContent=cnt;b.style.display=cnt>0?'flex':'none';}
+    if(b){b.textContent=cnt;b.style.display=cnt>0?'flex':'none';b.classList.toggle('show2',cnt>0);}
     if(prevCntSol>=0&&cnt>prevCntSol)tonoP(); // solo si aumentaron
     prevCntSol=cnt;
   });
