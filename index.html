@@ -564,6 +564,7 @@
     <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot on"></div></div>
     <div class="ob-card">
       <div class="ob-title">Tus datos, tus reglas</div><div class="ob-sub">Leemos tus datos solo para prestarte el servicio</div>
+      <div class="ferr" id="e4"></div>
       <div class="priv-box">
         <strong>¿Qué guardamos?</strong>Tu nombre, teléfono y ciudad para identificarte y coordinar servicios. Nunca los vendemos ni compartimos con terceros.<br><br>
         <strong>¿Para qué usamos tu teléfono?</strong>Para que conductores y pasajeros se contacten por WhatsApp al coordinar viajes o encomiendas.<br><br>
@@ -1226,7 +1227,21 @@ window.registrar=async()=>{
     setCookie('rl_uid',u.uid);
     setCookie('rl_ciudad',u.ciudad.toLowerCase());
     U=u;registrarCiudadNueva(c);mostrarApp();
-  }catch(err){const e=document.getElementById('e3');e.textContent='❌ Error: '+err.message;e.style.display='block';b.disabled=false;b.textContent='✅ Entrar a RUTA LIBRE';}
+  }catch(err){
+    // FIX: el error ya NO se escribe solo en #e3 (que vive en el paso "ob3",
+    // invisible mientras el usuario está parado en "ob4" = Privacidad).
+    // Antes, si el registro fallaba (p. ej. reglas de seguridad de Firestore
+    // bloqueando la escritura), el usuario no veía NADA: el botón simplemente
+    // volvía a su estado normal y la app parecía "trabada" en la misma pantalla.
+    console.error('Error al registrar usuario:',err);
+    let msg='❌ '+(err.message||'Error desconocido');
+    if(err.code==='permission-denied')msg='❌ Firestore rechazó el registro (permission-denied). Revisa las Reglas de seguridad de Firestore: esta app no usa Firebase Authentication, así que las reglas deben permitir escritura pública en /ciudades/{ciudad}/usuarios/{uid}.';
+    else if(err.code==='unavailable')msg='❌ Sin conexión con el servidor. Verifica tu internet e intenta de nuevo.';
+    toast(msg,'error');
+    const e3=document.getElementById('e3');if(e3){e3.textContent=msg;e3.style.display='block';}
+    const e4=document.getElementById('e4');if(e4){e4.textContent=msg;e4.style.display='block';}
+    b.disabled=false;b.textContent='✅ Entrar a RUTA LIBRE';
+  }
 };
 
 // ── INIT ──
@@ -1324,9 +1339,10 @@ function mostrarApp(){
   document.getElementById('pRol2').textContent=eC?'Conductor':'Pasajero';document.getElementById('pAv').textContent=eC?'🚗':'👤';
   document.getElementById('pCred2').textContent=(U.creditos||0)+' créditos';document.getElementById('credSaldo').textContent=U.creditos||0;
   document.getElementById('pFecha').textContent=new Date(U.fechaReg).toLocaleDateString('es-CO');
-  if(!eC)escucharAlertasPas();loadSnd();cargarCFG();cargarPuntos();
+  if(!eC){escucharAlertasPas();escucharMisSolicitudes();escucharMisEncomiendas();} // FIX: estas dos funciones ya existían (avisan "¡viaje aceptado!" / "¡encomienda tomada!") pero nunca se llamaban — el pasajero nunca recibía esas notificaciones.
+  loadSnd();cargarCFG();cargarPuntos();
   if(eC){escucharAlertasCiudadActiva();escucharEncDisp();escucharSolsDisp();iniciarAutoExpiry();mostrarBtnSOS(true);escucharSolsEnVia();escucharEncEnVia();const ca=document.getElementById('conductorActions');if(ca)ca.classList.add('show');}
-  if(deferredPWA)document.getElementById('btnInstalar').style.display='block';
+  if(deferredPWA){const bi=document.getElementById('btnInstalar');if(bi)bi.style.display='block';} // FIX: 'btnInstalar' no existe en el HTML; esto tiraba un error silencioso que se comía (por el catch de registrar) cualquier crédito de registro exitoso posterior al fallo.
   setTimeout(cargarEstadisticasPerfil,2000);
   // Solicitar permisos de notificación (una vez)
   if('Notification' in window && Notification.permission==='default'){

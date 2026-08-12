@@ -1,142 +1,92 @@
-// RUTA LIBRE — Service Worker v5.0
-// Optimizado: offline-first, cola de alertas, sincronización automática
+// ═══════════════════════════════════════════════════════════
+// RUTA LIBRE — Service Worker
+// ═══════════════════════════════════════════════════════════
+// CÓMO ACTUALIZAR LA APP SIN ROMPER NADA:
+// Cada vez que subas cambios a index.html / instalar.html / manifest.json,
+// SOLO tenés que subir el número de esta constante (v6 -> v7 -> v8...).
+// Eso hace que los celulares que ya tienen la app instalada descarguen
+// la versión nueva automáticamente la próxima vez que la abran,
+// en vez de quedarse pegados con una copia vieja en caché.
+// NO edites nada más de este archivo salvo que sepas lo que hacés.
+const CACHE_VERSION = 'rutalibre-v6';
 
-const CACHE_NAME = 'rutalibre-v5';
-const BASE = self.location.pathname.replace('/sw.js', '');
-
-const ASSETS = [
-  BASE + '/',
-  BASE + '/index.html',
-  BASE + '/admin-rutalibre.html',
-  BASE + '/instalar.html',
-  BASE + '/manifest.json',
-  BASE + '/icon-192.png',
-  BASE + '/icon-512.png',
+// Archivos del "cascarón" de la app — se guardan para que funcione offline.
+// admin-rutalibre.html queda afuera a propósito: el panel admin siempre
+// debe mostrar datos frescos y no tiene sentido que funcione sin conexión.
+const APP_SHELL = [
+  './',
+  './index.html',
+  './instalar.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
-// Cola de alertas pendientes (cuando no hay señal)
-let alertasPendientes = [];
-
-// ── INSTALAR ──
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => Promise.allSettled(ASSETS.map(url =>
-        cache.add(url).catch(() => {})
-      )))
+// ── INSTALL: guarda el cascarón de la app ──
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_VERSION)
+      .then(cache => cache.addAll(APP_SHELL))
       .then(() => self.skipWaiting())
   );
 });
 
-// ── ACTIVAR ──
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
+// ── ACTIVATE: borra versiones de caché viejas ──
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(nombres =>
+      Promise.all(
+        nombres
+          .filter(nombre => nombre.startsWith('rutalibre-') && nombre !== CACHE_VERSION)
+          .map(nombre => caches.delete(nombre))
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
-// ── FETCH: Cache-first para assets, Network-first para datos ──
-self.addEventListener('fetch', e => {
-  const url = e.request.url;
+// ── FETCH ──
+// Estrategia:
+// - Solo intervenimos en peticiones GET de nuestro propio origen (mismo dominio).
+//   Todo lo de Firebase/Firestore/Google (otro dominio) pasa directo a la red,
+//   sin tocarlo — cachear eso rompería el tiempo real de la app.
+// - Para navegación (abrir la app) y el cascarón: intentamos red primero,
+//   así el usuario recibe la versión más nueva apenas hay señal; si no hay
+//   conexión, servimos la copia guardada para que la app abra igual.
+self.addEventListener('fetch', event => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
 
-  // Pasar Firebase y APIs externas directamente
-  if (url.includes('googleapis.com') || url.includes('firestore') ||
-      url.includes('firebase') || url.includes('gstatic.com') ||
-      url.includes('fonts.googleapis') || url.includes('wa.me') ||
-      url.includes('maps.google') || e.request.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return; // deja pasar Firebase, Google Fonts, etc.
 
-  // Cache-first para assets estáticos (rápido con poca señal)
-  const isAsset = ASSETS.some(a => url.endsWith(a.replace(BASE,'')));
-  if (isAsset) {
-    e.respondWith(
-      caches.match(e.request).then(cached => {
-        if (cached) return cached;
-        return fetch(e.request).then(res => {
-          if (res && res.status === 200) {
-            const clone = res.clone();
-            caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-          }
-          return res;
-        });
-      })
-    );
-    return;
-  }
-
-  // Network-first para el resto (intenta red, cae a cache)
-  e.respondWith(
-    fetch(e.request)
+  event.respondWith(
+    fetch(req)
       .then(res => {
-        if (res && res.status === 200) {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-        }
+        const copia = res.clone();
+        caches.open(CACHE_VERSION).then(cache => cache.put(req, copia));
         return res;
       })
-      .catch(() => caches.match(e.request)
-        .then(cached => cached || caches.match(BASE + '/index.html'))
-      )
+      .catch(() => caches.match(req).then(cached => cached || caches.match('./index.html')))
   );
 });
 
-// ── SINCRONIZACIÓN EN BACKGROUND (cuando recupera señal) ──
-self.addEventListener('sync', e => {
-  if (e.tag === 'sync-alertas') {
-    e.waitUntil(sincronizarAlertas());
+// ── BACKGROUND SYNC ──
+// Cuando vuelve la conexión, el navegador dispara este evento y le avisamos
+// a la pestaña abierta para que vacíe la cola de alertas pendientes
+// (la cola en sí vive en localStorage, del lado de index.html — acá solo avisamos).
+self.addEventListener('sync', event => {
+  if (event.tag === 'sync-alertas') {
+    event.waitUntil(
+      self.clients.matchAll().then(clientes => {
+        clientes.forEach(c => c.postMessage({ type: 'SYNC_PENDIENTES' }));
+      })
+    );
   }
-});
-
-async function sincronizarAlertas() {
-  // Notificar a los clientes que sincronicen la cola pendiente
-  const clients = await self.clients.matchAll({ type: 'window' });
-  clients.forEach(client => client.postMessage({ type: 'SYNC_PENDIENTES' }));
-}
-
-// ── PUSH NOTIFICATIONS ──
-self.addEventListener('push', e => {
-  const data = e.data ? e.data.json() : {};
-  const title = data.title || '🚗 RUTA LIBRE';
-  const options = {
-    body: data.body || 'Toca para ver la novedad',
-    icon: BASE + '/icon-192.png',
-    badge: BASE + '/icon-192.png',
-    vibrate: [200, 100, 200, 100, 200],
-    tag: data.tag || 'ruta-libre-alert',
-    requireInteraction: data.urgent || false,
-    silent: false,
-    data: { url: data.url || BASE + '/' }
-  };
-  e.waitUntil(self.registration.showNotification(title, options));
-});
-
-// ── CLICK EN NOTIFICACIÓN ──
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  e.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cls => {
-      const url = e.notification.data?.url || BASE + '/';
-      for (const client of cls) {
-        if (client.url.includes(BASE) && 'focus' in client) {
-          client.focus();
-          client.postMessage({ type: 'PUSH_CLICK', url });
-          return;
-        }
-      }
-      if (clients.openWindow) return clients.openWindow(url);
-    })
-  );
 });
 
 // ── MENSAJES DESDE LA APP ──
-self.addEventListener('message', e => {
-  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
-  if (e.data?.type === 'GUARDAR_ALERTA_PENDIENTE') {
-    alertasPendientes.push(e.data.alerta);
-  }
+// Permite forzar la activación inmediata de una versión nueva si en el futuro
+// agregás un botón de "Actualizar ahora" en vez de pedirle al usuario que recargue.
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
-
-console.log('[SW] RUTA LIBRE v5.0 — Optimizado offline');
