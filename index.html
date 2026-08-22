@@ -336,25 +336,25 @@
     .req-publicada{font-size:10px;color:var(--tm);flex-shrink:0}
     .req-pills-main{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
     .req-pills-main .req-pill{font-size:12px;font-weight:800;padding:4px 11px}
-    /* Tarjeta estilo boleto: franja lateral vertical (PASAJERO/ENCOMIENDA + N°) + datos grandes apilados */
+    /* Tarjeta estilo boleto horizontal: franja lateral angosta (PASAJERO/ENCOMIENDA + N°)
+       + franja de datos en una sola fila (destino, fecha, hora, cupos) para que
+       ocupe menos alto y quepan más tarjetas visibles a la vez. */
     .req-card.ticket{display:flex;flex-direction:column;padding:0;overflow:hidden}
     .req-ticket-top{display:flex}
-    .req-ticket-side{writing-mode:vertical-rl;transform:rotate(180deg);flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:5px;padding:10px 4px;font-family:'Sora',sans-serif;font-weight:800;font-size:8px;letter-spacing:1.1px;color:#fff}
+    .req-ticket-side{writing-mode:vertical-rl;transform:rotate(180deg);flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 3px;font-family:'Sora',sans-serif;font-weight:800;font-size:7.5px;letter-spacing:1px;color:#fff}
     .req-ticket-side.pas{background:linear-gradient(180deg,var(--acc),#4f46e5)}
     .req-ticket-side.enc{background:linear-gradient(180deg,var(--am),#d97706)}
-    .req-ticket-side .num{font-family:'Sora',sans-serif;font-size:15px;letter-spacing:0}
-    .req-ticket-main{flex:1;min-width:0;padding:12px 16px 0}
-    .req-ticket-destino-lbl{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--tm)}
-    .req-ticket-destino{font-family:'Sora',sans-serif;font-size:24px;font-weight:900;color:var(--tp);margin-bottom:10px;line-height:1.1}
-    .req-ticket-hora-row{margin-bottom:9px}
-    .req-ticket-hora-row .big{display:block;font-family:'Sora',sans-serif;font-size:28px;font-weight:900;color:var(--tp);line-height:1.1}
-    .req-ticket-hora-row .unit{display:block;font-size:10px;color:var(--ts);font-weight:700;letter-spacing:.3px;margin-top:1px}
-    .req-ticket-stats{display:flex;gap:0;margin-bottom:9px}
-    .req-ticket-stat{flex:1;min-width:0;padding-right:12px}
-    .req-ticket-stat+.req-ticket-stat{border-left:1px solid var(--bn);padding-left:14px}
-    .req-ticket-stat .big{display:block;font-family:'Sora',sans-serif;font-size:26px;font-weight:900;color:var(--tp);line-height:1.1}
-    .req-ticket-stat .unit{display:block;font-size:10px;color:var(--ts);font-weight:700;letter-spacing:.3px;margin-top:1px}
-    .req-ticket-foot{font-size:12.5px;color:var(--ts);margin:0 0 10px}
+    .req-ticket-side .num{font-family:'Sora',sans-serif;font-size:13px;letter-spacing:0}
+    .req-ticket-main{flex:1;min-width:0;padding:10px 14px 0}
+    .req-ticket-strip{display:flex;align-items:center;flex-wrap:wrap;margin-bottom:8px;column-gap:2px;row-gap:6px}
+    .rts-item{padding:0 11px;min-width:0}
+    .rts-item:first-child{padding-left:0}
+    .rts-item:not(:first-child){border-left:1px solid var(--bn)}
+    .rts-item.dest{flex:1.3}
+    .rts-lbl{display:block;font-size:8.5px;font-weight:800;letter-spacing:.6px;color:var(--tm);white-space:nowrap}
+    .rts-val{display:block;font-family:'Sora',sans-serif;font-weight:900;font-size:16px;color:var(--tp);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rts-item.dest .rts-val{font-size:18px;color:var(--acc)}
+    .req-ticket-foot{font-size:12.5px;color:var(--ts);margin:0 0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .req-comprar{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:var(--rmd);padding:8px 12px;margin:0 14px 8px;font-size:12px;color:var(--am);line-height:1.5}
     .req-comprar strong{display:block;font-size:11px;font-weight:700;margin-bottom:2px}
     .req-actions{display:flex;gap:0;border-top:1px solid var(--bs)}
@@ -2446,7 +2446,7 @@ async function registrarCiudadNueva(ciudad){
       // Agregar a vecinas con ciudades base cercanas
       VECINAS[key]=[key,...(VECINAS['default'])];
     }
-    await setDoc(doc(db,'config','ciudades',key),{nombre:ciudad,activa:true,timestamp:serverTimestamp()},{merge:true});
+    await setDoc(doc(db,'ciudadesRegistradas',key),{nombre:ciudad,activa:true,timestamp:serverTimestamp()},{merge:true});
   }catch(e){}
 }
 
@@ -2810,12 +2810,11 @@ function renderCardPas(s,idx){
     <div class="req-ticket-top">
       <div class="req-ticket-side pas"><span>PASAJERO</span><span class="num">#${idx}</span></div>
       <div class="req-ticket-main">
-        <div class="req-ticket-destino-lbl">PARA</div>
-        <div class="req-ticket-destino">${destinoCorto}</div>
-        ${fh?`<div class="req-ticket-hora-row"><span class="big">${fh.hora}</span></div>`:`<div class="req-ticket-hora-row"><span class="big" style="font-size:16px">🕐 Flexible</span></div>`}
-        <div class="req-ticket-stats">
-          ${fh?`<div class="req-ticket-stat"><span class="big">${fh.dia}</span><span class="unit">${fh.mes}.</span></div>`:''}
-          <div class="req-ticket-stat"><span class="big">${s.personas}</span><span class="unit">CUPO${parseInt(s.personas)>1?'S':''}</span></div>
+        <div class="req-ticket-strip">
+          <div class="rts-item dest"><span class="rts-lbl">PARA</span><span class="rts-val">${destinoCorto}</span></div>
+          ${fh?`<div class="rts-item"><span class="rts-lbl">${fh.mes}.</span><span class="rts-val">${fh.dia}</span></div>
+          <div class="rts-item"><span class="rts-lbl">HORA</span><span class="rts-val">${fh.hora}</span></div>`:`<div class="rts-item" style="flex:1"><span class="rts-lbl">CUÁNDO</span><span class="rts-val">🕐 Flexible</span></div>`}
+          <div class="rts-item"><span class="rts-lbl">CUPO${parseInt(s.personas)>1?'S':''}</span><span class="rts-val">${s.personas}</span></div>
         </div>
         <div class="req-ticket-foot">👤 <strong>${s.pasajeroNombre}</strong> · 📍 ${s.puntoRecogida||s.origen||'—'} · <span style="color:var(--tm)">${publicada}</span></div>
         ${s.nota&&!tieneComprar?`<div class="req-nota">📝 ${s.nota}</div>`:''}
@@ -2840,11 +2839,10 @@ function renderCardEnc(e,idx){
     <div class="req-ticket-top">
       <div class="req-ticket-side enc"><span>ENCOMIENDA</span><span class="num">#${idx}</span></div>
       <div class="req-ticket-main">
-        <div class="req-ticket-destino-lbl">PARA</div>
-        <div class="req-ticket-destino">${destinoCorto}</div>
-        <div class="req-ticket-stats">
-          <div class="req-ticket-stat" style="flex:1.6"><span class="big" style="font-size:15px;white-space:normal;line-height:1.25">${e.descripcion||'Encomienda'}</span><span class="unit">PAQUETE</span></div>
-          ${e.valor?`<div class="req-ticket-stat"><span class="big">$${parseInt(e.valor).toLocaleString()}</span><span class="unit">VALOR</span></div>`:''}
+        <div class="req-ticket-strip">
+          <div class="rts-item dest"><span class="rts-lbl">PARA</span><span class="rts-val">${destinoCorto}</span></div>
+          <div class="rts-item" style="flex:1.6"><span class="rts-lbl">PAQUETE</span><span class="rts-val" style="font-size:14px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25">${e.descripcion||'Encomienda'}</span></div>
+          ${e.valor?`<div class="rts-item"><span class="rts-lbl">VALOR</span><span class="rts-val">$${parseInt(e.valor).toLocaleString()}</span></div>`:''}
         </div>
         <div class="req-ticket-foot">👤 <strong>${e.remitenteNombre}</strong> · 📍 ${e.puntoRecogida||'—'} · <span style="color:var(--tm)">${publicada}</span></div>
         ${e.nota?`<div class="req-nota">📝 ${e.nota}</div>`:''}

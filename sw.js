@@ -8,7 +8,7 @@
 // la versión nueva automáticamente la próxima vez que la abran,
 // en vez de quedarse pegados con una copia vieja en caché.
 // NO edites nada más de este archivo salvo que sepas lo que hacés.
-const CACHE_VERSION = 'rutalibre-v6';
+const CACHE_VERSION = 'rutalibre-v8';
 
 // Archivos del "cascarón" de la app — se guardan para que funcione offline.
 // admin-rutalibre.html queda afuera a propósito: el panel admin siempre

@@ -227,6 +227,8 @@
     <button class="mob-tab" onclick="goSec('sUsuarios',this)">👥 Usuarios</button>
     <button class="mob-tab" onclick="goSec('sApariencia',this)">🎨 Apariencia</button>
     <button class="mob-tab" onclick="goSec('sPublicidad',this)">📣 Publicidad</button>
+    <button class="mob-tab" onclick="goSec('sEnc',this)">📦 Encomiendas</button>
+    <button class="mob-tab" onclick="goSec('sSols',this)">🚗 Solicitudes</button>
     <button class="mob-tab" onclick="goSec('sConfig',this)">⚙️ Config</button>
   </div>
 
@@ -239,6 +241,8 @@
       <button class="nav-item" id="n-alertas" onclick="goSec('sAlertas',this)"><span class="nav-ico">🚨</span>Alertas en vivo<span class="nav-bdg" id="bdgAl" style="display:none">0</span></button>
       <button class="nav-item" id="n-puntos" onclick="goSec('sPuntos',this)"><span class="nav-ico">📍</span>Puntos de retén</button>
       <button class="nav-item" id="n-usuarios" onclick="goSec('sUsuarios',this)"><span class="nav-ico">👥</span>Usuarios</button>
+      <button class="nav-item" id="n-enc" onclick="goSec('sEnc',this)"><span class="nav-ico">📦</span>Encomiendas</button>
+      <button class="nav-item" id="n-sols" onclick="goSec('sSols',this)"><span class="nav-ico">🚗</span>Solicitudes de viaje</button>
       <div class="nav-sec">Plataforma</div>
       <button class="nav-item" id="n-apariencia" onclick="goSec('sApariencia',this)"><span class="nav-ico">🎨</span>Apariencia</button>
       <button class="nav-item" id="n-publicidad" onclick="goSec('sPublicidad',this)"><span class="nav-ico">📣</span>Publicidad</button>
@@ -464,6 +468,39 @@
       <div id="chatAdminLista" style="display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow-y:auto;padding:4px 0"></div>
       </div>
 
+      <!-- ENCOMIENDAS ADMIN -->
+      <div class="sec" id="sEnc">
+        <div class="ph">📦 Encomiendas</div>
+        <div class="ps">Encomiendas activas en la plataforma</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <input type="text" id="filtEncCiudad" class="inp" placeholder="Ciudad..." style="max-width:180px" value="tauramena" oninput="cargarAdminEnc()">
+          <select class="inp" id="filtEncEstado" style="max-width:160px" onchange="cargarAdminEnc()">
+            <option value="">Todos los estados</option>
+            <option value="esperando">Esperando</option>
+            <option value="en_camino">En camino</option>
+            <option value="entregado">Entregado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+        <div id="adminEncLista"><div class="spinner"></div></div>
+      </div>
+
+      <!-- SOLICITUDES ADMIN -->
+      <div class="sec" id="sSols">
+        <div class="ph">🚗 Solicitudes de Viaje</div>
+        <div class="ps">Solicitudes de transporte de pasajeros</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <input type="text" id="filtSolsCiudad" class="inp" placeholder="Ciudad..." style="max-width:180px" value="tauramena" oninput="cargarAdminSols()">
+          <select class="inp" id="filtSolsEstado" style="max-width:160px" onchange="cargarAdminSols()">
+            <option value="">Todos</option>
+            <option value="esperando">Esperando</option>
+            <option value="aceptada">Aceptada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+        </div>
+        <div id="adminSolsLista"><div class="spinner"></div></div>
+      </div>
+
     </main>
   </div>
 </div>
@@ -533,41 +570,7 @@
       <div class="fg"><label>Dirección</label><input type="text" id="aDir" class="inp" placeholder="Calle 5 # 8-23"></div>
     </div>
     <button class="btn-p" onclick="guardarAnuncio()">💾 Publicar anuncio</button>
-  </div><!-- /sPublicidad -->
-
-    <!-- ENCOMIENDAS ADMIN -->
-    <div class="sec" id="sEnc">
-      <div class="ph">📦 Encomiendas</div>
-      <div class="ps">Encomiendas activas en la plataforma</div>
-      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-        <input type="text" id="filtEncCiudad" class="inp" placeholder="Ciudad..." style="max-width:180px" value="tauramena" oninput="cargarAdminEnc()">
-        <select class="inp" id="filtEncEstado" style="max-width:160px" onchange="cargarAdminEnc()">
-          <option value="">Todos los estados</option>
-          <option value="esperando">Esperando</option>
-          <option value="en_camino">En camino</option>
-          <option value="entregado">Entregado</option>
-          <option value="cancelado">Cancelado</option>
-        </select>
-      </div>
-      <div id="adminEncLista"><div class="spinner"></div></div>
-    </div>
-
-    <!-- SOLICITUDES ADMIN -->
-    <div class="sec" id="sSols">
-      <div class="ph">🚗 Solicitudes de Viaje</div>
-      <div class="ps">Solicitudes de transporte de pasajeros</div>
-      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-        <input type="text" id="filtSolsCiudad" class="inp" placeholder="Ciudad..." style="max-width:180px" value="tauramena" oninput="cargarAdminSols()">
-        <select class="inp" id="filtSolsEstado" style="max-width:160px" onchange="cargarAdminSols()">
-          <option value="">Todos</option>
-          <option value="esperando">Esperando</option>
-          <option value="aceptada">Aceptada</option>
-          <option value="cancelada">Cancelada</option>
-        </select>
-      </div>
-      <div id="adminSolsLista"><div class="spinner"></div></div>
-    </div>
-</div>
+  </div>
 </div>
 
 <script type="module">
@@ -614,7 +617,7 @@ window.goSec=(id,el)=>{
   document.querySelectorAll('.nav-item,.mob-tab').forEach(b=>b.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   if(el)el.classList.add('on');
-  const nid='n-'+id.replace('s','');
+  const nid='n-'+id.slice(1).toLowerCase();
   const nel=document.getElementById(nid);if(nel)nel.classList.add('on');
   // Auto-cargar según sección
   if(id==='sEnc')cargarAdminEnc();
