@@ -555,16 +555,18 @@
     .btn-ver-pub-vert{position:absolute;top:0;left:0;bottom:0;width:32px;background:linear-gradient(180deg,var(--acc),#4f46e5);border:none;border-radius:var(--rxl) 0 0 var(--rxl);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;padding:12px 0;z-index:2}
     .btn-ver-pub-vert .vert-label{writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Sora',sans-serif;font-weight:800;font-size:9px;letter-spacing:1.5px;color:#fff}
     .btn-ver-pub-vert .vert-num{font-family:'Sora',sans-serif;font-weight:900;font-size:14px;color:#fff;background:rgba(255,255,255,0.22);border-radius:var(--rfl);padding:1px 6px;min-width:20px;text-align:center}
-    .mi-servicio-card{display:flex;align-items:center;gap:10px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.25);border-radius:var(--rmd);padding:11px 12px;margin-bottom:8px}
-    .mi-servicio-info{flex:1;min-width:0}
+    .mi-servicio-card{display:flex;flex-direction:column;gap:10px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.25);border-radius:var(--rmd);padding:12px;margin-bottom:10px}
+    .mi-servicio-info{min-width:0}
     .mi-servicio-tipo{font-family:'Sora',sans-serif;font-size:13px;font-weight:800;color:var(--tp);margin-bottom:3px}
     .mi-servicio-linea{font-size:11px;color:var(--ts);line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .mi-servicio-linea strong{color:var(--tp);font-weight:700}
-    .mi-servicio-btns{display:flex;gap:6px;flex-shrink:0}
-    .mi-servicio-btns button{background:var(--elev);border:1px solid var(--bn);border-radius:50%;width:32px;height:32px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-    .mi-servicio-btns button.mapa{background:rgba(99,102,241,0.15);border-color:var(--acc)}
-    .mi-servicio-btns button.cerca{background:rgba(245,158,11,0.15);border-color:var(--am)}
-    .mi-servicio-btns button.ok{background:rgba(34,197,94,0.15);border-color:var(--v)}
+    .mi-servicio-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .mi-servicio-btns button{background:var(--elev);border:1px solid var(--bn);border-radius:var(--rmd);padding:8px 4px;font-size:9.5px;font-weight:700;color:var(--ts);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:'Inter',sans-serif;line-height:1.2;text-align:center}
+    .mi-servicio-btns button .ico{font-size:16px}
+    .mi-servicio-btns button.mapa{background:rgba(99,102,241,0.12);border-color:var(--acc);color:var(--acc)}
+    .mi-servicio-btns button.cerca{background:rgba(245,158,11,0.12);border-color:var(--am);color:var(--am)}
+    .mi-servicio-btns button.ok{background:rgba(34,197,94,0.12);border-color:var(--v);color:var(--v)}
+    .mi-servicio-btns button.wsp{background:rgba(37,211,102,0.12);border-color:#25d366;color:#25d366}
     .req-empty .ico{font-size:48px;display:block;margin-bottom:10px}
     .req-empty p{font-size:13px;line-height:1.6}
 
@@ -971,8 +973,8 @@
         <div class="info-r"><span>📅 Registro</span><strong id="pFecha">—</strong></div>
       </div>
       <!-- Botón instalar SIEMPRE visible -->
-      <button onclick="instalarPWA()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:var(--rmd);padding:14px;width:100%;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:10px">
-        📲 Instalar app en este celular
+      <button onclick="instalarPWA()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:var(--rmd);padding:14px;width:100%;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.3px">
+        📲 INSTALAR ESTA APLICACIÓN
       </button>
       <button onclick="navGo('pCredP')" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:var(--rmd);padding:13px;width:100%;color:var(--acc);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:8px">💰 Ver mis créditos</button>
       <button onclick="navGo('pHist','nHist');cargarHistorial()" class="co" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:var(--rmd);padding:13px;width:100%;color:var(--v);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:8px">📋 Ver mi historial</button>
@@ -1089,7 +1091,7 @@
     </div>
     <div class="slbl">¿En qué punto?</div>
     <div class="pto-d"><div><div class="pto-l">GPS</div><div class="pto-v" id="pGps">Detectando...</div></div>
-      <select class="sel-rl" id="selPM" onchange="sPtoM()"><option value="">Cambiar punto</option><option value="El Venado">El Venado</option><option value="Puente El Venado">Pte. El Venado</option><option value="Mordizco">Mordizco</option><option value="Choricera">Choricera</option><option value="Valle Verde">Valle Verde</option><option value="Puente Peatonal Sonora">Pte. Sonora</option><option value="Los Troncos">Los Troncos</option><option value="Uñete">Uñete</option><option value="Pozo Ramiriquí">Pozo Ramiriquí</option><option value="La Ceiba">La Ceiba</option><option value="Puente Cachaguas">Pte. Cachaguas</option><option value="Antiguo Toro">Antiguo Toro</option><option value="Aguazul - El Toro">Aguazul-El Toro</option><option value="nuevo">+ Nuevo punto</option></select>
+      <select class="sel-rl" id="selPM" onchange="sPtoM()"><option value="">Cambiar punto</option><option value="nuevo">+ Nuevo punto</option></select>
     </div>
     <div class="nvo-pto" id="nvoP"><input type="text" id="iNvoP" class="inp" placeholder="¿Cómo se llama este lugar?"></div>
     <div class="nvo-pto" id="destP"><div class="slbl" style="margin-top:0">¿Hacia dónde se dirige la patrulla?</div><input type="text" id="iDestP" class="inp" placeholder="Ej: hacia Yopal, hacia el centro..."></div>
@@ -1318,7 +1320,9 @@ let U=null,rolEl=null,inact=false,tipoR=null,sentR=null,ptoR=null;
 let unsubA=null,unsubCFG=null,unsubChat=null,unsubEnc=null,unsubPas=null,unsubCL=null;
 let SND={vol:7,pas:true,enc:true,chat:true};
 let CFG={wsp:'3114571322',msg:'Hola, necesito información sobre RUTA LIBRE 👋',franjaOn:false,carColor:'#ef4444',catPub:[]};
-const PUNTOS_DEF=['El Venado','Puente El Venado','Mordizco','Choricera','Valle Verde','Puente Peatonal Sonora','Los Troncos','Uñete','Pozo Ramiriquí','La Ceiba','Puente Cachaguas','Antiguo Toro','Aguazul - El Toro'];
+// (antes había aquí una lista de respaldo con puntos de la vía Tauramena-Yopal;
+// se quitó porque hacía que cualquier ciudad sin puntos propios mostrara puntos
+// ajenos que no existen en su territorio — cada ciudad/ruta debe partir vacía).
 let puntosList=[];let puntosMeta={};let deferredPWA=null;
 // Mapa de ciudades vecinas — se amplía con cada registro nuevo
 const VECINAS={
@@ -1598,8 +1602,8 @@ async function cargarPuntos(){
       const data=d.data();pts.push(data.nombre);
       puntosMeta[data.nombre]={id:d.id,orden:data.orden??null,ruta:data.ruta||null,lat:data.lat??null,lng:data.lng??null};
     });
-    puntosList=pts.length?pts:[...PUNTOS_DEF];
-  }catch(e){puntosList=[...PUNTOS_DEF];puntosMeta={};}
+    puntosList=pts;
+  }catch(e){puntosList=[];puntosMeta={};}
   try{
     const cfg=await getDoc(doc(db,'ciudades',U.ciudad.toLowerCase(),'config','puntosEdicion'));
     puntosEdicionAbierta=cfg.exists()?cfg.data().abierta!==false:true;
@@ -1622,6 +1626,11 @@ async function cargarPuntos(){
 }
 function renderPuntos(alMap){
   const grid=document.getElementById('puntosGrid');grid.innerHTML='';const now=Date.now();
+  if(!puntosList.length){
+    grid.innerHTML='<div class="req-empty" style="grid-column:1/-1"><span class="req-empty-ico">📍</span><p>Todavía no hay puntos registrados en tu ciudad<br><small>Toca "+ Agregar punto" para crear el primero</small></p></div>';
+    const pt=document.getElementById('puntosTiem');if(pt)pt.textContent=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    return;
+  }
   puntosList.forEach((nombre,i)=>{
     const al=alMap[nombre];const tieneR=al&&al.tipo==='reten';const tieneA=al&&al.tipo==='accidente';
     const cl=tieneR?'pr':tieneA?'pa':'pv';const dot=tieneR?'r':tieneA?'a':'v';
@@ -2926,11 +2935,11 @@ function renderMiServicio(it){
       <div class="mi-servicio-linea">🛣️ <strong>Ruta:</strong> ${ruta}</div>
     </div>
     <div class="mi-servicio-btns">
-      <button class="mapa" title="Ir a recoger (ruta más corta)" onclick="${it.recogidaLat?`irARecoger(${it.recogidaLat},${it.recogidaLng})`:`irARecogerTexto('${encodeURIComponent(recogida)}')`}">🧭</button>
-      ${!esViaje&&entrega?`<button class="mapa" title="Ir a entregar" onclick="${it.entregaLat?`irARecoger(${it.entregaLat},${it.entregaLng})`:`irARecogerTexto('${encodeURIComponent(entrega)}')`}">🏁</button>`:''}
-      <button class="cerca" title="Avisar que estoy cerca (~10 min)" onclick="avisarCerca('${it.id}','${esViaje?'solicitudes':'encomiendas'}')">🔔</button>
-      <button title="WhatsApp" onclick="wspDirecto('${tel}')">💬</button>
-      <button class="ok" title="Marcar completado" onclick="${completar}">✅</button>
+      <button class="mapa" onclick="${it.recogidaLat?`irARecoger(${it.recogidaLat},${it.recogidaLng})`:`irARecogerTexto('${encodeURIComponent(recogida)}')`}"><span class="ico">🧭</span>${esViaje?'Ir por el pasajero':'Ir a recoger'}</button>
+      ${!esViaje&&entrega?`<button class="mapa" onclick="${it.entregaLat?`irARecoger(${it.entregaLat},${it.entregaLng})`:`irARecogerTexto('${encodeURIComponent(entrega)}')`}"><span class="ico">🏁</span>Ir a entregar</button>`:''}
+      <button class="cerca" onclick="avisarCerca('${it.id}','${esViaje?'solicitudes':'encomiendas'}')"><span class="ico">🔔</span>Avisar cercanía</button>
+      <button class="wsp" onclick="wspDirecto('${tel}')"><span class="ico">💬</span>WhatsApp</button>
+      <button class="ok" onclick="${completar}"><span class="ico">✅</span>${esViaje?'Viaje completado':'Envío entregado'}</button>
     </div>
   </div>`;
 }

@@ -222,7 +222,6 @@
   <!-- TABS MÓVIL -->
   <div class="mob-tabs">
     <button class="mob-tab on" onclick="goSec('sDash',this)">📊 Dashboard</button>
-    <button class="mob-tab" onclick="goSec('sAlertas',this)">🚨 Alertas</button>
     <button class="mob-tab" onclick="goSec('sPuntos',this)">📍 Puntos</button>
     <button class="mob-tab" onclick="goSec('sUsuarios',this)">👥 Usuarios</button>
     <button class="mob-tab" onclick="goSec('sApariencia',this)">🎨 Apariencia</button>
@@ -238,7 +237,6 @@
       <div class="nav-sec">Principal</div>
       <button class="nav-item on" id="n-dash" onclick="goSec('sDash',this)"><span class="nav-ico">📊</span>Dashboard</button>
       <div class="nav-sec">Operación</div>
-      <button class="nav-item" id="n-alertas" onclick="goSec('sAlertas',this)"><span class="nav-ico">🚨</span>Alertas en vivo<span class="nav-bdg" id="bdgAl" style="display:none">0</span></button>
       <button class="nav-item" id="n-puntos" onclick="goSec('sPuntos',this)"><span class="nav-ico">📍</span>Puntos de retén</button>
       <button class="nav-item" id="n-usuarios" onclick="goSec('sUsuarios',this)"><span class="nav-ico">👥</span>Usuarios</button>
       <button class="nav-item" id="n-enc" onclick="goSec('sEnc',this)"><span class="nav-ico">📦</span>Encomiendas</button>
@@ -260,36 +258,24 @@
       <section class="sec on" id="sDash">
         <div class="ph">📊 Dashboard</div>
         <div class="ps" id="dashFecha">Cargando...</div>
-        <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr)">
-          <div class="kpi gv"><span class="kpi-ico">🚗</span><span class="kpi-n" id="kCond">—</span><div class="kpi-l">Conductores</div></div>
-          <div class="kpi gi"><span class="kpi-ico">👤</span><span class="kpi-n" id="kPas">—</span><div class="kpi-l">Pasajeros</div></div>
-          <div class="kpi gr"><span class="kpi-ico">🚨</span><span class="kpi-n" id="kAl">—</span><div class="kpi-l">Alertas hoy</div></div>
-          <div class="kpi ga"><span class="kpi-ico">📍</span><span class="kpi-n" id="kPtos">—</span><div class="kpi-l">Puntos activos</div></div>
-          <div class="kpi" style="border-color:rgba(99,102,241,0.3)"><span class="kpi-ico">📦</span><span class="kpi-n" id="kEnc" style="color:var(--acc)">—</span><div class="kpi-l">Encomiendas activas</div></div>
-          <div class="kpi" style="border-color:rgba(34,197,94,0.3)"><span class="kpi-ico">🗺️</span><span class="kpi-n" id="kSols" style="color:var(--v)">—</span><div class="kpi-l">Solicitudes hoy</div></div>
+
+        <div class="fg" style="max-width:320px">
+          <label>🏙️ Ciudad</label>
+          <select class="inp" id="dashCiudadSel" onchange="cambiarCiudadDash()">
+            <option value="tauramena">Tauramena</option>
+          </select>
         </div>
+
+        <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi gv kpi-click" onclick="irAUsuarios('conductor')"><span class="kpi-ico">🚗</span><span class="kpi-n" id="kCond">—</span><div class="kpi-l">Conductores</div></div>
+          <div class="kpi gi kpi-click" onclick="irAUsuarios('pasajero')"><span class="kpi-ico">👤</span><span class="kpi-n" id="kPas">—</span><div class="kpi-l">Pasajeros</div></div>
+          <div class="kpi kpi-click" style="border-color:rgba(99,102,241,0.3)" onclick="irASeccion('sEnc')"><span class="kpi-ico">📦</span><span class="kpi-n" id="kEnc" style="color:var(--acc)">—</span><div class="kpi-l">Encomiendas activas</div></div>
+          <div class="kpi kpi-click" style="border-color:rgba(34,197,94,0.3)" onclick="irASeccion('sSols')"><span class="kpi-ico">🗺️</span><span class="kpi-n" id="kSols" style="color:var(--v)">—</span><div class="kpi-l">Solicitudes hoy</div></div>
+          <div class="kpi ga kpi-click" style="grid-column:1/-1" onclick="irASeccion('sPuntos')"><span class="kpi-ico">📍</span><span class="kpi-n" id="kPtos">—</span><div class="kpi-l">Puntos activos en esta ciudad</div></div>
+        </div>
+
         <div id="dashSpinner"><div class="spinner"></div></div>
         <div id="dashAlertas"></div>
-      </section>
-
-      <!-- ALERTAS EN VIVO -->
-      <section class="sec" id="sAlertas">
-        <div class="ph">🚨 Alertas en tiempo real</div>
-        <div class="ps">Todas las alertas activas en tu ciudad</div>
-        <div class="fgrp" style="max-width:280px">
-          <label>Filtrar por ciudad</label>
-          <input type="text" id="filtCiudad" class="inp" placeholder="Ej: Tauramena" value="tauramena" oninput="cargarAlertas()">
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
-        <span style="background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:3px 10px;font-size:11px;cursor:pointer;color:var(--ts)" onclick="document.getElementById('filtCiudad').value=this.textContent;cargarAlertas()">Tauramena</span>
-        <span style="background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:3px 10px;font-size:11px;cursor:pointer;color:var(--ts)" onclick="document.getElementById('filtCiudad').value=this.textContent;cargarAlertas()">Yopal</span>
-        <span style="background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:3px 10px;font-size:11px;cursor:pointer;color:var(--ts)" onclick="document.getElementById('filtCiudad').value=this.textContent;cargarAlertas()">Aguazul</span>
-        <span style="background:var(--elev);border:1px solid var(--bn);border-radius:var(--rfl);padding:3px 10px;font-size:11px;cursor:pointer;color:var(--ts)" onclick="document.getElementById('filtCiudad').value=this.textContent;cargarAlertas()">Villanueva</span>
-      </div>
-        </div>
-        <div id="alertasLive"><div class="spinner"></div></div>
-        <div style="margin-top:16px">
-          <button class="btn-s" onclick="cargarAlertas()">↻ Actualizar</button>
-        </div>
       </section>
 
       <!-- PUNTOS DE RETÉN -->
@@ -300,13 +286,14 @@
           <label>Ciudad</label>
           <input type="text" id="filtPtoCiudad" class="inp" placeholder="Ej: Tauramena" value="tauramena" oninput="cargarPuntos()">
         </div>
-        <button class="btn-p" style="max-width:220px;margin-bottom:16px" onclick="abrirAddPunto()">➕ Agregar punto</button>
+        <button class="btn-p" style="max-width:220px;margin-bottom:12px" onclick="abrirAddPunto()">➕ Agregar punto</button>
+        <div id="puntosLockBar" style="margin-bottom:14px"></div>
         <div id="puntosLista"><div class="spinner"></div></div>
       </section>
 
       <!-- USUARIOS -->
       <section class="sec" id="sUsuarios">
-        <div class="ph">👥 Usuarios</div>
+        <div class="ph">👥 Conductores y Pasajeros</div>
         <div class="ps">Gestiona conductores y pasajeros registrados</div>
         <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
           <input type="text" id="busUsr" class="inp" placeholder="🔍 Buscar por nombre..." style="flex:1;min-width:180px" oninput="filtrarUsuarios()">
@@ -317,7 +304,19 @@
           </select>
           <input type="text" id="filtCiudadUsr" class="inp" placeholder="Ciudad..." style="width:140px" value="tauramena" oninput="cargarUsuarios()">
         </div>
-        <button class="btn-s" style="margin-bottom:16px" onclick="cargarUsuarios()">↻ Actualizar</button>
+        <button class="btn-s" style="margin-bottom:12px" onclick="cargarUsuarios()">↻ Actualizar</button>
+
+        <!-- Panel de acciones en lote: aparece solo cuando hay usuarios seleccionados -->
+        <div id="loteBar" style="display:none;position:sticky;top:0;z-index:5;background:var(--card);border:1.5px solid var(--acc);border-radius:var(--rmd);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:12px;font-weight:700;color:var(--acc)"><span id="loteCount">0</span> seleccionados</span>
+          <button class="btn-sm" onclick="loteCambiarRol('conductor')">🚗 A conductor</button>
+          <button class="btn-sm" onclick="loteCambiarRol('pasajero')">👤 A pasajero</button>
+          <button class="btn-sm" onclick="loteEstado(true)">🚫 Suspender</button>
+          <button class="btn-sm v" onclick="loteEstado(false)">✅ Activar</button>
+          <button class="btn-sm r" id="loteBorrarBtn" onclick="loteEliminar(event)">🗑 Eliminar (doble clic)</button>
+          <button class="btn-sm" style="margin-left:auto" onclick="loteLimpiar()">✕ Limpiar selección</button>
+        </div>
+
         <div id="usuariosLista"><div class="spinner"></div></div>
       </section>
 
@@ -510,16 +509,16 @@
   <div class="mc">
     <button class="mc-close" onclick="cerrarM('mPunto')">✕</button>
     <div class="mc-tit">📍 Agregar punto</div>
-    <div class="mc-sub">El punto quedará disponible para todos los conductores</div>
+    <div class="mc-sub">El punto quedará disponible para todos los conductores de esa ciudad/ruta</div>
     <div class="fg"><label>Nombre del punto *</label><input type="text" id="pNom" class="inp" placeholder="Ej: La Ye de Aguazul" maxlength="40"></div>
-    <div class="fg"><label>Ciudad</label><input type="text" id="pCiu" class="inp" placeholder="Tauramena" value="tauramena"></div>
-    <div class="fg"><label>Ruta</label>
-      <select id="pRuta" class="inp">
-        <option value="ambas">Ambas rutas</option>
-        <option value="tauramena-yopal">Tauramena → Yopal</option>
-        <option value="yopal-tauramena">Yopal → Tauramena</option>
-      </select>
+    <div class="fg"><label>Ciudad *</label><input type="text" id="pCiu" class="inp" placeholder="tauramena" value="tauramena"></div>
+    <div class="fg"><label>Ruta (ej: tauramena-yopal, villanueva-bogota)</label><input type="text" id="pRuta" class="inp" placeholder="nombre-de-la-ruta"></div>
+    <div class="fgrid c2">
+      <div class="fg"><label>Latitud GPS</label><input type="number" id="pLat" class="inp" placeholder="Ej: 5.0175" step="0.000001"></div>
+      <div class="fg"><label>Longitud GPS</label><input type="number" id="pLng" class="inp" placeholder="Ej: -72.7583" step="0.000001"></div>
     </div>
+    <div class="fg"><label>Orden en la ruta (opcional)</label><input type="number" id="pOrden" class="inp" placeholder="Ej: 3 — posición real en el recorrido"></div>
+    <div class="hint">Sin coordenadas GPS, este punto no se podrá detectar automáticamente por proximidad — solo aparecerá en la lista manual.</div>
     <button class="btn-p" onclick="guardarPunto()">📍 Guardar punto</button>
   </div>
 </div>
@@ -531,13 +530,12 @@
     <div class="mc-tit">✏️ Editar punto</div>
     <input type="hidden" id="editPtoId">
     <div class="fg"><label>Nombre del punto *</label><input type="text" id="editPNom" class="inp"></div>
-    <div class="fg"><label>Ruta</label>
-      <select id="editPRuta" class="inp">
-        <option value="ambas">Ambas rutas</option>
-        <option value="tauramena-yopal">Tauramena → Yopal</option>
-        <option value="yopal-tauramena">Yopal → Tauramena</option>
-      </select>
+    <div class="fg"><label>Ruta (ej: tauramena-yopal, villanueva-bogota)</label><input type="text" id="editPRuta" class="inp" placeholder="nombre-de-la-ruta"></div>
+    <div class="fgrid c2">
+      <div class="fg"><label>Latitud GPS</label><input type="number" id="editPLat" class="inp" step="0.000001"></div>
+      <div class="fg"><label>Longitud GPS</label><input type="number" id="editPLng" class="inp" step="0.000001"></div>
     </div>
+    <div class="fg"><label>Orden en la ruta (opcional)</label><input type="number" id="editPOrden" class="inp"></div>
     <div style="display:flex;gap:10px">
       <button class="btn-p" onclick="actualizarPunto()">💾 Actualizar</button>
       <button class="btn-d" onclick="eliminarPunto()">🗑 Eliminar</button>
@@ -633,20 +631,58 @@ window.goSec=(id,el)=>{
 };
 
 // ── DASHBOARD ──
+let ciudadActual='tauramena'; // ciudad elegida en el selector del Dashboard; se propaga al navegar a otras secciones
+
+// Llena el selector de ciudades con las que realmente existen (ciudadesRegistradas + tauramena de base)
+async function poblarSelectorCiudades(){
+  const sel=document.getElementById('dashCiudadSel');
+  if(!sel)return;
+  const ciudades=new Set(['tauramena']);
+  try{
+    const snap=await getDocs(collection(db,'ciudadesRegistradas'));
+    snap.forEach(d=>ciudades.add(d.id));
+  }catch(e){/* si falla, al menos queda tauramena */}
+  const actual=sel.value||ciudadActual;
+  sel.innerHTML='';
+  [...ciudades].sort().forEach(c=>{
+    const opt=document.createElement('option');opt.value=c;opt.textContent=c.charAt(0).toUpperCase()+c.slice(1);sel.appendChild(opt);
+  });
+  if([...ciudades].includes(actual))sel.value=actual;
+}
+window.cambiarCiudadDash=()=>{
+  ciudadActual=document.getElementById('dashCiudadSel').value;
+  cargarDashboard();
+  escucharAlertasLive();
+};
+// Los KPI del dashboard llevan directo a la sección correspondiente, con la ciudad ya elegida
+window.irAUsuarios=(rol)=>{
+  const fc=document.getElementById('filtCiudadUsr');if(fc)fc.value=ciudadActual;
+  const fr=document.getElementById('filtRol');if(fr)fr.value=rol;
+  goSec('sUsuarios',document.getElementById('n-usuarios'));
+  cargarUsuarios();
+};
+window.irASeccion=(id)=>{
+  const mapaCiudad={sEnc:'filtEncCiudad',sSols:'filtSolsCiudad',sPuntos:'filtPtoCiudad'};
+  const campo=mapaCiudad[id];
+  if(campo){const el=document.getElementById(campo);if(el)el.value=ciudadActual;}
+  goSec(id,document.getElementById('n-'+id.slice(1).toLowerCase()));
+  if(id==='sEnc')cargarAdminEnc();
+  if(id==='sSols')cargarAdminSols();
+  if(id==='sPuntos')cargarPuntos();
+};
+
 async function cargarDashboard(){
   document.getElementById('dashFecha').textContent='Hoy: '+new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});
+  await poblarSelectorCiudades();
+  const _c=ciudadActual;
   try{
-    const _c=document.getElementById('filtCiudad')?.value?.trim()?.toLowerCase()||'tauramena';
     const snap=await getDocs(collection(db,'ciudades',_c,'usuarios'));
     let c=0,p=0;snap.forEach(d=>{if(d.data().rol==='conductor')c++;else p++;});
     document.getElementById('kCond').textContent=c;
     document.getElementById('kPas').textContent=p;
     const ptos=await getDocs(collection(db,'ciudades',_c,'puntos'));
-    document.getElementById('kPtos').textContent=ptos.size||13;
-    const als=await getDocs(collection(db,'ciudades',_c,'alertas'));
-    let hoy=0;const hoy0=new Date();hoy0.setHours(0,0,0,0);
-    als.forEach(d=>{const t=d.data().timestamp?.toDate?.();if(t&&t>hoy0)hoy++;});
-    document.getElementById('kAl').textContent=hoy;
+    document.getElementById('kPtos').textContent=ptos.size; // sin valor de respaldo: 0 real si la ciudad no tiene ninguno
+    const hoy0=new Date();hoy0.setHours(0,0,0,0);
     // Encomiendas activas
     try{
       const encs=await getDocs(collection(db,'ciudades',_c,'encomiendas'));
@@ -663,53 +699,42 @@ async function cargarDashboard(){
   document.getElementById('dashSpinner').style.display='none';
 }
 
-// ── ALERTAS EN VIVO ──
+// ── ALERTAS (solo como resumen dentro del Dashboard; la pantalla dedicada se quitó) ──
 function escucharAlertasLive(){
   if(_unsubAl)_unsubAl();
-  const _cd=document.getElementById('filtCiudad')?.value?.trim()?.toLowerCase()||'tauramena';
+  const _cd=ciudadActual||'tauramena';
   _unsubAl=onSnapshot(collection(db,'ciudades',_cd,'alertas'),snap=>{
     const al=[];snap.forEach(d=>{if(d.data().activa)al.push({id:d.id,...d.data()});});
     al.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
     const bdg=document.getElementById('bdgAl');
-    if(al.length){bdg.style.display='inline';bdg.textContent=al.length;}
-    else bdg.style.display='none';
-    // Dashboard preview
+    if(bdg){if(al.length){bdg.style.display='inline';bdg.textContent=al.length;}else bdg.style.display='none';}
+    // Resumen dentro del Dashboard
     const da=document.getElementById('dashAlertas');
+    if(!da)return;
     if(al.length){
-      da.innerHTML=`<div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;color:var(--r)">🚨 ${al.length} alerta${al.length>1?'s':''} activa${al.length>1?'s':''}</div>`+al.slice(0,3).map(a=>mkAlCard(a)).join('');
-    } else da.innerHTML='<div class="empty"><div class="eico">✅</div><p>Vía despejada</p></div>';
+      da.innerHTML=`<div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;color:var(--r)">🚨 ${al.length} alerta${al.length>1?'s':''} activa${al.length>1?'s':''} en ${_cd}</div>`+al.slice(0,3).map(a=>mkAlCard(a,true,_cd)).join('');
+    } else da.innerHTML='<div class="empty"><div class="eico">✅</div><p>Vía despejada en '+_cd+'</p></div>';
   });
 }
 
-window.cargarAlertas=async()=>{
-  const ciudad=document.getElementById('filtCiudad').value.trim().toLowerCase()||'tauramena';
-  const c=document.getElementById('alertasLive');c.innerHTML='<div class="spinner"></div>';
-  try{
-    const snap=await getDocs(collection(db,'ciudades',ciudad,'alertas'));
-    const al=[];snap.forEach(d=>{if(d.data().activa)al.push({id:d.id,...d.data()});});
-    al.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
-    if(!al.length){c.innerHTML='<div class="empty"><div class="eico">✅</div><p>Sin alertas activas en '+ciudad+'</p></div>';return;}
-    c.innerHTML=al.map(a=>mkAlCard(a,true)).join('');
-  }catch(e){c.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
-};
-
-function mkAlCard(a,conBtn=false){
+function mkAlCard(a,conBtn=false,ciudadForzada=null){
   const min=Math.max(0,Math.floor((Date.now()-(a.timestamp?.seconds*1000||Date.now()))/60000));
   const isR=a.tipo==='reten',isA=a.tipo==='accidente';
   const cl=isR?'r':isA?'a':'v';
   const lbl=isR?'🚔 RETÉN':isA?'⚠️ ACCIDENTE':'🚧 NOVEDAD';
   const sm={ida:"T'MENA→YOPAL",vuelta:"YOPAL→T'MENA",ambos:'Ambos sentidos'};
+  const cd=ciudadForzada||a.ciudad||'tauramena';
   return `<div class="alerta-live ${cl}">
-    <div class="al-top"><div class="ac-tipo" style="color:${isR?'var(--r)':isA?'var(--am)':'var(--v)'}">${lbl}</div>${conBtn?`<button class="btn-sm r" onclick="desactivarAlerta('${a.id}','${a.ciudad||'tauramena'}')">✕ Desactivar</button>`:''}</div>
+    <div class="al-top"><div class="ac-tipo" style="color:${isR?'var(--r)':isA?'var(--am)':'var(--v)'}">${lbl}</div>${conBtn?`<button class="btn-sm r" onclick="desactivarAlerta('${a.id}','${cd}')">✕ Desactivar</button>`:''}</div>
     <div class="al-punto">${a.punto||'?'}</div>
     <div class="al-meta">${sm[a.sentido]?sm[a.sentido]+' · ':''} 🕐 ${min<1?'Ahora':min+' min'} · ✅ ${a.confirmaciones||0} conf.</div>
     ${a.nota?`<div style="font-size:12px;color:var(--ts);margin-top:6px">${a.nota}</div>`:''}
-    ${conBtn?`<div style="margin-top:8px"><button class="btn-sm v" onclick="confAdmin('${a.id}','${a.ciudad||'tauramena'}')">🚗 Confirmar</button></div>`:''}
+    ${conBtn?`<div style="margin-top:8px"><button class="btn-sm v" onclick="confAdmin('${a.id}','${cd}')">🚗 Confirmar</button></div>`:''}
   </div>`;
 }
 
 window.desactivarAlerta=async(id,ciudad)=>{
-  try{await updateDoc(doc(db,'ciudades',ciudad,'alertas',id),{activa:false});toast('✅ Alerta desactivada');window.cargarAlertas();}
+  try{await updateDoc(doc(db,'ciudades',ciudad,'alertas',id),{activa:false});toast('✅ Alerta desactivada');}
   catch(e){toast('❌ '+e.message,'error');}
 };
 window.confAdmin=async(id,ciudad)=>{
@@ -721,43 +746,77 @@ window.confAdmin=async(id,ciudad)=>{
 window.cargarPuntos=async()=>{
   const ciudad=document.getElementById('filtPtoCiudad').value.trim().toLowerCase()||'tauramena';
   const c=document.getElementById('puntosLista');c.innerHTML='<div class="spinner"></div>';
-  const DEFAULT=['El Venado','Puente El Venado','Mordizco','Choricera','Valle Verde','Puente Peatonal Sonora','Los Troncos','Uñete','Pozo Ramiriquí','La Ceiba','Puente Cachaguas','Antiguo Toro','Aguazul - El Toro'];
   try{
     const snap=await getDocs(collection(db,'ciudades',ciudad,'puntos'));
-    let pts=[];snap.forEach(d=>pts.push({id:d.id,...d.data()}));
+    const pts=[];snap.forEach(d=>pts.push({id:d.id,...d.data()}));
     if(!pts.length){
-      // Cargar los defaults si no hay ninguno
-      for(const n of DEFAULT){await setDoc(doc(db,'ciudades',ciudad,'puntos',n.toLowerCase().replace(/\s/g,'-')),{nombre:n,ruta:'ambas',timestamp:serverTimestamp()});}
-      pts=DEFAULT.map(n=>({id:n.toLowerCase().replace(/\s/g,'-'),nombre:n,ruta:'ambas'}));
+      c.innerHTML='<div class="empty"><p>📍 "'+ciudad+'" todavía no tiene ningún punto registrado.<br><small>Cada ciudad/ruta tiene sus propios puntos — no se copian de otras ciudades. Agrega el primero abajo.</small></p></div>';
+      return;
     }
+    // Orden en la vía: primero los que tienen "orden" asignado, luego el resto alfabético
+    pts.sort((a,b)=>{
+      const oa=a.orden??null,ob=b.orden??null;
+      if(oa!=null&&ob!=null)return oa-ob;
+      if(oa!=null)return -1;
+      if(ob!=null)return 1;
+      return (a.nombre||'').localeCompare(b.nombre||'','es');
+    });
+    let cfgAbierta=true;
+    try{const cfg=await getDoc(doc(db,'ciudades',ciudad,'config','puntosEdicion'));cfgAbierta=cfg.exists()?cfg.data().abierta!==false:true;}catch(e){}
+    document.getElementById('puntosLockBar').innerHTML=cfgAbierta
+      ?`<span style="color:var(--v);font-size:12px">🔓 Edición abierta: los conductores pueden crear/editar puntos en "${ciudad}"</span><button class="btn-s" style="margin-left:10px" onclick="bloquearEdicionPuntos('${ciudad}',false)">🔒 Bloquear edición</button>`
+      :`<span style="color:var(--r);font-size:12px">🔒 Edición bloqueada: solo el admin puede modificar puntos en "${ciudad}"</span><button class="btn-s" style="margin-left:10px" onclick="bloquearEdicionPuntos('${ciudad}',true)">🔓 Reabrir edición</button>`;
     c.innerHTML=pts.map((p,i)=>`
       <div class="punto-row">
-        <span class="punto-num">${(i+1).toString().padStart(2,'0')}</span>
-        <div style="flex:1"><div class="punto-nom">${p.nombre}</div><div class="punto-ruta">${p.ruta==='ambas'?'↔️ Ambas rutas':p.ruta==='tauramena-yopal'?"➡️ T'MENA→YOPAL":"⬅️ YOPAL→T'MENA"}</div></div>
-        <button class="btn-sm" onclick="editarPunto('${p.id}','${p.nombre}','${p.ruta||'ambas'}','${ciudad}')">✏️ Editar</button>
+        <span class="punto-num">${p.orden!=null?'#'+p.orden:(i+1).toString().padStart(2,'0')}</span>
+        <div style="flex:1">
+          <div class="punto-nom">${p.nombre}</div>
+          <div class="punto-ruta">${p.ruta&&p.ruta!=='ambas'&&p.ruta!=='tauramena-yopal'&&p.ruta!=='yopal-tauramena'?p.ruta:p.ruta==='ambas'?'↔️ Ambas rutas':p.ruta==='tauramena-yopal'?"➡️ T'MENA→YOPAL":p.ruta==='yopal-tauramena'?"⬅️ YOPAL→T'MENA":'Sin ruta asignada'}
+            ${p.lat!=null?' · 📍 GPS ('+p.lat.toFixed(4)+', '+p.lng.toFixed(4)+')':' · <span style="color:var(--r)">⚠️ Sin coordenadas GPS</span>'}</div>
+        </div>
+        <button class="btn-sm" onclick="editarPunto('${p.id}','${p.nombre}','${p.ruta||''}','${ciudad}',${p.lat??'null'},${p.lng??'null'},${p.orden??'null'})">✏️ Editar</button>
       </div>`).join('');
   }catch(e){c.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
 };
-
-window.abrirAddPunto=()=>{document.getElementById('pNom').value='';document.getElementById('mPunto').classList.add('open');};
-window.guardarPunto=async()=>{
-  const n=document.getElementById('pNom').value.trim(),c=document.getElementById('pCiu').value.trim().toLowerCase(),r=document.getElementById('pRuta').value;
-  if(!n){toast('⚠️ Escribe el nombre del punto','warning');return;}
-  try{await setDoc(doc(db,'ciudades',c,'puntos',n.toLowerCase().replace(/[\s]/g,'-')),{nombre:n,ruta:r,timestamp:serverTimestamp()});cerrarM('mPunto');toast('📍 Punto agregado');cargarPuntos();}
+window.bloquearEdicionPuntos=async(ciudad,abierta)=>{
+  try{await setDoc(doc(db,'ciudades',ciudad,'config','puntosEdicion'),{abierta},{merge:true});toast(abierta?'🔓 Edición reabierta para conductores':'🔒 Edición bloqueada — solo el admin puede editar');cargarPuntos();}
   catch(e){toast('❌ '+e.message,'error');}
 };
-window.editarPunto=(id,nom,ruta,ciudad)=>{
+
+window.abrirAddPunto=()=>{document.getElementById('pNom').value='';document.getElementById('pRuta').value='';document.getElementById('pLat').value='';document.getElementById('pLng').value='';document.getElementById('pOrden').value='';document.getElementById('mPunto').classList.add('open');};
+window.guardarPunto=async()=>{
+  const n=document.getElementById('pNom').value.trim(),c=document.getElementById('pCiu').value.trim().toLowerCase(),r=document.getElementById('pRuta').value.trim();
+  const latV=document.getElementById('pLat').value,lngV=document.getElementById('pLng').value,ordenV=document.getElementById('pOrden').value;
+  if(!n||!c){toast('⚠️ Escribe el nombre y la ciudad','warning');return;}
+  try{
+    const datos={nombre:n,ruta:r||null,timestamp:serverTimestamp()};
+    if(latV!==''&&lngV!==''){datos.lat=parseFloat(latV);datos.lng=parseFloat(lngV);}
+    if(ordenV!=='')datos.orden=parseFloat(ordenV);
+    await setDoc(doc(db,'ciudades',c,'puntos',n.toLowerCase().replace(/[\s]/g,'-')),datos);
+    cerrarM('mPunto');toast('📍 Punto agregado');document.getElementById('filtPtoCiudad').value=c;cargarPuntos();
+  }catch(e){toast('❌ '+e.message,'error');}
+};
+window.editarPunto=(id,nom,ruta,ciudad,lat,lng,orden)=>{
   document.getElementById('editPtoId').value=id+'|'+ciudad;
   document.getElementById('editPNom').value=nom;
-  document.getElementById('editPRuta').value=ruta;
+  document.getElementById('editPRuta').value=ruta||'';
+  document.getElementById('editPLat').value=lat!=null&&lat!=='null'?lat:'';
+  document.getElementById('editPLng').value=lng!=null&&lng!=='null'?lng:'';
+  document.getElementById('editPOrden').value=orden!=null&&orden!=='null'?orden:'';
   document.getElementById('mEditPunto').classList.add('open');
 };
 window.actualizarPunto=async()=>{
   const [id,ciudad]=document.getElementById('editPtoId').value.split('|');
-  const nom=document.getElementById('editPNom').value.trim(),ruta=document.getElementById('editPRuta').value;
+  const nom=document.getElementById('editPNom').value.trim(),ruta=document.getElementById('editPRuta').value.trim();
+  const latV=document.getElementById('editPLat').value,lngV=document.getElementById('editPLng').value,ordenV=document.getElementById('editPOrden').value;
   if(!nom){toast('⚠️ Escribe el nombre','warning');return;}
-  try{await updateDoc(doc(db,'ciudades',ciudad,'puntos',id),{nombre:nom,ruta});cerrarM('mEditPunto');toast('✅ Punto actualizado');cargarPuntos();}
-  catch(e){toast('❌ '+e.message,'error');}
+  try{
+    const datos={nombre:nom,ruta:ruta||null};
+    datos.lat=latV!==''?parseFloat(latV):null;
+    datos.lng=lngV!==''?parseFloat(lngV):null;
+    datos.orden=ordenV!==''?parseFloat(ordenV):null;
+    await updateDoc(doc(db,'ciudades',ciudad,'puntos',id),datos);cerrarM('mEditPunto');toast('✅ Punto actualizado');cargarPuntos();
+  }catch(e){toast('❌ '+e.message,'error');}
 };
 window.eliminarPunto=async()=>{
   if(!confirm('¿Eliminar este punto?'))return;
@@ -770,6 +829,7 @@ window.eliminarPunto=async()=>{
 window.cargarUsuarios=async()=>{
   const ciudad=document.getElementById('filtCiudadUsr').value.trim().toLowerCase()||'tauramena';
   const c=document.getElementById('usuariosLista');c.innerHTML='<div class="spinner"></div>';
+  _seleccionUsr.clear();document.getElementById('loteBar').style.display='none';
   try{
     const snap=await getDocs(collection(db,'ciudades',ciudad,'usuarios'));
     _todosUsuarios=[];snap.forEach(d=>_todosUsuarios.push({id:d.id,...d.data()}));
@@ -777,6 +837,7 @@ window.cargarUsuarios=async()=>{
   }catch(e){c.innerHTML='<div class="empty"><p>Error: '+e.message+'</p></div>';}
 };
 
+let _seleccionUsr=new Set();
 window.filtrarUsuarios=()=>{
   const q=document.getElementById('busUsr').value.toLowerCase();
   const rol=document.getElementById('filtRol').value;
@@ -790,42 +851,83 @@ window.filtrarUsuarios=()=>{
   c.innerHTML=f.map(u=>`
     <div class="card">
       <div class="card-h">
-        <div>
-          <div class="card-titulo">${u.nombre||'Sin nombre'}</div>
-          <div class="card-sub">📱 ${u.telefono||'—'} · ${u.ciudad||'—'}</div>
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <input type="checkbox" style="margin-top:4px;width:16px;height:16px" ${_seleccionUsr.has(u.id)?'checked':''} onchange="toggleSeleccionUsr('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}',this.checked)">
+          <div>
+            <div class="card-titulo" style="${u.sospechoso?'color:var(--r)':''}">${u.sospechoso?'🚩 ':''}${u.nombre||'Sin nombre'}</div>
+            <div class="card-sub">📱 ${u.telefono||'—'} · ${u.ciudad||'—'}</div>
+          </div>
         </div>
         <span class="badge ${u.rol==='conductor'?'v':'i'}">${u.rol==='conductor'?'🚗 Conductor':'👤 Pasajero'}</span>
       </div>
       <div style="font-size:12px;color:var(--ts);margin-bottom:10px">
-        ⭐ ${u.estrellas||5}/5 · 💰 ${u.creditos||0} créditos · ${u.inactivo?'😴 Inactivo':'🟢 Activo'}
+        ⭐ ${u.estrellas||5}/5 · 💰 ${u.creditos||0} créditos · ${u.bloqueado?'🚫 Suspendido':u.inactivo?'😴 Inactivo':'🟢 Activo'}
       </div>
       <div class="card-acciones">
         ${u.rol==='pasajero'?`<button class="btn-sm v" onclick="cambiarRol('${u.id}','conductor','${u.ciudad?.toLowerCase()||'tauramena'}')">→ Conductor</button>`:`<button class="btn-sm" onclick="cambiarRol('${u.id}','pasajero','${u.ciudad?.toLowerCase()||'tauramena'}')">→ Pasajero</button>`}
         ${u.bloqueado
-          ?`<button class="btn-sm v" onclick="desbloquearUsuario('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}')">✅ Desbloquear</button>`
-          :`<button class="btn-sm r" onclick="bloquearUsuario('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}')">🚫 Bloquear</button>`}
+          ?`<button class="btn-sm v" onclick="desbloquearUsuario('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}')">✅ Activar</button>`
+          :`<button class="btn-sm r" onclick="bloquearUsuario('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}')">🚫 Suspender</button>`}
         <button class="btn-sm" onclick="abrirRecargaCreditos('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}','${u.nombre}',${u.creditos||0})">💰 Créditos</button>
-        <button class="btn-sm r" style="background:rgba(239,68,68,0.2)" onclick="eliminarUsuario('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}','${u.nombre}')">🗑 Eliminar</button>
+        <button class="btn-sm ${u.sospechoso?'':'r'}" onclick="toggleSospechoso('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}',${!u.sospechoso})">${u.sospechoso?'✅ Quitar marca':'🚩 Sospechoso'}</button>
+        <button class="btn-sm r" style="background:rgba(239,68,68,0.2)" ondblclick="eliminarUsuario('${u.id}','${u.ciudad?.toLowerCase()||'tauramena'}','${u.nombre}')" onclick="toast('🗑 Doble clic para confirmar eliminación','warning')">🗑 Eliminar (doble clic)</button>
       </div>
     </div>`).join('');
 };
 
-window.cambiarRol=async(uid,nuevoRol,ciudad)=>{
-  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{rol:nuevoRol});toast('✅ Rol actualizado');cargarUsuarios();}
+window.toggleSospechoso=async(uid,ciudad,valor)=>{
+  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{sospechoso:valor});toast(valor?'🚩 Marcado como sospechoso':'✅ Marca retirada');cargarUsuarios();}
   catch(e){toast('❌ '+e.message,'error');}
 };
+
+// ── Selección múltiple y acciones en lote ──
+window.toggleSeleccionUsr=(uid,ciudad,checked)=>{
+  const key=uid+'|'+ciudad;
+  if(checked)_seleccionUsr.add(key);else _seleccionUsr.delete(key);
+  const bar=document.getElementById('loteBar');
+  document.getElementById('loteCount').textContent=_seleccionUsr.size;
+  bar.style.display=_seleccionUsr.size?'flex':'none';
+};
+window.loteLimpiar=()=>{_seleccionUsr.clear();document.getElementById('loteBar').style.display='none';filtrarUsuarios();};
+window.loteCambiarRol=async(rol)=>{
+  if(!_seleccionUsr.size)return;
+  if(!confirm(`¿Pasar ${_seleccionUsr.size} usuario(s) a "${rol}"?`))return;
+  for(const key of _seleccionUsr){const [uid,ciudad]=key.split('|');await cambiarRol(uid,rol,ciudad,true);}
+  toast('✅ Rol actualizado en lote');loteLimpiar();cargarUsuarios();
+};
+window.loteEstado=async(bloquear)=>{
+  if(!_seleccionUsr.size)return;
+  for(const key of _seleccionUsr){const [uid,ciudad]=key.split('|');await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{bloqueado:bloquear}).catch(()=>{});}
+  toast(bloquear?'🚫 Suspendidos en lote':'✅ Activados en lote');loteLimpiar();cargarUsuarios();
+};
+window.loteEliminar=(ev)=>{
+  const btn=ev.currentTarget;
+  if(btn.dataset.armado==='1'){
+    (async()=>{
+      for(const key of _seleccionUsr){const [uid,ciudad]=key.split('|');await deleteDoc(doc(db,'ciudades',ciudad,'usuarios',uid)).catch(()=>{});}
+      toast('🗑 Eliminados en lote');loteLimpiar();cargarUsuarios();
+    })();
+    btn.dataset.armado='0';btn.textContent='🗑 Eliminar (doble clic)';
+  }else{
+    btn.dataset.armado='1';btn.textContent='⚠️ Toca de nuevo para confirmar';
+    setTimeout(()=>{if(btn.dataset.armado==='1'){btn.dataset.armado='0';btn.textContent='🗑 Eliminar (doble clic)';}},3000);
+  }
+};
+
+window.cambiarRol=async(uid,nuevoRol,ciudad,silencioso=false)=>{
+  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{rol:nuevoRol});if(!silencioso){toast('✅ Rol actualizado');cargarUsuarios();}}
+  catch(e){if(!silencioso)toast('❌ '+e.message,'error');}
+};
 window.bloquearUsuario=async(uid,ciudad)=>{
-  if(!confirm('¿Bloquear este usuario?'))return;
-  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{bloqueado:true});toast('🚫 Usuario bloqueado');cargarUsuarios();}
+  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{bloqueado:true});toast('🚫 Usuario suspendido');cargarUsuarios();}
   catch(e){toast('❌ '+e.message,'error');}
 };
 window.desbloquearUsuario=async(uid,ciudad)=>{
-  if(!confirm('¿Desbloquear este usuario?'))return;
-  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{bloqueado:false});toast('✅ Usuario desbloqueado');cargarUsuarios();}
+  try{await updateDoc(doc(db,'ciudades',ciudad,'usuarios',uid),{bloqueado:false});toast('✅ Usuario activado');cargarUsuarios();}
   catch(e){toast('❌ '+e.message,'error');}
 };
 window.eliminarUsuario=async(uid,ciudad,nombre)=>{
-  if(!confirm(`⚠️ ¿ELIMINAR a ${nombre} de la plataforma?\n\nEsto borra su cuenta permanentemente.`))return;
+  // El doble clic en el botón ya es la confirmación — no se pide otra vez.
   try{
     await deleteDoc(doc(db,'ciudades',ciudad,'usuarios',uid));
     toast(`🗑 ${nombre} eliminado de la plataforma`);cargarUsuarios();
@@ -1155,7 +1257,6 @@ window.limpiarChatAdmin=async()=>{
 
 // Cargar usuarios al entrar a esa sección
 document.getElementById('n-usuarios')?.addEventListener('click',()=>cargarUsuarios());
-document.getElementById('n-alertas')?.addEventListener('click',()=>window.cargarAlertas());
 document.getElementById('n-puntos')?.addEventListener('click',()=>cargarPuntos());
 </script>
 </body>
